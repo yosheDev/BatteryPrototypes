@@ -10,7 +10,7 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
     //=======================================================================================================================
     [Header("Magnet Data")]
     public MagnetData _magData = new MagnetData();
-    protected const float _magFactor = 100f;/// This is a constant factor that is multiplied with all calculated forces. This will affect all magnets project-wide.
+    protected const float _magFactor = 20f;/// This is a constant factor that is multiplied with all calculated forces. This will affect all magnets project-wide.
 
     [HideInInspector]public HashSet<MagnetComponentBase> affectFields = new HashSet<MagnetComponentBase>();
     //=======================================================================================================================
@@ -22,11 +22,11 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
     }
     public abstract MagnetData GetMagDataOverride();
 
-    public Vector2 GetNearestPoint()
+    public Vector2 GetNearestPoint(Vector2 posWS) /// Returns nearest point on surface of magnets area. Used to get proper distance value that is not always reliant on pivot point.
     {
-        return GetNearestPointOverride();
+        return GetNearestPointOverride(posWS);
     }
-    public abstract Vector2 GetNearestPointOverride();
+    public abstract Vector2 GetNearestPointOverride(Vector2 posWS);
 
     public bool AffectsRadius(Vector2 posWS, float radius)
     {
@@ -35,7 +35,7 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
     public abstract bool AffectsRadiusOverride(Vector2 posWS, float radius);
 
     // Multiple overrides for the different types of magnet shapes?
-    public Vector2 GetAppliedForce(MagnetData magData, Vector2 posWS, float radius) /// Point
+    public Vector2 GetAppliedForce(MagnetData magData, Vector2 posWS, float radius)
     {
         return GetAppliedForceOverride(magData, posWS, radius);
     }

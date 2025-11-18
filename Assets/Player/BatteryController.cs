@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using System.Collections.Generic;
-using static UnityEngine.GraphicsBuffer;
+using Unity.Mathematics;
 using System.Linq;
 using Magnet;
 
@@ -14,8 +14,8 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject cursorObj;
-    [SerializeField] private MagneticPoint positiveMag;
-    [SerializeField] private MagneticPoint negativeMag;
+    [SerializeField] private MagneticSurface positiveMag;
+    [SerializeField] private MagneticSurface negativeMag;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
@@ -34,7 +34,7 @@ public class BatteryController : MonoBehaviour
     private void FixedUpdate()
     {
         // Get Aim Target Vector
-        Vector3 aimDir = (cursorObj.transform.position - transform.position).normalized;
+        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
 
         // Apply rotation.
@@ -46,30 +46,51 @@ public class BatteryController : MonoBehaviour
 
         // [Handle Positive Magnet]
         Vector2 combinedPositiveForces = Vector2.zero;
+        Vector2 positiveMagDir = (positiveMag.transform.up).normalized;
 
         List<MagnetComponentBase> positiveFields = positiveMag.affectFields.ToList();
         for (int i = 0; i < positiveFields.Count; i++)
         {
-            // Will need to replace this with new function when I have that.
-            combinedPositiveForces += positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._radius);
+            Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance);
+
+            // Prevent NaN
+            if (float.IsNaN(curForce.x))
+            {
+                curForce = Vector2.zero;
+            }
+
+            // Will not be accounted for if pole is facing opposite direction (for game feel.)
+            if (Vector2.Dot(positiveMagDir, curForce.normalized) < 0.4f)
+            {
+                combinedPositiveForces += curForce;
+            }
         }
 
         // [Handle Negative Magnet]
         Vector2 combinedNegativeForces = Vector2.zero;
+        Vector2 negativeMagDir = (negativeMag.transform.up).normalized;
 
         List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
         for (int i = 0; i < negativeFields.Count; i++)
         {
-            // Will need to replace this with new function when I have that.
-            Debug.Log(negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._radius));
-            combinedNegativeForces += negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._radius);
+            Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance);
+
+            // Prevent NaN
+            if (float.IsNaN(curForce.x))
+            {
+                curForce = Vector2.zero;
+            }
+
+            // Will not be accounted for if pole is facing opposite direction (for game feel.)
+            if (Vector2.Dot(negativeMagDir, curForce.normalized) < 0.4f)
+            {
+                combinedNegativeForces += curForce;
+            }
         }
 
-        // Combine Forces and Apply
-        //rb.AddForceAtPosition(combinedPositiveForces, positiveMag.transform.position);
-        //Debug.Log("Positive Force: " + combinedPositiveForces);
+        // Apply Forces
+        rb.AddForceAtPosition(combinedPositiveForces, positiveMag.transform.position);
         rb.AddForceAtPosition(combinedNegativeForces, negativeMag.transform.position);
-        Debug.Log("Negative Force: " + combinedNegativeForces);
 
         #endregion
     }
