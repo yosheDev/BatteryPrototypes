@@ -52,7 +52,7 @@ public class BatteryController : MonoBehaviour
         for (int i = 0; i < positiveFields.Count; i++)
         {
             Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance);
-
+            Debug.Log("Positive Force: " + curForce);
             // Prevent NaN
             if (float.IsNaN(curForce.x))
             {
@@ -60,10 +60,10 @@ public class BatteryController : MonoBehaviour
             }
 
             // Will not be accounted for if pole is facing opposite direction (for game feel.)
-            if (Vector2.Dot(positiveMagDir, curForce.normalized) < 0.4f)
-            {
-                combinedPositiveForces += curForce;
-            }
+            //if (Vector2.Dot(positiveMagDir, curForce.normalized) < 0.4f)
+            //{
+                combinedPositiveForces += Vector2.Lerp(curForce, (-aimDir * curForce.magnitude), .5f);
+            //}
         }
 
         // [Handle Negative Magnet]
@@ -82,10 +82,12 @@ public class BatteryController : MonoBehaviour
             }
 
             // Will not be accounted for if pole is facing opposite direction (for game feel.)
-            if (Vector2.Dot(negativeMagDir, curForce.normalized) < 0.4f)
-            {
-                combinedNegativeForces += curForce;
-            }
+            //if (Vector2.Dot(negativeMagDir, curForce.normalized) < 0.4f)
+            //{
+                combinedNegativeForces += Vector2.Lerp(curForce, (aimDir * curForce.magnitude), .5f);
+
+                // Maybe make t a remap of velocity? More influence at higher velocity?
+            //}
         }
 
         // Apply Forces
