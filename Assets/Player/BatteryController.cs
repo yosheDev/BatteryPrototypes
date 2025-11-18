@@ -52,18 +52,20 @@ public class BatteryController : MonoBehaviour
         for (int i = 0; i < positiveFields.Count; i++)
         {
             Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance);
-            Debug.Log("Positive Force: " + curForce);
+
             // Prevent NaN
             if (float.IsNaN(curForce.x))
             {
                 curForce = Vector2.zero;
             }
 
+            Vector2 adjustedAimDir = (positiveFields[i]._magData.charge * positiveMag._magData.charge == -1 ? positiveMagDir : -positiveMagDir);
             // Will not be accounted for if pole is facing opposite direction (for game feel.)
-            //if (Vector2.Dot(positiveMagDir, curForce.normalized) < 0.4f)
-            //{
-                combinedPositiveForces += Vector2.Lerp(curForce, (-aimDir * curForce.magnitude), .5f);
-            //}
+            if (Vector2.Dot(adjustedAimDir, curForce.normalized) > 0.4f)
+            {
+                combinedPositiveForces += Vector2.ClampMagnitude(Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), .5f), 100f);
+                // Maybe make t a remap of velocity? More influence at higher velocity?
+            }
         }
 
         // [Handle Negative Magnet]
@@ -81,19 +83,21 @@ public class BatteryController : MonoBehaviour
                 curForce = Vector2.zero;
             }
 
+            Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
             // Will not be accounted for if pole is facing opposite direction (for game feel.)
-            //if (Vector2.Dot(negativeMagDir, curForce.normalized) < 0.4f)
-            //{
-                combinedNegativeForces += Vector2.Lerp(curForce, (aimDir * curForce.magnitude), .5f);
+            if (Vector2.Dot(adjustedAimDir, curForce.normalized) > 0.4f)
+            {
+                combinedNegativeForces += Vector2.ClampMagnitude(Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), .5f), 100f);
 
                 // Maybe make t a remap of velocity? More influence at higher velocity?
-            //}
+            }
         }
 
         // Apply Forces
         rb.AddForceAtPosition(combinedPositiveForces, positiveMag.transform.position);
+        Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + combinedPositiveForces);
         rb.AddForceAtPosition(combinedNegativeForces, negativeMag.transform.position);
-
+        Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + combinedNegativeForces);
         #endregion
     }
 
