@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using System.Linq;
 using Magnet;
+using FunctionLibrary;
 
 public class BatteryController : MonoBehaviour
 {
@@ -25,19 +26,32 @@ public class BatteryController : MonoBehaviour
     //==============================================================================================================================
 
     private Vector3 startPos;
+    private float angularVelocity;
+    private Quaternion previousRotation;
+
     #endregion 
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
         startPos = transform.position;
+        previousRotation = transform.rotation;
     }
 
     private void FixedUpdate()
     {
-            // Get Aim Target Vector
-            Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
+        float velocity = (Mathf.Abs(rb.linearVelocity.x) + Mathf.Abs(rb.linearVelocity.y)) * 0.5f;
+        //Debug.Log("Velocity: " + velocity);
+
+        Quaternion currentRotation = transform.rotation;
+        Vector3 rotationChange = currentRotation.eulerAngles - previousRotation.eulerAngles;
+        angularVelocity = (rotationChange.z + 180f) % 360f - 180f;
+        previousRotation = currentRotation;
+
+        // Get Aim Target Vector
+        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
 
         // Apply rotation.
@@ -47,7 +61,7 @@ public class BatteryController : MonoBehaviour
         // Get Overlapped Magneting Fields From Magnet Components 
         /// Handle + and - sides seperately, as those will apply forces at different points of player collider.
 
-        // [Handle Positive Magnet]
+        #region Combine Positive Magnet Forces
         Vector2 combinedPositiveForces = Vector2.zero;
         Vector2 positiveMagDir = (positiveMag.transform.up).normalized;
 
@@ -66,12 +80,13 @@ public class BatteryController : MonoBehaviour
             // Will not be accounted for if pole is facing opposite direction (for game feel.)
             if (Vector2.Dot(adjustedAimDir, curForce.normalized) > 0.4f)
             {
-                combinedPositiveForces += Vector2.ClampMagnitude(Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), .5f), 100f);
-                // Maybe make t a remap of velocity? More influence at higher velocity?
+                float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
+                combinedPositiveForces += Vector2.ClampMagnitude(Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence), 100f);
             }
         }
+        #endregion
 
-        // [Handle Negative Magnet]
+        #region Combine Negative Magnet Forces
         Vector2 combinedNegativeForces = Vector2.zero;
         Vector2 negativeMagDir = (negativeMag.transform.up).normalized;
 
@@ -90,16 +105,21 @@ public class BatteryController : MonoBehaviour
             // Will not be accounted for if pole is facing opposite direction (for game feel.)
             if (Vector2.Dot(adjustedAimDir, curForce.normalized) > 0.4f)
             {
-                combinedNegativeForces += Vector2.ClampMagnitude(Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), .5f), 100f);
-
-                // Maybe make t a remap of velocity? More influence at higher velocity?
+                float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
+                combinedNegativeForces += Vector2.ClampMagnitude(Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence), 100f);
             }
         }
+        #endregion
 
         // Apply Forces
-        rb.AddForceAtPosition(combinedPositiveForces, positiveMag.transform.position);
+
+        float velocityMultiplier = 1f;// FunctionLibraryF.MapRangeClamped(0f, 10f, .8f, 1.15f, velocity);
+        float angularMultiplier = FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
+
+        rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
         Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + combinedPositiveForces);
-        rb.AddForceAtPosition(combinedNegativeForces, negativeMag.transform.position);
+
+        rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
         Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + combinedNegativeForces);
         #endregion
     }

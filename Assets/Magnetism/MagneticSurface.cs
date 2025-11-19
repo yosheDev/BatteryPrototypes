@@ -93,7 +93,7 @@ public class MagneticSurface : MagnetComponentBase
         // Point of this magnet nearest to the other magnet.
         Vector2 nearestPoint = GetNearestPoint(posWS);
 
-        // Occlusion Test
+        #region Occlusion Test
         // TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting values is possible at the moment.
         RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
 
@@ -109,6 +109,7 @@ public class MagneticSurface : MagnetComponentBase
                 break;
             }
         }
+        #endregion
 
         // Multiply strength by charge for each.
         float mag1Amp = magData.strength * magData.charge;
