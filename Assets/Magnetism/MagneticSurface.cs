@@ -96,7 +96,7 @@ public class MagneticSurface : MagnetComponentBase
         // Occlusion Test
         // TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting values is possible at the moment.
         RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
-        Debug.DrawLine(posWS, nearestPoint, Color.red, .2f);
+
         foreach (RaycastHit2D hit in hits)
         {
             if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
