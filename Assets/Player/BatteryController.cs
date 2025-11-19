@@ -23,18 +23,21 @@ public class BatteryController : MonoBehaviour
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
     //==============================================================================================================================
+
+    private Vector3 startPos;
     #endregion 
 
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        startPos = transform.position;
     }
 
     private void FixedUpdate()
     {
-        // Get Aim Target Vector
-        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
+            // Get Aim Target Vector
+            Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
 
         // Apply rotation.
@@ -121,5 +124,10 @@ public class BatteryController : MonoBehaviour
         }
     }
 
+    public void Restart()
+    {
+        transform.position = startPos;
+        rb.linearVelocity = Vector3.zero;
+    }
     #endregion
 }
