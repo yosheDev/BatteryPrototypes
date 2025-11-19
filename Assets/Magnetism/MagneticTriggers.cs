@@ -14,7 +14,6 @@ public class MagneticTriggers : MonoBehaviour
         }
 
         magnetComponent.affectFields.Add(collision.gameObject.GetComponent<MagnetComponentBase>());
-        //Debug.Log("Add Field ");
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -23,7 +22,6 @@ public class MagneticTriggers : MonoBehaviour
         {
             return;
         }
-        //Debug.Log("Remove Field ");
         magnetComponent.affectFields.Remove(collision.gameObject.GetComponent<MagnetComponentBase>());
     }
 
