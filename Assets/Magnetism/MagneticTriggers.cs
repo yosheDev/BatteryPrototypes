@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class MagneticTriggers : MonoBehaviour
 {
     [SerializeField] private MagnetComponentBase magnetComponent;
-    [SerializeField] private bool isOnPlayer = false; /// True when this is one of the players magnets. This prevents player magnets from affecting each other.
+    public bool isOnPlayer = false; /// True when this is one of the players magnets. This prevents player magnets from affecting each other.
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
