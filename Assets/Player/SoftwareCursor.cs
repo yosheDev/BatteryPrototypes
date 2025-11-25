@@ -13,31 +13,26 @@ public class SoftwareCursor : MonoBehaviour
 
     void Update()
     {
-        // TO DO: Constrain in cone when player is clinging.
-
-        
-
+        // Local pos is used in calcs...causing issue of not clamping mechanically and only visually.
 
         // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
         localPos += (batteryController.mouseDelta * .02f);
         localPos = clampMin ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
 
-        // Get angle to center.
-        Vector2 aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * (((Vector2)parentForPos.transform.position + localPos) - (Vector2)parentForPos.transform.position).normalized;
-        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(aimDir.y, aimDir.x) - Mathf.Atan2(-batteryController.clingSurfaceNormal.y, -batteryController.clingSurfaceNormal.x));
-        Debug.Log(angleFromNormal + " | " + batteryController.clingAngleClamp);
+        // Get angle between cursorObj dir and surface normal.
+        Vector2 aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
+        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.clingSurfaceNormal.y, batteryController.clingSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
 
-        //if (clampMin && (angleFromNormal > batteryController.clingAngleClamp || angleFromNormal < -batteryController.clingAngleClamp))
-        //{
-           
-        //}
-        //else
-        //{
+        if (!(clampMin && (angleFromNormal > batteryController.clingAngleClamp || angleFromNormal < -batteryController.clingAngleClamp)))
+        {
             worldPos = (Vector2)parentForPos.transform.position + localPos;
-            Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)aimDir * 3f), Color.green, .2f);
-            Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (-(Vector3)batteryController.clingSurfaceNormal * 3f), Color.purple, .2f);
             transform.position = worldPos;
-        //}
+        }
+        else
+        {
+            localPos -= (batteryController.mouseDelta * .02f);
+            localPos = clampMin ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+        }
     }
 
     // Custom ClampMagnitude that includes min and max both.

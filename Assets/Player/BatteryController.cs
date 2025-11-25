@@ -183,7 +183,6 @@ public class BatteryController : MonoBehaviour
             //Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * clingAimDir), Color.hotPink, .2f);
 
             float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(clingSurfaceNormal.y, clingSurfaceNormal.x) - Mathf.Atan2(adjustedClingAimDir.y, adjustedClingAimDir.x), 2);
-            //Debug.Log(angleFromSurfNormal);
 
             // Is next rotation within clamped range?
             if (Mathf.Abs(angleFromSurfNormal) < clingAngleClamp && Mathf.Abs(angleFromSurfNormal) > -clingAngleClamp)
