@@ -63,7 +63,8 @@ public class MagneticSurface : MagnetComponentBase
     }
 
     public override Vector2 GetNearestPointOverride(Vector2 posWS)
-    {  
+    {
+        Debug.Log("Getting Nearest Point on: " + this.gameObject);
         // If magnet acts as literal point.
         if (surfaceCol == null)
         {
@@ -71,6 +72,7 @@ public class MagneticSurface : MagnetComponentBase
         }
         else // If magnet has surface area. 
         {
+            Debug.Log(surfaceCol + " get point nearest to: " + posWS + " = " + surfaceCol.ClosestPoint(posWS));
             return surfaceCol.ClosestPoint(posWS);
         }
     }
@@ -92,24 +94,23 @@ public class MagneticSurface : MagnetComponentBase
 
         // Point of this magnet nearest to the other magnet.
         Vector2 nearestPoint = GetNearestPoint(posWS);
+        //#region Occlusion Test
+        //// TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting values is possible at the moment.
+        //RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
 
-        #region Occlusion Test
-        // TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting values is possible at the moment.
-        RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
-
-        foreach (RaycastHit2D hit in hits)
-        {
-            if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
-            {
-                float occlusion = hit.collider.gameObject.GetComponent<FieldOccluder>().occlusion;
-                if (occlusion >= 1f)
-                {
-                    return Vector2.zero;
-                }
-                break;
-            }
-        }
-        #endregion
+        //foreach (RaycastHit2D hit in hits)
+        //{
+        //    if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+        //    {
+        //        float occlusion = hit.collider.gameObject.GetComponent<FieldOccluder>().occlusion;
+        //        if (occlusion >= 1f)
+        //        {
+        //            return Vector2.zero;
+        //        }
+        //        break;
+        //    }
+        //}
+        //#endregion
 
         // Multiply strength by charge for each.
         float mag1Amp = magData.strength * magData.charge;
@@ -119,13 +120,13 @@ public class MagneticSurface : MagnetComponentBase
         float force = mag1Amp * mag2Amp;
 
         // Divide by distance^2
-        force /= Mathf.Pow(Vector2.Distance(posWS, nearestPoint), _attenuation);
+        Debug.Log("PosWS: " + posWS + "  | NearestPoint: " + nearestPoint);
+        force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _attenuation);
 
         // Get force direction(normalized) and multiply with force.
         Vector2 result = (force * (posWS - nearestPoint).normalized) * _magFactor;
 
         #endregion
-
         return result;
     }
 }

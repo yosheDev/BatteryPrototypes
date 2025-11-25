@@ -35,13 +35,19 @@ public class BatteryController : MonoBehaviour
     private Quaternion previousRotation; /// Used for calculating angular velocity.
     private Vector3 previousClingUp;    /// Used for determining input rotation direction.
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
-    [HideInInspector]public Vector2 clingSurfaceNormal; /// Stores normal information to constrain pivot rotation.
+    [HideInInspector] public Vector2 clingSurfaceNormal; /// Stores normal information to constrain pivot rotation.
     MagneticSurface playerClingMag;     /// Which magnet player is using for cling.
     private Vector2 moveInput;
     private bool anchor;
 
     // Replace with state stuff later
-    private bool isClinging = false;
+    [HideInInspector] public WeldState weldState = WeldState.None;
+    public enum WeldState
+    {
+        None,
+        Welded,
+        LaunchAim,
+    }
 
     #endregion 
 
@@ -135,14 +141,14 @@ public class BatteryController : MonoBehaviour
                 //clingSurfaceNormalQuat = Quaternion.LookRotation(Vector3.forward, -clingAimDir);
 
                 // TO DO: Put this into state machine logic.
-                isClinging = true;
+                ChangeWeldState(WeldState.Welded);
             }
             else
             {
                 // TO DO: Put this into state machine logic.
                 positiveMag.GetComponent<HingeJoint2D>().enabled = false;
                 negativeMag.GetComponent<HingeJoint2D>().enabled = false;
-                isClinging = false;
+                ChangeWeldState(WeldState.None);
             }
             #endregion
         }
@@ -151,7 +157,7 @@ public class BatteryController : MonoBehaviour
             // TO DO: Put this into state machine logic.
             positiveMag.GetComponent<HingeJoint2D>().enabled = false;
             negativeMag.GetComponent<HingeJoint2D>().enabled = false;
-            isClinging = false;
+            ChangeWeldState(WeldState.None);
         }
         #endregion
 
@@ -160,20 +166,18 @@ public class BatteryController : MonoBehaviour
         Vector3 aimDir = (pivotObj.transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
 
-        if (!isClinging)
+        if (weldState == WeldState.None)
         {
             cursorObj.GetComponent<SoftwareCursor>().parentForPos = gameObject;
-            cursorObj.GetComponent<SoftwareCursor>().clampMin = false;
             rotationFactor = 30f;
 
             // Manually Update Transforms
             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
             intermediateRot = transform.rotation;
         }
-        else
+        else if (weldState == WeldState.Welded)
         {
             cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerClingMag.gameObject;
-            cursorObj.GetComponent<SoftwareCursor>().clampMin = true;
             rotationFactor = 60f;
 
             Vector3 clingAimDir = (playerClingMag.transform.position - cursorObj.transform.position).normalized;
@@ -191,26 +195,14 @@ public class BatteryController : MonoBehaviour
                 intermediateRot = Quaternion.Slerp(intermediateRot, clingTargetAimQuat, Time.deltaTime * rotationFactor);
                 //rb.MoveRotation(intermediateRot);
             }
-            else
-            {
-                //if (angleFromSurfNormal < -clingAngleClamp)
-                //{
-                //    intermediateRot = 
-                //}
-                //else
-                //{
-
-                //}
-            }
                 // I need to make the conditional above only update target rotation. Always update to last valid target rotation. This will account for fast mouse.
-                rb.MoveRotation(intermediateRot);
+            rb.MoveRotation(intermediateRot);
         }
         #endregion
 
         #region Apply Magnetic Forces
-        if (!isClinging)
+        if (weldState == WeldState.None)
         {
-            
             // Get Overlapped Magneting Fields From Magnet Components 
             /// Handle + and - sides seperately, as those will apply forces at different points of player collider.
 
@@ -247,7 +239,7 @@ public class BatteryController : MonoBehaviour
             for (int i = 0; i < negativeFields.Count; i++)
             {
                 Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance);
-
+                Debug.Log("Negative Force: " + curForce);
                 // Prevent NaN
                 if (float.IsNaN(curForce.x))
                 {
@@ -263,6 +255,8 @@ public class BatteryController : MonoBehaviour
                 }
             }
             #endregion
+
+            Debug.Log("Positive Fields: " + positiveFields.Count + " | " + "Negative Fields: " + negativeFields.Count);
 
             // Apply Forces
 
@@ -308,6 +302,11 @@ public class BatteryController : MonoBehaviour
         {
             anchor = (context.ReadValue<float>() == 1 ? true : false);
         }
+    }
+
+    public void ChangeWeldState(WeldState newState)
+    {
+        weldState = newState;
     }
 
     public void Restart()

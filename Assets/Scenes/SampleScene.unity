@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 1967190749}
   isOnPlayer: 0
 --- !u!1 &56276015
 GameObject:
@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 1820805405}
   isOnPlayer: 0
 --- !u!1 &323830610
 GameObject:
@@ -948,7 +948,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 1966693659}
   isOnPlayer: 0
 --- !u!1 &396592459
 GameObject:
@@ -993,7 +993,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 396592459}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec3c9944e82bf3d48b0ba99c5d28f082, type: 3}
   m_Name: 
@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 396592459}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
@@ -1054,7 +1054,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 396592459}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -2307,7 +2307,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 851838943}
   isOnPlayer: 0
 --- !u!1 &1053962439
 GameObject:
@@ -2696,7 +2696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 1120018365}
   isOnPlayer: 0
 --- !u!1 &1195957605
 GameObject:
@@ -3214,7 +3214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 2097455707}
   isOnPlayer: 0
 --- !u!1 &1446521829
 GameObject:
@@ -3259,7 +3259,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446521829}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec3c9944e82bf3d48b0ba99c5d28f082, type: 3}
   m_Name: 
@@ -3306,7 +3306,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446521829}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
@@ -3320,7 +3320,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1446521829}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -3851,6 +3851,8 @@ MonoBehaviour:
   clingLayerMask:
     serializedVersion: 2
     m_Bits: 55
+  clingSurfaceNormal: {x: 0, y: 0}
+  weldState: 0
 --- !u!1 &1688005581
 GameObject:
   m_ObjectHideFlags: 0
@@ -4101,7 +4103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 642995659}
   isOnPlayer: 0
 --- !u!1 &1820805401
 GameObject:
@@ -4328,7 +4330,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: -1507414017650965189, guid: fc7d49590ea09c44093c69ff9530e60f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.78867924, g: 0.78867924, b: 0.78867924, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4367,7 +4369,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CursorConstraint
   batteryController: {fileID: 1676372183}
   parentForPos: {fileID: 1676372177}
-  clampMin: 0
 --- !u!1 &1966693654
 GameObject:
   m_ObjectHideFlags: 0
@@ -4767,7 +4768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 1688005585}
   isOnPlayer: 0
 --- !u!1 &1993116044
 GameObject:

@@ -7,9 +7,6 @@ public class SoftwareCursor : MonoBehaviour
     private Vector2 localPos;
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
     public GameObject parentForPos;
-    
-    // Cling Controls
-    [HideInInspector]public bool clampMin = false;
 
     void Update()
     {
@@ -17,13 +14,13 @@ public class SoftwareCursor : MonoBehaviour
 
         // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
         localPos += (batteryController.mouseDelta * .02f);
-        localPos = clampMin ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+        localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 4f, 3.95f) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
 
         // Get angle between cursorObj dir and surface normal.
         Vector2 aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
         float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.clingSurfaceNormal.y, batteryController.clingSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
 
-        if (!(clampMin && (angleFromNormal > batteryController.clingAngleClamp || angleFromNormal < -batteryController.clingAngleClamp)))
+        if (!(batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.clingAngleClamp || angleFromNormal < -batteryController.clingAngleClamp)))
         {
             worldPos = (Vector2)parentForPos.transform.position + localPos;
             transform.position = worldPos;
@@ -31,7 +28,7 @@ public class SoftwareCursor : MonoBehaviour
         else
         {
             localPos -= (batteryController.mouseDelta * .02f);
-            localPos = clampMin ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+            localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
         }
     }
 
