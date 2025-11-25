@@ -17,12 +17,12 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject cursorObj;
     [SerializeField] private GameObject pivotObj;
-    [SerializeField] private MagneticSurface positiveMag;
-    [SerializeField] private MagneticSurface negativeMag;
+    public MagneticSurface positiveMag;
+    public MagneticSurface negativeMag;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
-    [SerializeField] private float clingAngleClamp = 1.15f;
+    public float clingAngleClamp = 1.15f;
 
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
@@ -35,7 +35,7 @@ public class BatteryController : MonoBehaviour
     private Quaternion previousRotation; /// Used for calculating angular velocity.
     private Vector3 previousClingUp;    /// Used for determining input rotation direction.
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
-    private Vector2 clingSurfaceNormal; /// Stores normal information to constrain pivot rotation.
+    [HideInInspector]public Vector2 clingSurfaceNormal; /// Stores normal information to constrain pivot rotation.
     MagneticSurface playerClingMag;     /// Which magnet player is using for cling.
     private Vector2 moveInput;
     private bool anchor;
@@ -163,6 +163,8 @@ public class BatteryController : MonoBehaviour
         if (!isClinging)
         {
             cursorObj.GetComponent<SoftwareCursor>().parentForPos = gameObject;
+            cursorObj.GetComponent<SoftwareCursor>().clampMin = false;
+            rotationFactor = 30f;
 
             // Manually Update Transforms
             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
@@ -171,49 +173,38 @@ public class BatteryController : MonoBehaviour
         else
         {
             cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerClingMag.gameObject;
+            cursorObj.GetComponent<SoftwareCursor>().clampMin = true;
+            rotationFactor = 60f;
+
             Vector3 clingAimDir = (playerClingMag.transform.position - cursorObj.transform.position).normalized;
             Vector3 adjustedClingAimDir = (playerClingMag == positiveMag ? -1f : 1f) * ((playerClingMag.transform.position - cursorObj.transform.position).normalized);
             Quaternion clingTargetAimQuat = Quaternion.LookRotation(Vector3.forward, clingAimDir);
-            Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * (Vector3)clingSurfaceNormal), Color.black, .2f);
-            Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * clingAimDir), Color.hotPink, .2f);
+            //Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * (Vector3)clingSurfaceNormal), Color.black, .2f);
+            //Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * clingAimDir), Color.hotPink, .2f);
 
-            // Get Direction of Rotation
-            //float upAngleChange = Mathf.Atan2(previousClingUp.y, previousClingUp.x) - Mathf.Atan2(-playerClingMag.transform.up.y, -playerClingMag.transform.up.x);
-            //previousClingUp = -playerClingMag.transform.up;
-            //bool rotDir = upAngleChange < 0 ? false : true;
-            //Debug.Log(rotDir + " | " + upAngleChange);
-
-            // Get Next Rotation Vector
-            //Vector3 nextUpRot = Quaternion.AngleAxis((rotDir ? -1f : 1f) * 2f, Vector3.forward) * -playerClingMag.transform.up;
-            //Debug.DrawLine(transform.position, transform.position + (3f * nextUpRot), Color.coral, .2f);
-
-            // Get Angle From Surface Normal
-            //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(clingSurfaceNormal.y, clingSurfaceNormal.x) - Mathf.Atan2(nextUpRot.y, nextUpRot.x), 2);
             float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(clingSurfaceNormal.y, clingSurfaceNormal.x) - Mathf.Atan2(adjustedClingAimDir.y, adjustedClingAimDir.x), 2);
-            Debug.Log(angleFromSurfNormal);
+            //Debug.Log(angleFromSurfNormal);
 
             // Is next rotation within clamped range?
             if (Mathf.Abs(angleFromSurfNormal) < clingAngleClamp && Mathf.Abs(angleFromSurfNormal) > -clingAngleClamp)
             {
                 // Foddian Rigidbody rotation method
                 intermediateRot = Quaternion.Slerp(intermediateRot, clingTargetAimQuat, Time.deltaTime * rotationFactor);
-                rb.MoveRotation(intermediateRot);
+                //rb.MoveRotation(intermediateRot);
             }
-            //else // Constrain back into clamped range.
-            //{
-            //    if (angleFromSurfNormal > clingAngleClamp)
-            //    {
-            //        angleFromSurfNormal = clingAngleClamp;
-            //    }
-            //    else
-            //    {
-            //        angleFromSurfNormal = -clingAngleClamp;
-            //    }
-            //}
+            else
+            {
+                //if (angleFromSurfNormal < -clingAngleClamp)
+                //{
+                //    intermediateRot = 
+                //}
+                //else
+                //{
 
-            // Is target aim within contraints?
-            // Rotate.
-            // If not, dont.
+                //}
+            }
+                // I need to make the conditional above only update target rotation. Always update to last valid target rotation. This will account for fast mouse.
+                rb.MoveRotation(intermediateRot);
         }
         #endregion
 

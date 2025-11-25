@@ -3845,7 +3845,7 @@ MonoBehaviour:
   positiveMag: {fileID: 1446521831}
   negativeMag: {fileID: 396592461}
   rotationFactor: 30
-  clingAngleClamp: 0.85
+  clingAngleClamp: 1.15
   cursorPosWS: {x: 0, y: 0}
   mouseDelta: {x: 0, y: 0}
   clingLayerMask:
@@ -4367,6 +4367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CursorConstraint
   batteryController: {fileID: 1676372183}
   parentForPos: {fileID: 1676372177}
+  clampMin: 0
 --- !u!1 &1966693654
 GameObject:
   m_ObjectHideFlags: 0
