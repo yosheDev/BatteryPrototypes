@@ -8,7 +8,7 @@ public class MagneticTriggers : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isOnPlayer && collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;
         }
@@ -18,7 +18,7 @@ public class MagneticTriggers : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (isOnPlayer && collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;
         }
@@ -27,7 +27,7 @@ public class MagneticTriggers : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (isOnPlayer && collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;
         }

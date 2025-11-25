@@ -115,7 +115,6 @@ public class MagneticSurface : MagnetComponentBase
         float mag1Amp = magData.strength * magData.charge;
         float mag2Amp = _magData.strength * _magData.charge;
 
-
         // Multiply that result together, then multiply by proportionConst
         float force = mag1Amp * mag2Amp;
 

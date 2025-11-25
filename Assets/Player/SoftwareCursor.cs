@@ -6,13 +6,13 @@ public class SoftwareCursor : MonoBehaviour
     [SerializeField] private BatteryController batteryController;
     private Vector2 localPos;
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
-    
+    public GameObject parentForPos;
     void Update()
     {
         // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
         localPos += (batteryController.mouseDelta * .02f);
         localPos = Vector2.ClampMagnitude(localPos, 2f);
-        worldPos = (Vector2)batteryController.gameObject.transform.position + localPos;
+        worldPos = (Vector2)parentForPos.transform.position + localPos;
         transform.position = worldPos;
     }
 

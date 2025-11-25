@@ -22,6 +22,7 @@ public class BatteryController : MonoBehaviour
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
+    [SerializeField] private float clingAngleClamp = 1.15f;
 
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
@@ -32,7 +33,10 @@ public class BatteryController : MonoBehaviour
     private Vector3 startPos;
     private float angularVelocity;
     private Quaternion previousRotation; /// Used for calculating angular velocity.
+    private Vector3 previousClingUp;    /// Used for determining input rotation direction.
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
+    private Vector2 clingSurfaceNormal; /// Stores normal information to constrain pivot rotation.
+    MagneticSurface playerClingMag;     /// Which magnet player is using for cling.
     private Vector2 moveInput;
     private bool anchor;
 
@@ -48,6 +52,7 @@ public class BatteryController : MonoBehaviour
 
         startPos = transform.position;
         previousRotation = transform.rotation;
+        previousClingUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
     }
 
@@ -61,15 +66,16 @@ public class BatteryController : MonoBehaviour
         angularVelocity = (rotationChange.z + 180f) % 360f - 180f;
         previousRotation = currentRotation;
 
-        #region Point To Software Cursor
-
+        #region Weld To Surface
+        // If Weld is inputted.
         if (anchor)
         {
             #region Cling
 
-            Collider2D aimMag = null;
-            bool magCharge = false;
+            Collider2D clingMagSurface = null; /// Surface of the magnet to cling to.
+            bool magCharge = false;            /// The charge of the players magnet that is clinging.
 
+            #region Get Cling Magnet Surface
             Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .5f, clingLayerMask);
             Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .5f, clingLayerMask);
             foreach (Collider2D col in positiveOverlap)
@@ -78,22 +84,13 @@ public class BatteryController : MonoBehaviour
                 // If can anchor to this magnet.
                 if (curMag != null && curMag._magData.charge == -1)
                 {
-                    // Unneeded right now, as players magnetic fields are excluded in LayerMask.
-                    //if (curMag is MagneticSurface)
-                    //{
-                    //    if (((MagneticSurface)curMag).fieldCol.gameObject.GetComponent<MagneticTriggers>().isOnPlayer == false)
-                    //    {
-
-                    //    }
-                    //}
-                    Debug.DrawLine(positiveMag.transform.position, positiveMag.transform.position + new Vector3(1f, 1f, 0f), Color.yellow, 2f);
-                    aimMag = curMag.gameObject.GetComponent<Collider2D>();
+                    clingMagSurface = curMag.gameObject.GetComponent<Collider2D>();
                     magCharge = true; /// Refers to players clinging magnet charge.
                     break;
                 }
             }
 
-            if (aimMag == null)
+            if (clingMagSurface == null)
             {
                 foreach (Collider2D col in negativeOverlap)
                 {
@@ -101,78 +98,129 @@ public class BatteryController : MonoBehaviour
                     // If can anchor to this magnet.
                     if (curMag != null && curMag._magData.charge == 1)
                     {
-                        Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + new Vector3(1f, 1f, 0f), Color.yellow, 2f);
-                        aimMag = curMag.gameObject.GetComponent<Collider2D>();
+                        clingMagSurface = curMag.gameObject.GetComponent<Collider2D>();
                         magCharge = false; /// Refers to players clinging magnet charge.
                         break;
                     }
                 }
             }
-            
-            if (aimMag != null)
+            #endregion
+
+            if (clingMagSurface != null)
             {
-                MagneticSurface playerClingMag = (magCharge ? positiveMag : negativeMag);
-                Vector3 nearestClingPoint = aimMag.ClosestPoint(playerClingMag.transform.position);
+                playerClingMag = (magCharge ? positiveMag : negativeMag);
+                Vector3 nearestClingPoint = clingMagSurface.ClosestPoint(playerClingMag.transform.position);
 
-                // Get Aim Target Vector
+                // Enable Hinge Joint and Set Rotation Constraints
+                playerClingMag.GetComponent<HingeJoint2D>().enabled = true;
+                
+                
+                // Apply Custom Force
                 Vector3 clingAimDir = (nearestClingPoint - playerClingMag.transform.position).normalized;
-                //Vector2 adjustedAimDir = (playerClingMag._magData.charge * aimMag.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? aimDir : -aimDir);
-
-                Debug.DrawLine(playerClingMag.transform.position, (Vector2)playerClingMag.transform.position + (Vector2)(clingAimDir * 3f), Color.red, 1f);
-
+                //Vector2 adjustedAimDir = (playerClingMag._magData.charge * clingMagSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? clingAimDir : -clingAimDir);
                 Quaternion targetClingAimQuat = Quaternion.LookRotation(Vector3.forward, clingAimDir);
+                //rb.AddForceAtPosition(clingAimDir * 1000f, playerClingMag.transform.position);
 
-                // Apply rotation.
-                //transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                // Update surface normal. PUT THIS IN A DO ONCE!
+                // Raycast to the point, get normal back.
+                RaycastHit2D[] hits = Physics2D.RaycastAll(playerClingMag.transform.position, clingAimDir, 1f, clingLayerMask);
+                foreach (RaycastHit2D hit in hits)
+                {
+                    if (hit.collider == clingMagSurface)
+                    {
+                        clingSurfaceNormal = hit.normal;
+                    }
+                }
 
+                //clingSurfaceNormalQuat = Quaternion.LookRotation(Vector3.forward, -clingAimDir);
+
+                // TO DO: Put this into state machine logic.
                 isClinging = true;
-
-                rb.AddForceAtPosition(clingAimDir * 1000f, playerClingMag.transform.position);
-                //Debug.Log("Adding force for cling");
             }
             else
             {
+                // TO DO: Put this into state machine logic.
+                positiveMag.GetComponent<HingeJoint2D>().enabled = false;
+                negativeMag.GetComponent<HingeJoint2D>().enabled = false;
                 isClinging = false;
             }
             #endregion
         }
         else
         {
+            // TO DO: Put this into state machine logic.
+            positiveMag.GetComponent<HingeJoint2D>().enabled = false;
+            negativeMag.GetComponent<HingeJoint2D>().enabled = false;
             isClinging = false;
         }
+        #endregion
 
+        #region Rotate Player
         // Get Aim Target Vector
         Vector3 aimDir = (pivotObj.transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
 
         if (!isClinging)
         {
+            cursorObj.GetComponent<SoftwareCursor>().parentForPos = gameObject;
+
             // Manually Update Transforms
             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
             intermediateRot = transform.rotation;
         }
         else
         {
-            // Foddian Rigidbody rotation method
-            intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
-            rb.MoveRotation(intermediateRot);
+            cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerClingMag.gameObject;
+            Vector3 clingAimDir = (playerClingMag.transform.position - cursorObj.transform.position).normalized;
+            Vector3 adjustedClingAimDir = (playerClingMag == positiveMag ? -1f : 1f) * ((playerClingMag.transform.position - cursorObj.transform.position).normalized);
+            Quaternion clingTargetAimQuat = Quaternion.LookRotation(Vector3.forward, clingAimDir);
+            Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * (Vector3)clingSurfaceNormal), Color.black, .2f);
+            Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * clingAimDir), Color.hotPink, .2f);
+
+            // Get Direction of Rotation
+            //float upAngleChange = Mathf.Atan2(previousClingUp.y, previousClingUp.x) - Mathf.Atan2(-playerClingMag.transform.up.y, -playerClingMag.transform.up.x);
+            //previousClingUp = -playerClingMag.transform.up;
+            //bool rotDir = upAngleChange < 0 ? false : true;
+            //Debug.Log(rotDir + " | " + upAngleChange);
+
+            // Get Next Rotation Vector
+            //Vector3 nextUpRot = Quaternion.AngleAxis((rotDir ? -1f : 1f) * 2f, Vector3.forward) * -playerClingMag.transform.up;
+            //Debug.DrawLine(transform.position, transform.position + (3f * nextUpRot), Color.coral, .2f);
+
+            // Get Angle From Surface Normal
+            //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(clingSurfaceNormal.y, clingSurfaceNormal.x) - Mathf.Atan2(nextUpRot.y, nextUpRot.x), 2);
+            float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(clingSurfaceNormal.y, clingSurfaceNormal.x) - Mathf.Atan2(adjustedClingAimDir.y, adjustedClingAimDir.x), 2);
+            Debug.Log(angleFromSurfNormal);
+
+            // Is next rotation within clamped range?
+            if (Mathf.Abs(angleFromSurfNormal) < clingAngleClamp && Mathf.Abs(angleFromSurfNormal) > -clingAngleClamp)
+            {
+                // Foddian Rigidbody rotation method
+                intermediateRot = Quaternion.Slerp(intermediateRot, clingTargetAimQuat, Time.deltaTime * rotationFactor);
+                rb.MoveRotation(intermediateRot);
+            }
+            //else // Constrain back into clamped range.
+            //{
+            //    if (angleFromSurfNormal > clingAngleClamp)
+            //    {
+            //        angleFromSurfNormal = clingAngleClamp;
+            //    }
+            //    else
+            //    {
+            //        angleFromSurfNormal = -clingAngleClamp;
+            //    }
+            //}
+
+            // Is target aim within contraints?
+            // Rotate.
+            // If not, dont.
         }
-
-        // Trying to be able to customize the pivot point of rotation based on a transform location.
-
-        //float angleBetweenDirs = Vector2.Angle(transform.up, aimDir);
-        //float angleBetweenDirs = Mathf.Atan2(aimDir.y, aimDir.x) - Mathf.Atan2(transform.up.y, transform.up.x);
-        //atan2(vector2.y, vector2.x) - atan2(vector1.y, vector1.x)
-        //Transform destination = transform;
-
-        // Trying to let me rotate around a speficic pivot point.
-        // destination.RotateAround(pivotObj.transform.position, Vector3.forward, angleBetweenDirs);
-        //Quaternion targetAimQuat = transform.rotation;
         #endregion
 
+        #region Apply Magnetic Forces
         if (!isClinging)
         {
-            #region Apply Magnetic Forces
+            
             // Get Overlapped Magneting Fields From Magnet Components 
             /// Handle + and - sides seperately, as those will apply forces at different points of player collider.
 
@@ -236,9 +284,9 @@ public class BatteryController : MonoBehaviour
 
             rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
             Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + combinedNegativeForces);
-            #endregion
+            
         }
-
+        #endregion
     }
 
     #region Input Actions
