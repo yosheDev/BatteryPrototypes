@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using System.Linq;
 using Magnet;
 using FunctionLibrary;
+using UnityEngine.Rendering;
 
 public class BatteryController : MonoBehaviour
 {
@@ -16,32 +17,34 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject cursorObj;
-    [SerializeField] private GameObject pivotObj;
     public MagneticSurface positiveMag;
     public MagneticSurface negativeMag;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
-    public float clingAngleClamp = 1.15f;
+    public float weldAngleClamp = 1.15f;
 
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
 
-    [SerializeField] private LayerMask clingLayerMask;
+    [SerializeField] private LayerMask weldLayerMask;
     //==============================================================================================================================
 
     private Vector3 startPos;
     private float angularVelocity;
     private Quaternion previousRotation; /// Used for calculating angular velocity.
-    private Vector3 previousClingUp;    /// Used for determining input rotation direction.
+    private Vector3 previousWeldUp;    /// Used for determining input rotation direction.
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
-    [HideInInspector] public Vector2 clingSurfaceNormal; /// Stores normal information to constrain pivot rotation.
-    MagneticSurface playerClingMag;     /// Which magnet player is using for cling.
+    [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
+    MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
     private Vector2 moveInput;
-    private bool anchor;
+    private bool weldInput;
+    private bool launchInput;
+    private InputAction launchAction;
 
     // Replace with state stuff later
     [HideInInspector] public WeldState weldState = WeldState.None;
+    private bool lockWeldState = false;
     public enum WeldState
     {
         None,
@@ -53,19 +56,22 @@ public class BatteryController : MonoBehaviour
 
     void Start()
     {
+        // Cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        // Initialize
         startPos = transform.position;
         previousRotation = transform.rotation;
-        previousClingUp = -negativeMag.transform.up;
+        previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
     }
 
     private void FixedUpdate()
     {
+        // Initialize Common Variables
         float velocity = (Mathf.Abs(rb.linearVelocity.x) + Mathf.Abs(rb.linearVelocity.y)) * 0.5f;
-        //Debug.Log("Velocity: " + velocity);
+        ///Debug.Log("Velocity: " + velocity);
 
         Quaternion currentRotation = transform.rotation;
         Vector3 rotationChange = currentRotation.eulerAngles - previousRotation.eulerAngles;
@@ -74,37 +80,36 @@ public class BatteryController : MonoBehaviour
 
         #region Weld To Surface
         // If Weld is inputted.
-        if (anchor)
+        if (weldInput)
         {
-            #region Cling
-
-            Collider2D clingMagSurface = null; /// Surface of the magnet to cling to.
+            #region Weld
+            Collider2D weldMagSurface = null; /// Surface of the magnet to cling to.
             bool magCharge = false;            /// The charge of the players magnet that is clinging.
 
             #region Get Cling Magnet Surface
-            Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .5f, clingLayerMask);
-            Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .5f, clingLayerMask);
+            Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .5f, weldLayerMask);
+            Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .5f, weldLayerMask);
             foreach (Collider2D col in positiveOverlap)
             {
                 MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                // If can anchor to this magnet.
+                // If can weld to this magnet.
                 if (curMag != null && curMag._magData.charge == -1)
                 {
-                    clingMagSurface = curMag.gameObject.GetComponent<Collider2D>();
+                    weldMagSurface = curMag.gameObject.GetComponent<Collider2D>();
                     magCharge = true; /// Refers to players clinging magnet charge.
                     break;
                 }
             }
 
-            if (clingMagSurface == null)
+            if (weldMagSurface == null)
             {
                 foreach (Collider2D col in negativeOverlap)
                 {
                     MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                    // If can anchor to this magnet.
+                    // If can weld to this magnet.
                     if (curMag != null && curMag._magData.charge == 1)
                     {
-                        clingMagSurface = curMag.gameObject.GetComponent<Collider2D>();
+                        weldMagSurface = curMag.gameObject.GetComponent<Collider2D>();
                         magCharge = false; /// Refers to players clinging magnet charge.
                         break;
                     }
@@ -112,90 +117,72 @@ public class BatteryController : MonoBehaviour
             }
             #endregion
 
-            if (clingMagSurface != null)
+            if (weldMagSurface != null)
             {
-                playerClingMag = (magCharge ? positiveMag : negativeMag);
-                Vector3 nearestClingPoint = clingMagSurface.ClosestPoint(playerClingMag.transform.position);
-
-                // Enable Hinge Joint and Set Rotation Constraints
-                playerClingMag.GetComponent<HingeJoint2D>().enabled = true;
-                
-                
-                // Apply Custom Force
-                Vector3 clingAimDir = (nearestClingPoint - playerClingMag.transform.position).normalized;
-                //Vector2 adjustedAimDir = (playerClingMag._magData.charge * clingMagSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? clingAimDir : -clingAimDir);
-                Quaternion targetClingAimQuat = Quaternion.LookRotation(Vector3.forward, clingAimDir);
-                //rb.AddForceAtPosition(clingAimDir * 1000f, playerClingMag.transform.position);
-
-                // Update surface normal. PUT THIS IN A DO ONCE!
-                // Raycast to the point, get normal back.
-                RaycastHit2D[] hits = Physics2D.RaycastAll(playerClingMag.transform.position, clingAimDir, 1f, clingLayerMask);
-                foreach (RaycastHit2D hit in hits)
+                if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
                 {
-                    if (hit.collider == clingMagSurface)
+                    playerWeldMag = (magCharge ? positiveMag : negativeMag);
+                    Vector3 nearestWeldPoint = weldMagSurface.ClosestPoint(playerWeldMag.transform.position);
+
+                    // Apply Custom Force
+                    Vector3 weldAimDir = (nearestWeldPoint - playerWeldMag.transform.position).normalized;
+                    //Vector2 adjustedAimDir = (playerWeldMag._magData.charge * weldMagSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
+                    Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+                    //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
+
+                    // Raycast to the point, get normal back.
+                    RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position, weldAimDir, 1f, weldLayerMask);
+                    foreach (RaycastHit2D hit in hits)
                     {
-                        clingSurfaceNormal = hit.normal;
+                        if (hit.collider == weldMagSurface)
+                        {
+                            weldSurfaceNormal = hit.normal;
+                        }
                     }
+                    ChangeWeldState(WeldState.Welded);
                 }
-
-                //clingSurfaceNormalQuat = Quaternion.LookRotation(Vector3.forward, -clingAimDir);
-
-                // TO DO: Put this into state machine logic.
-                ChangeWeldState(WeldState.Welded);
             }
             else
             {
-                // TO DO: Put this into state machine logic.
-                positiveMag.GetComponent<HingeJoint2D>().enabled = false;
-                negativeMag.GetComponent<HingeJoint2D>().enabled = false;
                 ChangeWeldState(WeldState.None);
             }
             #endregion
         }
         else
         {
-            // TO DO: Put this into state machine logic.
-            positiveMag.GetComponent<HingeJoint2D>().enabled = false;
-            negativeMag.GetComponent<HingeJoint2D>().enabled = false;
             ChangeWeldState(WeldState.None);
         }
         #endregion
 
         #region Rotate Player
         // Get Aim Target Vector
-        Vector3 aimDir = (pivotObj.transform.position - cursorObj.transform.position).normalized;
+        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
 
         if (weldState == WeldState.None)
         {
-            cursorObj.GetComponent<SoftwareCursor>().parentForPos = gameObject;
-            rotationFactor = 30f;
-
             // Manually Update Transforms
             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
             intermediateRot = transform.rotation;
         }
         else if (weldState == WeldState.Welded)
         {
-            cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerClingMag.gameObject;
-            rotationFactor = 60f;
+            Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+            Vector3 adjustedweldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
+            Quaternion clingTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+            //Debug.DrawLine(playerWeldMag.transform.position, transform.position + (3f * (Vector3)weldSurfaceNormal), Color.black, .2f);
+            //Debug.DrawLine(playerWeldMag.transform.position, transform.position + (3f * weldAimDir), Color.hotPink, .2f);
 
-            Vector3 clingAimDir = (playerClingMag.transform.position - cursorObj.transform.position).normalized;
-            Vector3 adjustedClingAimDir = (playerClingMag == positiveMag ? -1f : 1f) * ((playerClingMag.transform.position - cursorObj.transform.position).normalized);
-            Quaternion clingTargetAimQuat = Quaternion.LookRotation(Vector3.forward, clingAimDir);
-            //Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * (Vector3)clingSurfaceNormal), Color.black, .2f);
-            //Debug.DrawLine(playerClingMag.transform.position, transform.position + (3f * clingAimDir), Color.hotPink, .2f);
-
-            float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(clingSurfaceNormal.y, clingSurfaceNormal.x) - Mathf.Atan2(adjustedClingAimDir.y, adjustedClingAimDir.x), 2);
+            float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedweldAimDir.y, adjustedweldAimDir.x), 2);
 
             // Is next rotation within clamped range?
-            if (Mathf.Abs(angleFromSurfNormal) < clingAngleClamp && Mathf.Abs(angleFromSurfNormal) > -clingAngleClamp)
+            if (Mathf.Abs(angleFromSurfNormal) < weldAngleClamp && Mathf.Abs(angleFromSurfNormal) > -weldAngleClamp)
             {
                 // Foddian Rigidbody rotation method
                 intermediateRot = Quaternion.Slerp(intermediateRot, clingTargetAimQuat, Time.deltaTime * rotationFactor);
                 //rb.MoveRotation(intermediateRot);
             }
-                // I need to make the conditional above only update target rotation. Always update to last valid target rotation. This will account for fast mouse.
+
             rb.MoveRotation(intermediateRot);
         }
         #endregion
@@ -238,9 +225,8 @@ public class BatteryController : MonoBehaviour
             List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
             for (int i = 0; i < negativeFields.Count; i++)
             {
-                Debug.Log("Affect Field on Battery Negative: " + negativeFields[i]);
                 Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance);
-                Debug.Log("Negative Force: " + curForce);
+
                 // Prevent NaN
                 if (float.IsNaN(curForce.x))
                 {
@@ -256,8 +242,6 @@ public class BatteryController : MonoBehaviour
                 }
             }
             #endregion
-
-            Debug.Log("Positive Fields: " + positiveFields.Count + " | " + "Negative Fields: " + negativeFields.Count);
 
             // Apply Forces
 
@@ -293,7 +277,7 @@ public class BatteryController : MonoBehaviour
         }
     }
 
-    public void Anchor(InputAction.CallbackContext context)
+    public void Weld(InputAction.CallbackContext context)
     {
         if (playerInput.currentControlScheme.Equals("Gamepad"))
         {
@@ -301,15 +285,96 @@ public class BatteryController : MonoBehaviour
         }
         else
         {
-            anchor = (context.ReadValue<float>() == 1 ? true : false);
+            weldInput = (context.ReadValue<float>() == 1 ? true : false);
         }
     }
 
     public void ChangeWeldState(WeldState newState)
     {
+        //Debug.Log("Changing Weld State to " + newState);
+
+        // Prevents state from changing.
+        if (lockWeldState)
+        {
+            return;
+        }
+
         weldState = newState;
+        switch(weldState)
+        {
+            case WeldState.None:
+                cursorObj.GetComponent<SoftwareCursor>().parentForPos = gameObject;
+                rotationFactor = 30f;
+                positiveMag.GetComponent<HingeJoint2D>().enabled = false;
+                negativeMag.GetComponent<HingeJoint2D>().enabled = false;
+                break;
+            case WeldState.Welded:
+                cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerWeldMag.gameObject;
+                rotationFactor = 60f;
+                playerWeldMag.GetComponent<HingeJoint2D>().enabled = true;
+                break;
+            case WeldState.LaunchAim:
+                rotationFactor = 0f;
+                break;
+            default:
+                rotationFactor = 30f;
+                break;
+        }
     }
 
+    public IEnumerator LockWeldState(float duration)
+    {
+        lockWeldState = true;
+        yield return new WaitForSeconds(duration);
+        lockWeldState = false;
+        yield break;
+    }
+    public void InitiateLaunch(InputAction.CallbackContext context)
+    {
+        if (context.canceled && weldState == WeldState.LaunchAim)
+        {
+            LaunchFromWeld();
+        }
+        else
+        {
+            if (!context.started)
+            {
+                if (playerInput.currentControlScheme.Equals("Gamepad"))
+                {
+
+                }
+                else
+                {
+                    if (weldInput)
+                    {
+                        Debug.Log("Launch Aim");
+                        launchInput = (context.ReadValue<float>() == 1 ? true : false);
+                        ChangeWeldState(WeldState.LaunchAim);
+                    }
+                    else
+                    {
+                        launchInput = false;
+                    }
+                }
+            }
+        } 
+    }
+
+    public void LaunchFromWeld()
+    {
+        ChangeWeldState(WeldState.None);
+        //weldInput = false; /// Flush input.
+        StartCoroutine(LockWeldState(.2f));
+        // TO DO: Make force magnitude reliant on value from LaunchAim state.
+        rb.AddForceAtPosition(-playerWeldMag.transform.up * 1500f, playerWeldMag.transform.position);
+        Debug.Log("Launch!");
+    }
+
+    public void CancelLaunch(InputAction.CallbackContext context)
+    {
+        Debug.Log("Launch is cancelled.");
+        ChangeWeldState(WeldState.Welded);
+    }
     public void Restart()
     {
         transform.position = startPos;

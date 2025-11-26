@@ -34,9 +34,27 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Anchor",
+                    "name": "Weld",
                     "type": "Button",
                     "id": "025ace52-a9b0-427a-91cf-3f7e25b4e6b0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "InitiateLaunch",
+                    "type": "Button",
+                    "id": "e76048a1-3457-43fd-92c3-5c9dc7c0ab42",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ExitLaunch",
+                    "type": "Button",
+                    "id": "441feda9-91e8-4910-b814-340978e73b7e",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -128,7 +146,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
-                    "action": "Anchor",
+                    "action": "Weld",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7174f273-670e-4aa6-81a5-bd77e2b3c793",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardAndMouse",
+                    "action": "InitiateLaunch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "71099162-16b8-462e-a937-446c7f9441b3",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardAndMouse",
+                    "action": "ExitLaunch",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -64,7 +64,6 @@ public class MagneticSurface : MagnetComponentBase
 
     public override Vector2 GetNearestPointOverride(Vector2 posWS)
     {
-        Debug.Log("Getting Nearest Point on: " + this.gameObject);
         // If magnet acts as literal point.
         if (surfaceCol == null)
         {
@@ -72,7 +71,6 @@ public class MagneticSurface : MagnetComponentBase
         }
         else // If magnet has surface area. 
         {
-            Debug.Log(surfaceCol + " get point nearest to: " + posWS + " = " + surfaceCol.ClosestPoint(posWS));
             return surfaceCol.ClosestPoint(posWS);
         }
     }
@@ -120,7 +118,6 @@ public class MagneticSurface : MagnetComponentBase
         float force = mag1Amp * mag2Amp;
 
         // Divide by distance^2
-        Debug.Log("PosWS: " + posWS + "  | NearestPoint: " + nearestPoint);
         force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _attenuation);
 
         // Get force direction(normalized) and multiply with force.

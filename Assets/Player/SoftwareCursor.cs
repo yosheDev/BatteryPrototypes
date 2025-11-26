@@ -10,17 +10,15 @@ public class SoftwareCursor : MonoBehaviour
 
     void Update()
     {
-        // Local pos is used in calcs...causing issue of not clamping mechanically and only visually.
-
         // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
         localPos += (batteryController.mouseDelta * .02f);
         localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 4f, 3.95f) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
 
         // Get angle between cursorObj dir and surface normal.
         Vector2 aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
-        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.clingSurfaceNormal.y, batteryController.clingSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
+        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
 
-        if (!(batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.clingAngleClamp || angleFromNormal < -batteryController.clingAngleClamp)))
+        if (!(batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp)))
         {
             worldPos = (Vector2)parentForPos.transform.position + localPos;
             transform.position = worldPos;
