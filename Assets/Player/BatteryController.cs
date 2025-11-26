@@ -302,12 +302,12 @@ public class BatteryController : MonoBehaviour
             return;
         }
         // When leaving Launch Aim, correct the pivot math.
-        if (weldState == WeldState.LaunchAim)
-        {
-            Vector3 prevPosition = transform.position;
-            scalePivot.transform.position = transform.position;
-            transform.position = prevPosition;
-        }
+        //if (weldState == WeldState.LaunchAim)
+        //{
+        //    Vector3 prevPosition = transform.position;
+        //    scalePivot.transform.position = transform.position;
+        //    transform.position = prevPosition;
+        //}
 
         weldState = newState;
         switch(weldState)
@@ -331,15 +331,15 @@ public class BatteryController : MonoBehaviour
                 rotationFactor = 0f;
 
                 // Handle Pivot Point Math
-                Vector3 prevPosition = transform.position;
-                // Set scale pivot position and rotation.
-                float pivotAimAngle = Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x);
-                pivotAimAngle *= Mathf.Rad2Deg;
-                scalePivot.transform.position = playerWeldMag.transform.position;
-                scalePivot.transform.rotation = Quaternion.Euler(0, 0, pivotAimAngle - 90f);
+                //Vector3 prevPosition = transform.position;
+                //// Set scale pivot position and rotation.
+                //float pivotAimAngle = Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x);
+                //pivotAimAngle *= Mathf.Rad2Deg;
+                //scalePivot.transform.position = playerWeldMag.transform.position;
+                //scalePivot.transform.rotation = Quaternion.Euler(0, 0, pivotAimAngle - 90f);
 
-                // Move PlayerSprite to be in correct position.
-                transform.position = prevPosition;
+                //// Move PlayerSprite to be in correct position.
+                //transform.position = prevPosition;
 
                 break;
             default:
@@ -363,7 +363,7 @@ public class BatteryController : MonoBehaviour
         }
         else
         {
-            if (!context.started)
+            if (!context.started && !context.canceled)
             {
                 if (playerInput.currentControlScheme.Equals("Gamepad"))
                 {
