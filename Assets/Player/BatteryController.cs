@@ -17,6 +17,8 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject cursorObj;
+    [SerializeField] private GameObject scalePivot;
+    [SerializeField] private GameObject weldBlob;
     public MagneticSurface positiveMag;
     public MagneticSurface negativeMag;
 
@@ -37,6 +39,7 @@ public class BatteryController : MonoBehaviour
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
     [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
     MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
+    Vector3 adjustedWeldAimDir;
     private Vector2 moveInput;
     private bool weldInput;
     private bool launchInput;
@@ -168,18 +171,18 @@ public class BatteryController : MonoBehaviour
         else if (weldState == WeldState.Welded)
         {
             Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-            Vector3 adjustedweldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
-            Quaternion clingTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+            adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
+            Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
             //Debug.DrawLine(playerWeldMag.transform.position, transform.position + (3f * (Vector3)weldSurfaceNormal), Color.black, .2f);
             //Debug.DrawLine(playerWeldMag.transform.position, transform.position + (3f * weldAimDir), Color.hotPink, .2f);
 
-            float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedweldAimDir.y, adjustedweldAimDir.x), 2);
+            float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
 
             // Is next rotation within clamped range?
             if (Mathf.Abs(angleFromSurfNormal) < weldAngleClamp && Mathf.Abs(angleFromSurfNormal) > -weldAngleClamp)
             {
                 // Foddian Rigidbody rotation method
-                intermediateRot = Quaternion.Slerp(intermediateRot, clingTargetAimQuat, Time.deltaTime * rotationFactor);
+                intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                 //rb.MoveRotation(intermediateRot);
             }
 
@@ -298,6 +301,13 @@ public class BatteryController : MonoBehaviour
         {
             return;
         }
+        // When leaving Launch Aim, correct the pivot math.
+        if (weldState == WeldState.LaunchAim)
+        {
+            Vector3 prevPosition = transform.position;
+            scalePivot.transform.position = transform.position;
+            transform.position = prevPosition;
+        }
 
         weldState = newState;
         switch(weldState)
@@ -307,14 +317,30 @@ public class BatteryController : MonoBehaviour
                 rotationFactor = 30f;
                 positiveMag.GetComponent<HingeJoint2D>().enabled = false;
                 negativeMag.GetComponent<HingeJoint2D>().enabled = false;
+                weldBlob.SetActive(false);
                 break;
             case WeldState.Welded:
                 cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerWeldMag.gameObject;
                 rotationFactor = 60f;
                 playerWeldMag.GetComponent<HingeJoint2D>().enabled = true;
+                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+                weldBlob.SetActive(true);
                 break;
             case WeldState.LaunchAim:
                 rotationFactor = 0f;
+
+                // Handle Pivot Point Math
+                Vector3 prevPosition = transform.position;
+                // Set scale pivot position and rotation.
+                float pivotAimAngle = Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x);
+                pivotAimAngle *= Mathf.Rad2Deg;
+                scalePivot.transform.position = playerWeldMag.transform.position;
+                scalePivot.transform.rotation = Quaternion.Euler(0, 0, pivotAimAngle - 90f);
+
+                // Move PlayerSprite to be in correct position.
+                transform.position = prevPosition;
+
                 break;
             default:
                 rotationFactor = 30f;
