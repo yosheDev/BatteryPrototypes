@@ -238,6 +238,7 @@ public class BatteryController : MonoBehaviour
             List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
             for (int i = 0; i < negativeFields.Count; i++)
             {
+                Debug.Log("Affect Field on Battery Negative: " + negativeFields[i]);
                 Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance);
                 Debug.Log("Negative Force: " + curForce);
                 // Prevent NaN
