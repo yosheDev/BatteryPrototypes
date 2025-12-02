@@ -26,6 +26,8 @@ public class BatteryController : MonoBehaviour
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
     public float weldAngleClamp = 1.15f;
+    [SerializeField] private float launchMaxExponent = 1.13f;
+    [SerializeField] private float launchBaseConstant = 500f;
 
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
@@ -195,7 +197,7 @@ public class BatteryController : MonoBehaviour
         }
         else if (weldState == WeldState.LaunchAim)
         {
-            scalePivot.transform.localScale = new Vector3(1f, Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+            scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
         }
         #endregion
 
@@ -391,12 +393,11 @@ public class BatteryController : MonoBehaviour
     public void LaunchFromWeld()
     {
         ChangeWeldState(WeldState.None);
-        //weldInput = false; /// Flush input.
+        //weldInput = false; /// Flush input (uncommenting means players will need to repress space to weld to another surface after launch.)
         StartCoroutine(LockWeldState(.2f));
 
-        float launchForce = Mathf.Lerp(500f, 1500f, softwareCursor.GetLaunchAlpha());
+        float launchForce = Mathf.Pow(launchBaseConstant, FunctionLibraryF.MapRangeClamped(0f, 1f, 1f, launchMaxExponent, softwareCursor.GetLaunchAlpha()));
         rb.AddForceAtPosition(-playerWeldMag.transform.up * launchForce, playerWeldMag.transform.position);
-        //Debug.Log("Launch!");
     }
 
     public void CancelLaunch(InputAction.CallbackContext context)

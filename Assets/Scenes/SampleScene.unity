@@ -4034,6 +4034,8 @@ MonoBehaviour:
   negativeMag: {fileID: 396592461}
   rotationFactor: 30
   weldAngleClamp: 1.15
+  launchMaxExponent: 1.13
+  launchBaseConstant: 500
   cursorPosWS: {x: 0, y: 0}
   mouseDelta: {x: 0, y: 0}
   weldLayerMask:

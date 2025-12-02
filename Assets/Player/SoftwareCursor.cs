@@ -23,39 +23,37 @@ public class SoftwareCursor : MonoBehaviour
             // Move along aimDir as axis. Placement falls within range that aligns with the intensity of the launch.
             launchControlMin = parentForPos.transform.position + (-(Vector3)aimDir * (parentForPos == batteryController.positiveMag.gameObject ? 1f + playerSpriteLength : 1f));
 			launchControlMax = parentForPos.transform.position + (-(Vector3)aimDir * (parentForPos == batteryController.positiveMag.gameObject ? 4f + playerSpriteLength : 4f));
+            
+            // Will be replaced with graphics later.
+            Debug.DrawLine(launchControlMin, launchControlMax, Color.white, Time.deltaTime);
 
 			launchControlPos += (batteryController.mouseDelta * .02f);
             Vector2 deltaDir = batteryController.mouseDelta.normalized;
             float deltaMag = Time.deltaTime * (batteryController.mouseDelta.magnitude / 2f);
             float deltaDot = Vector2.Dot(deltaDir, aimDir);
 
+            // TO DO: Make this get harder to compress towards the Max end to feel "springy".
+            //          Make deltaMags amount change based on it. Make a formula it is put through that transforms it based on current launchControlAlpha.
 			if (deltaDot < -.85f)
             {
-                launchControlAlpha = Mathf.Clamp(launchControlAlpha + deltaMag, 0f, 1f);
+                launchControlAlpha = Mathf.Clamp(launchControlAlpha + DeltaMagSpringFormula(deltaMag, launchControlAlpha), 0f, 1f);
             }
             else if (deltaDot > .85f)
             {
-				launchControlAlpha = Mathf.Clamp(launchControlAlpha - deltaMag, 0f, 1f);
+				launchControlAlpha = Mathf.Clamp(launchControlAlpha - DeltaMagSpringFormula(deltaMag, launchControlAlpha, true), 0f, 1f);
 			}
 
             //Debug.Log(deltaMag + " | " + launchControlAlpha);
 
             //float dist = Vector2.Distance((Vector2)parentForPos.transform.position + launchControlPos, (Vector2)parentForPos.transform.position);
             //float distMapped = FunctionLibraryF.MapRangeClamped(0f, 6f, 0f, 1f, dist);
-			// How can I use mouseDelta to move cursor along just the axis I want?
 
-			// Get direction and magnitude of delta.
-
-			// Apply that to the lerp alpha somehow?
-
-			// Boil down to a float. Maybe just make delta not affect cursor and use distance clamp/check?
-
-            
 			transform.position = Vector3.Lerp(launchControlMin, launchControlMax, launchControlAlpha);
             return;
         }
         #endregion
 
+        #region Local Software Cursor (Non-Launching)
         // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
         localPos += (batteryController.mouseDelta * .02f);
 		localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
@@ -76,6 +74,7 @@ public class SoftwareCursor : MonoBehaviour
             localPos -= (batteryController.mouseDelta * .02f);
             localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
         }
+        #endregion
     }
 
     // Custom ClampMagnitude that includes min and max both.
@@ -87,6 +86,13 @@ public class SoftwareCursor : MonoBehaviour
         return v;
     }
 
+    private float DeltaMagSpringFormula(float deltaMag, float springAlpha, bool isReleasing = false)
+    {
+        // Releasing : Winding Up
+        float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
+
+        return deltaMag * mult;
+    }
     public float GetLaunchAlpha()
     {
         return launchControlAlpha;
