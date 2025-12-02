@@ -15,6 +15,7 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private BoxCollider2D surfaceCol;
     [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private PlayerNeutralDetector neutralDetector;
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject cursorObj;
     private SoftwareCursor softwareCursor;
@@ -171,9 +172,23 @@ public class BatteryController : MonoBehaviour
         #region Weld State Update Functionality
         if (weldState == WeldState.None)
         {
-            // Manually Update Transforms
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-            intermediateRot = transform.rotation;
+            // If on a neutral surface, use rigidbody for foddian movement or walk around.
+            if (neutralDetector.neutralDetected)//positiveMag.affectFields.Count + negativeMag.affectFields.Count <= 0 && hits.Length > 0)
+            {
+                intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
+                rb.MoveRotation(intermediateRot);
+                if (velocity > 10f)
+                {
+                    rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
+                }
+            }
+            else
+            {
+                // Manually Update Transforms to face software cursor.
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                intermediateRot = transform.rotation;
+            }
+
         }
         else if (weldState == WeldState.Welded)
         {
@@ -190,7 +205,6 @@ public class BatteryController : MonoBehaviour
             {
                 // Foddian Rigidbody rotation method
                 intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-                //rb.MoveRotation(intermediateRot);
             }
 
             rb.MoveRotation(intermediateRot);
