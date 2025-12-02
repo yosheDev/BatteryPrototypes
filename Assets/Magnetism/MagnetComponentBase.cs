@@ -35,9 +35,9 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
     public abstract bool AffectsRadiusOverride(Vector2 posWS, float radius);
 
     // Multiple overrides for the different types of magnet shapes?
-    public Vector2 GetAppliedForce(MagnetData magData, Vector2 posWS, float radius)
+    public Vector2 GetAppliedForce(MagnetData magData, Vector2 posWS, float radius, float velocity = 0f)
     {
-        return GetAppliedForceOverride(magData, posWS, radius);
+        return GetAppliedForceOverride(magData, posWS, radius, velocity);
     }
-    public abstract Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius);
+    public abstract Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, float velocity = 0f);
 }

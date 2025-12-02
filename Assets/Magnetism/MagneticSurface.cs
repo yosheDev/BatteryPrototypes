@@ -1,4 +1,5 @@
 using UnityEngine;
+using FunctionLibrary;
 using Magnet;
 
 // Magnetic Point is derived from MagnetComponentBase. It uses a single point as reference for the field(currently, might change?)
@@ -83,7 +84,7 @@ public class MagneticSurface : MagnetComponentBase
         return (Vector2.Distance(transform.position, posWS) < (radius + _fieldAttractDistance));
     }
 
-    public override Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius) /// Parent interface function for IMagnetic calls this abstract function.
+    public override Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, float velocity) /// Parent interface function for IMagnetic calls this abstract function.
     {
         // _magData = this magnets data.
         // magData = input magnets data.
@@ -92,6 +93,7 @@ public class MagneticSurface : MagnetComponentBase
 
         // Point of this magnet nearest to the other magnet.
         Vector2 nearestPoint = GetNearestPoint(posWS);
+
         //#region Occlusion Test
         //// TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting values is possible at the moment.
         //RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
@@ -118,7 +120,8 @@ public class MagneticSurface : MagnetComponentBase
         float force = mag1Amp * mag2Amp;
 
         // Divide by distance^2
-        force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _attenuation);
+        force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _attenuation * (velocity == 0f ? 1f : FunctionLibraryF.MapRangeClamped(0f, 10f, 1f, 2f, velocity)));
+        //force *= velocity == 0f ? 1f : FunctionLibraryF.MapRangeClamped(0f, 10f, 1f, 2f, velocity);
 
         // Get force direction(normalized) and multiply with force.
         Vector2 result = (force * (posWS - nearestPoint).normalized) * _magFactor;

@@ -214,7 +214,7 @@ public class BatteryController : MonoBehaviour
             List<MagnetComponentBase> positiveFields = positiveMag.affectFields.ToList();
             for (int i = 0; i < positiveFields.Count; i++)
             {
-                Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance);
+                Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, velocity);
 
                 // Prevent NaN
                 if (float.IsNaN(curForce.x))
@@ -224,10 +224,10 @@ public class BatteryController : MonoBehaviour
 
                 Vector2 adjustedAimDir = (positiveFields[i]._magData.charge * positiveMag._magData.charge == -1 ? positiveMagDir : -positiveMagDir);
                 // Will not be accounted for if pole is facing opposite direction (for game feel.)
-                if (Vector2.Dot(adjustedAimDir, curForce.normalized) > 0.4f)
+                if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                 {
                     float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
-                    combinedPositiveForces += Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f);
+                    combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f));
                 }
             }
             #endregion
@@ -239,7 +239,7 @@ public class BatteryController : MonoBehaviour
             List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
             for (int i = 0; i < negativeFields.Count; i++)
             {
-                Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance);
+                Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, velocity);
 
                 // Prevent NaN
                 if (float.IsNaN(curForce.x))
@@ -249,10 +249,10 @@ public class BatteryController : MonoBehaviour
 
                 Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
                 // Will not be accounted for if pole is facing opposite direction (for game feel.)
-                if (Vector2.Dot(adjustedAimDir, curForce.normalized) > 0.4f)
+                if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                 {
                     float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
-                    combinedNegativeForces += Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f);
+                    combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f));
                 }
             }
             #endregion
