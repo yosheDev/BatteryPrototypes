@@ -4,30 +4,33 @@ using System.Collections.Generic;
 public class MagneticTriggers : MonoBehaviour
 {
     [SerializeField] private MagnetComponentBase magnetComponent;
-    [SerializeField] private bool isOnPlayer = false; /// True when this is one of the players magnets. This prevents player magnets from affecting each other.
+    public bool isOnPlayer = false; /// True when this is one of the players magnets. This prevents player magnets from affecting each other.
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (isOnPlayer && collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;
         }
 
-        magnetComponent.affectFields.Add(collision.gameObject.GetComponent<MagnetComponentBase>());
+        // Add magnet component of the other object to affect fields of this gameObjects affect component.
+        magnetComponent.affectFields.Add(collision.GetComponent<MagneticTriggers>().magnetComponent);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (isOnPlayer && collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;
         }
-        magnetComponent.affectFields.Remove(collision.gameObject.GetComponent<MagnetComponentBase>());
+
+        // Remove magnet component of the other object from affect fields of this gameObjects affect component.
+        magnetComponent.affectFields.Remove(collision.GetComponent<MagneticTriggers>().magnetComponent);
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (isOnPlayer && collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;
         }
