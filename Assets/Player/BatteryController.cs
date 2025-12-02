@@ -17,6 +17,7 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private Camera mainCam;
     [SerializeField] private GameObject cursorObj;
+    private SoftwareCursor softwareCursor;
     [SerializeField] private GameObject scalePivot;
     [SerializeField] private GameObject weldBlob;
     public MagneticSurface positiveMag;
@@ -62,6 +63,7 @@ public class BatteryController : MonoBehaviour
         // Cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        softwareCursor = cursorObj.GetComponent<SoftwareCursor>();
 
         // Initialize
         startPos = transform.position;
@@ -72,16 +74,23 @@ public class BatteryController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Initialize Common Variables
+        #region Initialize Common Variables
+        // Velocity of player.
         float velocity = (Mathf.Abs(rb.linearVelocity.x) + Mathf.Abs(rb.linearVelocity.y)) * 0.5f;
         ///Debug.Log("Velocity: " + velocity);
 
+        // Angular velocity of player.
         Quaternion currentRotation = transform.rotation;
         Vector3 rotationChange = currentRotation.eulerAngles - previousRotation.eulerAngles;
         angularVelocity = (rotationChange.z + 180f) % 360f - 180f;
         previousRotation = currentRotation;
 
-        #region Weld To Surface
+        // Get Aim Target Vector and Quat. Used for rotating player.
+        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
+        Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
+        #endregion
+
+        #region Weld To Surface / Handle Weld Input
         // If Weld is inputted.
         if (weldInput)
         {
@@ -157,11 +166,7 @@ public class BatteryController : MonoBehaviour
         }
         #endregion
 
-        #region Rotate Player
-        // Get Aim Target Vector
-        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
-        Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
-
+        #region Weld State Update Functionality
         if (weldState == WeldState.None)
         {
             // Manually Update Transforms
@@ -187,6 +192,10 @@ public class BatteryController : MonoBehaviour
             }
 
             rb.MoveRotation(intermediateRot);
+        }
+        else if (weldState == WeldState.LaunchAim)
+        {
+            scalePivot.transform.localScale = new Vector3(1f, Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
         }
         #endregion
 
@@ -256,7 +265,7 @@ public class BatteryController : MonoBehaviour
 
             rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
             Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + combinedNegativeForces);
-            
+
         }
         #endregion
     }
@@ -301,13 +310,12 @@ public class BatteryController : MonoBehaviour
         {
             return;
         }
-        // When leaving Launch Aim, correct the pivot math.
-        //if (weldState == WeldState.LaunchAim)
-        //{
-        //    Vector3 prevPosition = transform.position;
-        //    scalePivot.transform.position = transform.position;
-        //    transform.position = prevPosition;
-        //}
+        // When leaving Launch Aim, unparent player from the squash/stretch pivot.
+        if (weldState == WeldState.LaunchAim)
+        {
+            scalePivot.transform.localScale = Vector3.one;
+            gameObject.transform.parent = scalePivot.transform.parent;
+        }
 
         weldState = newState;
         switch(weldState)
@@ -329,18 +337,12 @@ public class BatteryController : MonoBehaviour
                 break;
             case WeldState.LaunchAim:
                 rotationFactor = 0f;
+                
+                // Parent player to squash stretch pivot.
+                scalePivot.transform.position = playerWeldMag.transform.position;
+                scalePivot.transform.rotation = playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f);
 
-                // Handle Pivot Point Math
-                //Vector3 prevPosition = transform.position;
-                //// Set scale pivot position and rotation.
-                //float pivotAimAngle = Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x);
-                //pivotAimAngle *= Mathf.Rad2Deg;
-                //scalePivot.transform.position = playerWeldMag.transform.position;
-                //scalePivot.transform.rotation = Quaternion.Euler(0, 0, pivotAimAngle - 90f);
-
-                //// Move PlayerSprite to be in correct position.
-                //transform.position = prevPosition;
-
+                gameObject.transform.parent = scalePivot.transform;
                 break;
             default:
                 rotationFactor = 30f;
@@ -391,9 +393,10 @@ public class BatteryController : MonoBehaviour
         ChangeWeldState(WeldState.None);
         //weldInput = false; /// Flush input.
         StartCoroutine(LockWeldState(.2f));
-        // TO DO: Make force magnitude reliant on value from LaunchAim state.
-        rb.AddForceAtPosition(-playerWeldMag.transform.up * 1500f, playerWeldMag.transform.position);
-        Debug.Log("Launch!");
+
+        float launchForce = Mathf.Lerp(500f, 1500f, softwareCursor.GetLaunchAlpha());
+        rb.AddForceAtPosition(-playerWeldMag.transform.up * launchForce, playerWeldMag.transform.position);
+        //Debug.Log("Launch!");
     }
 
     public void CancelLaunch(InputAction.CallbackContext context)

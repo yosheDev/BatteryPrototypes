@@ -17,6 +17,7 @@ public class SoftwareCursor : MonoBehaviour
     
     void Update()
     {
+        #region Launch Aim Controls
         if (batteryController.weldState == BatteryController.WeldState.LaunchAim)
         {
             // Move along aimDir as axis. Placement falls within range that aligns with the intensity of the launch.
@@ -37,7 +38,7 @@ public class SoftwareCursor : MonoBehaviour
 				launchControlAlpha = Mathf.Clamp(launchControlAlpha - deltaMag, 0f, 1f);
 			}
 
-            Debug.Log(deltaMag + " | " + launchControlAlpha);
+            //Debug.Log(deltaMag + " | " + launchControlAlpha);
 
             //float dist = Vector2.Distance((Vector2)parentForPos.transform.position + launchControlPos, (Vector2)parentForPos.transform.position);
             //float distMapped = FunctionLibraryF.MapRangeClamped(0f, 6f, 0f, 1f, dist);
@@ -49,13 +50,14 @@ public class SoftwareCursor : MonoBehaviour
 
 			// Boil down to a float. Maybe just make delta not affect cursor and use distance clamp/check?
 
-
+            
 			transform.position = Vector3.Lerp(launchControlMin, launchControlMax, launchControlAlpha);
             return;
         }
+        #endregion
 
-		// Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
-		localPos += (batteryController.mouseDelta * .02f);
+        // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
+        localPos += (batteryController.mouseDelta * .02f);
 		localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
         launchControlPos = new Vector2(0f, 0f);
         launchControlAlpha = 0f;
@@ -83,5 +85,10 @@ public class SoftwareCursor : MonoBehaviour
         if (sm > (double)max * (double)max) return v.normalized * max;
         else if (sm < (double)min * (double)min) return v.normalized * min;
         return v;
+    }
+
+    public float GetLaunchAlpha()
+    {
+        return launchControlAlpha;
     }
 }
