@@ -37,8 +37,8 @@ public class PlayerNeutralDetector : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        Debug.Log("Neutral Detection: " + neutralDetected);
-    }
+    //private void Update()
+    //{
+    //    Debug.Log("Neutral Detection: " + neutralDetected);
+    //}
 }
