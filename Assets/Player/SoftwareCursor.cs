@@ -72,52 +72,38 @@ public class SoftwareCursor : MonoBehaviour
         // Get angle between cursorObj dir and surface normal.
         aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
 
-        // localPos is (0, 0)
-        Debug.Log("LocalPos: " + localPos);
-        //Debug.Log("WorldPos: " + transform.position);
-        // aimDir is (0, 0).
-        //Debug.Log(aimDir);
-        //Debug.DrawLine((Vector2)parentForPos.transform.position, ((Vector2)parentForPos.transform.position + (aimDir * 2f)), Color.purple, 1f);
-
         // This is not updating correctly after "correcting" after initial weld... prob aim dir.
         float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
-        Debug.Log("Cursor Angle From Norm: " + angleFromNormal);
+        //Debug.Log("Cursor Angle From Norm: " + angleFromNormal);
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
             // Clamp localPos back within range.
             if (justWelded)
             {
 
-                #region New Interp Method
-                //Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
+                #region Interp To Clamped Range Method
+                Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
+                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
+                //Debug.Log("Alpha: " + correctWeldAlpha);
+                Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
 
-                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((curRot * -(Vector3)batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.red, .5f);
-                //transform.position = parentForPos.transform.position + ((curRot * -(Vector3)batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+                transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
 
                 // Things break when localPos stuff is uncommented. Related to aimDir im sure.
-                //localPos = -parentForPos.transform.InverseTransformPoint(transform.position);
-                //localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+                localPos = transform.position - parentForPos.transform.position;
+                localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
                 #endregion
 
-                #region Old TP Method
-                // Player Rot
-                Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.darkMagenta, 2f);
-                Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal)))).normalized;
-                // Software Cursor Pos
-                Debug.DrawLine(parentForPos.transform.position, (Vector2)parentForPos.transform.position + (cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowNice, 2f);
-                
-                Debug.Log("TP");
-                transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
-                //transform.position = parentForPos.transform.position + ((targetQuat * (-(Vector3)batteryController.weldSurfaceNormal)) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
-                //batteryController.GetRigidBody().MoveRotation(Quaternion.LookRotation(Vector3.forward, targetQuat * batteryController.weldSurfaceNormal));
+                #region Teleport Within Clamped Range Method
+                /// This method is kept commented in case the simple math needs looked at. Interp version is better and is basically just this but with the slerp.
+                //Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal)))).normalized;
+                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.darkMagenta, 2f);
 
-                // Local pos is not correct. transform.position is indeed being set to correct place though. I believe it is because inverseTransformPoint accounts for rotation.
-                localPos = transform.position - parentForPos.transform.position;
-                //localPos = -parentForPos.transform.InverseTransformPoint(transform.position);
-
-                Debug.Log("LocalPosAfterInverse: " + localPos);
-                localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
-                Debug.Log("LocalPosAfterTP: " + localPos);
+                //// Handle transforms
+                //transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+                ////Debug.DrawLine(parentForPos.transform.position, (Vector2)parentForPos.transform.position + (cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowNice, 2f);
+                //localPos = transform.position - parentForPos.transform.position;
+                //localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
                 #endregion
             }
             else
@@ -178,17 +164,20 @@ public class SoftwareCursor : MonoBehaviour
 
     public IEnumerator WeldJustStarted(float duration)
     {
+        // Get initial quat.
+        weldInitialQuat = Quaternion.FromToRotation(-(Vector3)batteryController.weldSurfaceNormal, parentForPos.transform.up);
+
         // Get correct angle to target
         Quaternion negClampQuat = Quaternion.AngleAxis((-batteryController.weldAngleClamp * Mathf.Rad2Deg) + 1f, Vector3.forward);
         Quaternion posClampQuat = Quaternion.AngleAxis((batteryController.weldAngleClamp * Mathf.Rad2Deg) - 1f, Vector3.forward);
         Vector2 negClampAngle = negClampQuat * -batteryController.weldSurfaceNormal;
         Vector2 posClampAngle = posClampQuat * -batteryController.weldSurfaceNormal;
 
-        float posAngleDif = Vector2.Angle(posClampAngle, -parentForPos.transform.up);//(float)System.Math.Round(Mathf.Atan2(posClampAngle.y, posClampAngle.x) - Mathf.Atan2(parentForPos.transform.up.y, parentForPos.transform.up.x), 2);
-        float negAngleDif = Vector2.Angle(negClampAngle, -parentForPos.transform.up);//(float)System.Math.Round(Mathf.Atan2(negClampAngle.y, negClampAngle.x) - Mathf.Atan2(parentForPos.transform.up.y, parentForPos.transform.up.x), 2);
+        float posAngleDif = Vector2.Angle(posClampAngle, -parentForPos.transform.up);
+        float negAngleDif = Vector2.Angle(negClampAngle, -parentForPos.transform.up);
 
-        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
-        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
+        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
+        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
         //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * 2f), Color.yellow, 2f);
 
         //Debug.Log("Pos Dif: " + posAngleDif + " | " + "Neg Dif: " + negAngleDif);
@@ -204,12 +193,7 @@ public class SoftwareCursor : MonoBehaviour
             targetQuat = Quaternion.FromToRotation((Vector3)posClampAngle, -batteryController.weldSurfaceNormal);
         }
 
-
-        /// Fired from Battery Controller. This stops delta logic while player is snapping within range of weld.
-        //weldInitialQuat = Quaternion.LookRotation(-parentForPos.transform.up);
-        //weldInitialQuat = Quaternion.FromToRotation(-(Vector3)batteryController.weldSurfaceNormal, parentForPos.transform.up);
-        //targetQuat = Quaternion.LookRotation(-(Vector3)batteryController.weldSurfaceNormal);
-        //targetQuat = Quaternion.FromToRotation(-(Vector3)batteryController.weldSurfaceNormal, -(Vector3)batteryController.weldSurfaceNormal);
+        // Begin timer.
         correctWeldAlpha = 0f;
         justWelded = true;
         for (int i = 0; i < 10; i++)

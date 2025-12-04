@@ -225,18 +225,10 @@ public class BatteryController : MonoBehaviour
             Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
             adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
             Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-            //Debug.DrawLine(playerWeldMag.transform.position, transform.position + (3f * (Vector3)weldSurfaceNormal), Color.black, .2f);
-            //Debug.DrawLine(playerWeldMag.transform.position, transform.position + (3f * weldAimDir), Color.hotPink, .2f);
 
-            float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
-
-            // Is next rotation within the clamped range? If not within clamped range, code in SoftwareCursor.cs takes care of things.
-            if (Mathf.Abs(angleFromSurfNormal) < weldAngleClamp && Mathf.Abs(angleFromSurfNormal) > -weldAngleClamp)
-            {
-                intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-                rb.MoveRotation(intermediateRot);
-                Debug.Log("Should be rotating...");
-            }              
+            //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
+            intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+            rb.MoveRotation(intermediateRot);            
         }
         else if (weldState == WeldState.LaunchAim)
         {
@@ -381,7 +373,7 @@ public class BatteryController : MonoBehaviour
                 // If weld is outside of constraint range, start coroutine to correct it.
                 if (Mathf.Abs(angleFromSurfNormal) > weldAngleClamp || Mathf.Abs(angleFromSurfNormal) < -weldAngleClamp)
                 {
-                    StartCoroutine(softwareCursor.WeldJustStarted(.2f));
+                    StartCoroutine(softwareCursor.WeldJustStarted(.1f));
                 }
                     
                 rotationFactor = 60f;
