@@ -65,5 +65,17 @@ public static class SceneManagement
         return sb.ToString();
     }
 
+    public static bool DoesSceneExist(string sceneName)
+    {
+        int buildIndex = SceneUtility.GetBuildIndexByScenePath(sceneName);
+
+        return (buildIndex != -1);
+    }
+
+    public static bool DoesSceneExist(Level level)
+    {
+        int buildIndex = SceneUtility.GetBuildIndexByScenePath(GetSceneFormattedName(level));
+        return (buildIndex != -1);
+    }
     #endregion
 }

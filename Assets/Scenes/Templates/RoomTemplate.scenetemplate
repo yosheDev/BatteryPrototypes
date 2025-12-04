@@ -63,9 +63,13 @@ MonoBehaviour:
   description: Template scene for all rooms.
   preview: {fileID: 0}
   dependencies:
+  - dependency: {fileID: 5243175899369590085, guid: 1dff8af0ae0c07e4cb4d2c0a5cc55aa5, type: 3}
+    instantiationMode: 0
   - dependency: {fileID: 2800000, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
     instantiationMode: 0
   - dependency: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+    instantiationMode: 0
+  - dependency: {fileID: 2800000, guid: a9bee43c97dbe7a48a1d2ade2169ba8a, type: 3}
     instantiationMode: 0
   - dependency: {fileID: 2800000, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
     instantiationMode: 0
