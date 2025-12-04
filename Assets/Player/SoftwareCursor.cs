@@ -71,8 +71,17 @@ public class SoftwareCursor : MonoBehaviour
 
         // Get angle between cursorObj dir and surface normal.
         aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
-        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
 
+        // localPos is (0, 0)
+        Debug.Log("LocalPos: " + localPos);
+        //Debug.Log("WorldPos: " + transform.position);
+        // aimDir is (0, 0).
+        //Debug.Log(aimDir);
+        //Debug.DrawLine((Vector2)parentForPos.transform.position, ((Vector2)parentForPos.transform.position + (aimDir * 2f)), Color.purple, 1f);
+
+        // This is not updating correctly after "correcting" after initial weld... prob aim dir.
+        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
+        Debug.Log("Cursor Angle From Norm: " + angleFromNormal);
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
             // Clamp localPos back within range.
@@ -91,19 +100,24 @@ public class SoftwareCursor : MonoBehaviour
                 #endregion
 
                 #region Old TP Method
-                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((-(Vector3)batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.red, .5f);
+                // Player Rot
+                Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.darkMagenta, 2f);
+                Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal)))).normalized;
+                // Software Cursor Pos
+                Debug.DrawLine(parentForPos.transform.position, (Vector2)parentForPos.transform.position + (cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowNice, 2f);
                 
-                Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((targetQuat * (-(Vector3)batteryController.weldSurfaceNormal)) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.red, .5f);
-                transform.position = parentForPos.transform.position + ((targetQuat * (-(Vector3)batteryController.weldSurfaceNormal)) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
-                batteryController.GetRigidBody().MoveRotation(Quaternion.LookRotation(Vector3.forward, targetQuat * (-(Vector3)batteryController.weldSurfaceNormal)));
-                // Local stuff uncommented breaks shit.
-                //localPos = -parentForPos.transform.InverseTransformPoint(transform.position);
-                //localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+                Debug.Log("TP");
+                transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+                //transform.position = parentForPos.transform.position + ((targetQuat * (-(Vector3)batteryController.weldSurfaceNormal)) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+                //batteryController.GetRigidBody().MoveRotation(Quaternion.LookRotation(Vector3.forward, targetQuat * batteryController.weldSurfaceNormal));
 
-                // Handle cursor position data.
-                //transform.position = parentForPos.transform.position + ((-(Vector3)batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));    
+                // Local pos is not correct. transform.position is indeed being set to correct place though. I believe it is because inverseTransformPoint accounts for rotation.
+                localPos = transform.position - parentForPos.transform.position;
                 //localPos = -parentForPos.transform.InverseTransformPoint(transform.position);
-                //localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+
+                Debug.Log("LocalPosAfterInverse: " + localPos);
+                localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+                Debug.Log("LocalPosAfterTP: " + localPos);
                 #endregion
             }
             else
@@ -173,8 +187,8 @@ public class SoftwareCursor : MonoBehaviour
         float posAngleDif = Vector2.Angle(posClampAngle, -parentForPos.transform.up);//(float)System.Math.Round(Mathf.Atan2(posClampAngle.y, posClampAngle.x) - Mathf.Atan2(parentForPos.transform.up.y, parentForPos.transform.up.x), 2);
         float negAngleDif = Vector2.Angle(negClampAngle, -parentForPos.transform.up);//(float)System.Math.Round(Mathf.Atan2(negClampAngle.y, negClampAngle.x) - Mathf.Atan2(parentForPos.transform.up.y, parentForPos.transform.up.x), 2);
 
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 2f), Color.red, 2f);
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 2f), Color.blue, 2f);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
         //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * 2f), Color.yellow, 2f);
 
         //Debug.Log("Pos Dif: " + posAngleDif + " | " + "Neg Dif: " + negAngleDif);
