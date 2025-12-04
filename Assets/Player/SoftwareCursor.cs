@@ -1,6 +1,8 @@
 using UnityEngine;
 using FunctionLibrary;
 using UnityEngine.Windows;
+using UnityEditor.Rendering;
+using System.Collections;
 
 public class SoftwareCursor : MonoBehaviour
 {
@@ -14,7 +16,11 @@ public class SoftwareCursor : MonoBehaviour
     private Vector3 launchControlMax;
     private float launchControlAlpha;
     private float playerSpriteLength = 1.5f;
-    
+    private bool justWelded = false;
+    private Quaternion weldInitialQuat;
+    private Quaternion targetQuat;
+    private float correctWeldAlpha = 0f;
+
     void Update()
     {
         #region Launch Aim Controls
@@ -55,24 +61,70 @@ public class SoftwareCursor : MonoBehaviour
 
         #region Local Software Cursor (Non-Launching)
         // Calculate and Set local offset from player character position. (Manually done to avoid it rotating with the character.)
-        localPos += (batteryController.mouseDelta * .02f);
-		localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+        if (!justWelded)
+        {
+            localPos += (batteryController.mouseDelta * .02f);
+            localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+        }
         launchControlPos = new Vector2(0f, 0f);
         launchControlAlpha = 0f;
 
-		// Get angle between cursorObj dir and surface normal.
-		aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
-		float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
+        // Get angle between cursorObj dir and surface normal.
+        aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
 
-		if (!(batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp)))
+        // This is not updating correctly after "correcting" after initial weld... prob aim dir.
+        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
+        //Debug.Log("Cursor Angle From Norm: " + angleFromNormal);
+        if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
-            worldPos = (Vector2)parentForPos.transform.position + localPos;
-            transform.position = worldPos;
+            // Clamp localPos back within range.
+            if (justWelded)
+            {
+
+                #region Interp To Clamped Range Method
+                Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
+                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
+                //Debug.Log("Alpha: " + correctWeldAlpha);
+                Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
+
+                transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+
+                // Things break when localPos stuff is uncommented. Related to aimDir im sure.
+                localPos = transform.position - parentForPos.transform.position;
+                localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+                #endregion
+
+                #region Teleport Within Clamped Range Method
+                /// This method is kept commented in case the simple math needs looked at. Interp version is better and is basically just this but with the slerp.
+                //Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal)))).normalized;
+                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (targetQuat * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.darkMagenta, 2f);
+
+                //// Handle transforms
+                //transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+                ////Debug.DrawLine(parentForPos.transform.position, (Vector2)parentForPos.transform.position + (cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowNice, 2f);
+                //localPos = transform.position - parentForPos.transform.position;
+                //localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+                #endregion
+            }
+            else
+            {
+                localPos -= (batteryController.mouseDelta * .02f);
+                localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+            }  
         }
         else
         {
-            localPos -= (batteryController.mouseDelta * .02f);
-            localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+            if (justWelded)
+            {
+                justWelded = false;
+                //StopCoroutine
+            }
+            else
+            {
+                //Debug.Log("Normal Controls");
+                worldPos = (Vector2)parentForPos.transform.position + localPos;
+                transform.position = worldPos;
+            }  
         }
         #endregion
     }
@@ -85,7 +137,6 @@ public class SoftwareCursor : MonoBehaviour
         else if (sm < (double)min * (double)min) return v.normalized * min;
         return v;
     }
-
     private float DeltaMagSpringFormula(float deltaMag, float springAlpha, bool isReleasing = false)
     {
         // Releasing : Winding Up
@@ -96,5 +147,61 @@ public class SoftwareCursor : MonoBehaviour
     public float GetLaunchAlpha()
     {
         return launchControlAlpha;
+    }
+
+    public Vector2 GetLocalPos()
+    {
+        return localPos;
+    }
+
+    public void SetLocalPos(Vector2 inLocalPos)
+    {
+        Debug.Log("Software Cursor Local: " + localPos);
+        localPos = inLocalPos;
+        localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+        transform.position = (Vector2)parentForPos.transform.position + localPos;
+    }
+
+    public IEnumerator WeldJustStarted(float duration)
+    {
+        // Get initial quat.
+        weldInitialQuat = Quaternion.FromToRotation(-(Vector3)batteryController.weldSurfaceNormal, parentForPos.transform.up);
+
+        // Get correct angle to target
+        Quaternion negClampQuat = Quaternion.AngleAxis((-batteryController.weldAngleClamp * Mathf.Rad2Deg) + 1f, Vector3.forward);
+        Quaternion posClampQuat = Quaternion.AngleAxis((batteryController.weldAngleClamp * Mathf.Rad2Deg) - 1f, Vector3.forward);
+        Vector2 negClampAngle = negClampQuat * -batteryController.weldSurfaceNormal;
+        Vector2 posClampAngle = posClampQuat * -batteryController.weldSurfaceNormal;
+
+        float posAngleDif = Vector2.Angle(posClampAngle, -parentForPos.transform.up);
+        float negAngleDif = Vector2.Angle(negClampAngle, -parentForPos.transform.up);
+
+        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
+        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
+        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * 2f), Color.yellow, 2f);
+
+        //Debug.Log("Pos Dif: " + posAngleDif + " | " + "Neg Dif: " + negAngleDif);
+        // Higher value == correct angle to use.
+        if (posAngleDif > negAngleDif)
+        {
+            // Negative is target
+            targetQuat = Quaternion.FromToRotation((Vector3)negClampAngle, -batteryController.weldSurfaceNormal);
+        }
+        else
+        {
+            // Positive is target
+            targetQuat = Quaternion.FromToRotation((Vector3)posClampAngle, -batteryController.weldSurfaceNormal);
+        }
+
+        // Begin timer.
+        correctWeldAlpha = 0f;
+        justWelded = true;
+        for (int i = 0; i < 10; i++)
+        {
+            correctWeldAlpha += (1f / 10f);
+            yield return new WaitForSeconds(duration / 10f);
+        }
+        justWelded = false;
+        yield break;
     }
 }
