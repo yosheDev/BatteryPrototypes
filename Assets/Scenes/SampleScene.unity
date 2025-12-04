@@ -1201,7 +1201,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.5
+  m_Radius: 3
 --- !u!114 &342299666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1729,7 +1729,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 8
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1776,7 +1776,7 @@ MonoBehaviour:
   batteryController: {fileID: 1676372183}
   orthoCam: {fileID: 519420031}
   smoothTime: 0.2
-  zoomRange: {x: 8, y: 11}
+  zoomRange: {x: 10, y: 12}
   zoomVelocityRange: {x: 4, y: 20}
   zoomInterpSpeed: 0.01
 --- !u!1 &619394800
@@ -2448,7 +2448,7 @@ MonoBehaviour:
     proportionConst: 1
   fieldCol: {fileID: 1986373870}
   surfaceCol: {fileID: 707799226}
-  _fieldAttractDistance: 2
+  _fieldAttractDistance: 2.5
   _attenuation: 2
 --- !u!58 &707799226
 CircleCollider2D:
@@ -5177,7 +5177,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0.01
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0.95
   m_Material: {fileID: 6200000, guid: 935316eb34b4edf4c8cfe596a99e03ec, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
@@ -5864,7 +5864,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.5
+  m_Radius: 4.16
 --- !u!114 &1754208433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6485,7 +6485,7 @@ MonoBehaviour:
     proportionConst: 1
   fieldCol: {fileID: 342299664}
   surfaceCol: {fileID: 1966693658}
-  _fieldAttractDistance: 2
+  _fieldAttractDistance: 2.5
   _attenuation: 2
 --- !u!1 &1967190745
 GameObject:
@@ -6951,7 +6951,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 2.5
+  m_Radius: 3
 --- !u!114 &1986373871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7152,7 +7152,7 @@ MonoBehaviour:
     proportionConst: 1
   fieldCol: {fileID: 1754208432}
   surfaceCol: {fileID: 2010071742}
-  _fieldAttractDistance: 2
+  _fieldAttractDistance: 3.66
   _attenuation: 3
 --- !u!58 &2010071742
 CircleCollider2D:
