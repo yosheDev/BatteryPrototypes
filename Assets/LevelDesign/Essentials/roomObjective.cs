@@ -1,12 +1,9 @@
 using UnityEngine;
-
+using System.Collections;
+using System.Collections.Generic;
 public class roomObjective : MonoBehaviour
 {
     AreaManager areaManager;
-    void Start()
-    {
-        areaManager = GameObject.FindFirstObjectByType<AreaManager>();
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -17,6 +14,8 @@ public class roomObjective : MonoBehaviour
         }
 
         gameObject.GetComponent<Collider2D>().enabled = false;
-        areaManager.LoadNextRoom();
+
+        // Begin transition animation.
+        AreaManager.instance.ReachedObjective(this.gameObject);
     }
 }

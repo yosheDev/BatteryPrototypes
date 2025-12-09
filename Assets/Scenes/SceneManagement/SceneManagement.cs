@@ -28,7 +28,7 @@ public struct Level
 public static class SceneManagement
 {
   
-    #region Load Scene
+    #region Load / Unload Scene
     public static void LoadScene(Level level, string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
     {
         string roomSceneName;
@@ -43,6 +43,22 @@ public static class SceneManagement
         }
         
         SceneManager.LoadScene(roomSceneName, loadSceneMode);
+    }
+
+    public static void UnloadSceneAsync(Level level, string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
+    {
+        string roomSceneName;
+
+        if (overrideString != null)
+        {
+            roomSceneName = overrideString;
+        }
+        else
+        {
+            roomSceneName = GetSceneFormattedName(level);
+        }
+
+        SceneManager.UnloadSceneAsync(roomSceneName);
     }
     #endregion
 

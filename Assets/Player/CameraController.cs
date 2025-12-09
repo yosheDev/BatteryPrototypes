@@ -33,4 +33,9 @@ public class CameraController : MonoBehaviour
         //Debug.Log(zoom);
         transform.position = new Vector3(followPos.x, followPos.y, -10f); 
     }
+
+    public void SnapToTarget()
+    {
+        transform.position = followTarget.transform.position;
+    }
 }
