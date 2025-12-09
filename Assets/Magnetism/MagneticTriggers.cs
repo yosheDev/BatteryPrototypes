@@ -13,6 +13,10 @@ public class MagneticTriggers : MonoBehaviour
             return;
         }
 
+        if (collision.GetComponent<MagneticTriggers>() == null)
+        {
+            return;
+        }
         // Add magnet component of the other object to affect fields of this gameObjects affect component.
         magnetComponent.affectFields.Add(collision.GetComponent<MagneticTriggers>().magnetComponent);
     }
@@ -24,6 +28,10 @@ public class MagneticTriggers : MonoBehaviour
             return;
         }
 
+        if (collision.GetComponent<MagneticTriggers>() == null)
+        {
+            return;
+        }
         // Remove magnet component of the other object from affect fields of this gameObjects affect component.
         magnetComponent.affectFields.Remove(collision.GetComponent<MagneticTriggers>().magnetComponent);
     }

@@ -493,6 +493,7 @@ public class BatteryController : MonoBehaviour
         spawnCage.transform.position = gameObject.transform.position;
         rb.linearVelocity = new Vector2(0f, 0f);
         rb.gravityScale = 0f;
+        rb.WakeUp();
 
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().SnapToTarget();
     }
