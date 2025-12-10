@@ -7,6 +7,15 @@
             "id": "e25da27e-6beb-4382-b843-fa29b370c6e9",
             "actions": [
                 {
+                    "name": "DebugNextRoom",
+                    "type": "Button",
+                    "id": "3aa0b4b9-a149-4b4b-b275-949b6a34911d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "MouseDelta",
                     "type": "Value",
                     "id": "834e1ea5-0008-4042-90ca-a6046c1edc6f",
@@ -191,6 +200,17 @@
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
                     "action": "ExitLaunch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8929ae9b-2fca-4d97-82e0-d47bc2f62039",
+                    "path": "<Keyboard>/numpadPlus",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardAndMouse;Gamepad",
+                    "action": "DebugNextRoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -319,6 +319,14 @@ public class BatteryController : MonoBehaviour
     }
 
     #region Input Actions
+    public void DebugSkipToNextRoom()   // Remove this in builds.
+    {
+        if (Application.isEditor)
+        {
+            AreaManager.instance.ReachedObjective(GameObject.FindFirstObjectByType<roomObjective>().gameObject);
+        }
+    }
+
     public void UpdateMouseDelta(InputAction.CallbackContext context)
     {
         mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : mouseDelta; /// Magnitude check protects against mouse connectivity errors.
