@@ -33,11 +33,6 @@ public class SplineTraversal : MonoBehaviour
     private Vector3 position;
     //private Quaternion rotation;
 
-    //Notes
-    /// Spline container: Holds splines. Spline is first index?
-    /// Spline: Holds knots.
-    /// Bezier Knot: Every knot is this.
-    /// Goal: Have it travel along path point to point with an optional delay at the ends. Parameterize speed and the such.
     private void OnValidate()
     {
         speed = Mathf.Clamp(speed, 0f, float.MaxValue);
@@ -66,8 +61,6 @@ public class SplineTraversal : MonoBehaviour
     }
     void FixedUpdate()
     {
-        //Debug.Log("isPlaying: " + isPlaying);
-        //Debug.Log("Alpha: " + currentAlpha);
         if (isPlaying)
         {
             var dt = Time.fixedDeltaTime;
