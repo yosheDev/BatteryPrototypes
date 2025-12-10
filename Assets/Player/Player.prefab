@@ -946,6 +946,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 441feda9-91e8-4910-b814-340978e73b7e
     m_ActionName: 'Player/ExitLaunch[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8047242034082428540}
+        m_TargetAssemblyTypeName: BatteryController, Assembly-CSharp
+        m_MethodName: DebugSkipToNextRoom
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 3aa0b4b9-a149-4b4b-b275-949b6a34911d
+    m_ActionName: 'Player/DebugNextRoom[/Keyboard/numpadPlus]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: KeyboardAndMouse
   m_DefaultActionMap: Player
