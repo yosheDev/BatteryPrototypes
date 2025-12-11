@@ -27,6 +27,8 @@ public class PlayerNeutralDetector : MonoBehaviour
         {
             neutralDetected = true;
         }
+
+        batteryController.AddParentSource(collision.gameObject);
     }
     private void OnTriggerExit2D(Collider2D collision)
     {

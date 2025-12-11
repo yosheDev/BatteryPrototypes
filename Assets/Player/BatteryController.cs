@@ -6,53 +6,60 @@ using Unity.Mathematics;
 using System.Linq;
 using Magnet;
 using FunctionLibrary;
-using UnityEngine.Rendering;
-using static UnityEditor.ShaderData;
+using UnityEngine.Animations;
 
 public class BatteryController : MonoBehaviour
 {
     #region Properties
     [Header("References")]
-    [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Collider2D surfaceCol;
-    [SerializeField] private PlayerInput playerInput;
-    [SerializeField] private PlayerNeutralDetector neutralDetector;
-    [SerializeField] private Camera mainCam;
-    [SerializeField] private GameObject cursorObj;
-    private SoftwareCursor softwareCursor;
     [SerializeField] private GameObject scalePivot;
     [SerializeField] private GameObject weldBlob;
     [SerializeField] private GameObject spawnCage;
+    private Camera mainCam;
+    private Rigidbody2D rb;
+    private Collider2D surfaceCol;
+    private PlayerInput playerInput;
+    private PlayerNeutralDetector neutralDetector;  
+    private GameObject cursorObj;
+    private SoftwareCursor softwareCursor;
     public MagneticSurface positiveMag;
     public MagneticSurface negativeMag;
 
+    private Vector3 parentLastPos;    /// Trying a delta method.
+    private GameObject surfaceParent;
+    private Quaternion parentLastRot;
+    private Vector3 offsetFromParent;
+
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
+
+    // Weld
     public float weldAngleClamp = 1.15f;
+    [SerializeField] private LayerMask weldLayerMask;
+
+    // Launch
     [SerializeField] private float launchMaxExponent = 1.13f;
     [SerializeField] private float launchBaseConstant = 500f;
 
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
 
-    [SerializeField] private LayerMask weldLayerMask;
     //==============================================================================================================================
 
-    private Vector3 startPos;
-    public float velocity;
-    public float angularVelocity;
+    private Vector3 startPos; /// Used for current restart. Remove variable when restart is tied into AreaManager/PlayerStart stuff.
+    [HideInInspector] public float velocity;
+    [HideInInspector] public float angularVelocity;
     private Quaternion previousRotation; /// Used for calculating angular velocity.
     private Vector3 previousWeldUp;    /// Used for determining input rotation direction.
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
     [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
-    public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
-    Vector3 adjustedWeldAimDir;
+    [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
+    private Vector3 adjustedWeldAimDir;
     private Vector2 moveInput;
     private bool weldInput;
     private bool launchInput;
     private InputAction launchAction;
 
-    // Replace with state stuff later
     [HideInInspector] public WeldState weldState = WeldState.None;
     private bool lockWeldState = false;
     public enum WeldState
@@ -61,25 +68,75 @@ public class BatteryController : MonoBehaviour
         Welded,
         LaunchAim,
     }
-
+    // =============================================================================================================================
     #endregion 
 
     void Start()
     {
+        #region Initialize References
         // Cursor
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        cursorObj = transform.parent.gameObject.GetComponentInChildren<SoftwareCursor>().gameObject;
         softwareCursor = cursorObj.GetComponent<SoftwareCursor>();
 
+        // Other References
+        mainCam = Camera.main;
+        surfaceCol = GetComponent<CapsuleCollider2D>();
+        playerInput = GetComponent<PlayerInput>();
+        rb = GetComponent<Rigidbody2D>();
+        neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
+        #endregion
+
+        #region Initialize Variables
         // Initialize
         startPos = transform.position;
         previousRotation = transform.rotation;
         previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
+        #endregion
     }
 
     private void FixedUpdate()
-    {  
+    {
+        var dt = Time.fixedDeltaTime;
+
+        #region Inherit Surface Parent Delta
+
+        if (surfaceParent != null)
+        {
+            // How about first:
+            //  Getting offset from parents position.
+            //  Rotating this offset point around the parent when needed.
+            //  Setting position to be parents position + the offset.
+
+            #region Attempt 2 - Position w/ respect to parent rotations.
+            
+            // NOTE: Will need to ensure I have the parents proper rotation pivot. Make interface to retrieve it. If not exist, use transform.position.
+            Vector3 parentPivot = surfaceParent.transform.position;
+
+            Vector3 surfaceParentPosDelta = surfaceParent.transform.position - parentLastPos;
+            float rotAngle = Quaternion.Angle(surfaceParent.transform.rotation, parentLastRot);
+
+            if (gameObject.transform.parent == scalePivot.transform)
+            {
+                scalePivot.transform.position += surfaceParentPosDelta;
+                scalePivot.transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
+            }
+            else
+            {
+                transform.position += surfaceParentPosDelta;
+                transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
+            }
+
+            parentLastPos = surfaceParent.transform.position;
+            parentLastRot = surfaceParent.transform.rotation;
+
+            #endregion
+        }
+
+        #endregion
+
         #region Initialize Common Variables
         // Velocity of player.
         velocity = (Mathf.Abs(rb.linearVelocity.x) + Mathf.Abs(rb.linearVelocity.y)) * 0.5f;
@@ -233,10 +290,16 @@ public class BatteryController : MonoBehaviour
                 //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
                 intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                 rb.MoveRotation(intermediateRot);
+
+                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
             }
             else if (weldState == WeldState.LaunchAim)
             {
                 scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                
+                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
             }
             #endregion
 
@@ -413,10 +476,9 @@ public class BatteryController : MonoBehaviour
                 break;
             case WeldState.LaunchAim:
                 rotationFactor = 0f;
-                
+
                 // Parent player to squash stretch pivot.
-                scalePivot.transform.position = playerWeldMag.transform.position;
-                scalePivot.transform.rotation = playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f);
+                UpdateScalePivotTransforms();
 
                 gameObject.transform.parent = scalePivot.transform;
                 break;
@@ -473,25 +535,18 @@ public class BatteryController : MonoBehaviour
         rb.AddForceAtPosition(-playerWeldMag.transform.up * launchForce, playerWeldMag.transform.position);
     }
 
+    public void UpdateScalePivotTransforms()
+    {
+        if (playerWeldMag != null)
+        {
+            scalePivot.transform.position = playerWeldMag.transform.position;
+            scalePivot.transform.rotation = playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f);
+        }
+    }
     public void CancelLaunch(InputAction.CallbackContext context)
     {
         Debug.Log("Launch is cancelled.");
         ChangeWeldState(WeldState.Welded);
-    }
-    public void Restart()
-    {
-        transform.position = startPos;
-        rb.linearVelocity = Vector3.zero;
-    }
-
-    public void SetIntermediateRot(Quaternion inRot)
-    {
-        intermediateRot = inRot;
-    }
-
-    public Rigidbody2D GetRigidBody()
-    {
-        return rb;
     }
 
     public void ResetUponNewRoom(Vector3 startPos)
@@ -505,4 +560,35 @@ public class BatteryController : MonoBehaviour
 
         GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().SnapToTarget();
     }
+
+    public void Restart()
+    {
+        transform.position = startPos;
+        rb.linearVelocity = Vector3.zero;
+    }
+
+    public void AddParentSource(GameObject parentObj)
+    {
+        /// Notes:
+        /// - When adding source, record initial offset from player to source? Would I need this?
+        /// - Set parent reference and get delta change of parent each frame and apply that to the player before player input is calculated.
+        Debug.Log("Parent is now: " + parentObj);
+        surfaceParent = parentObj;
+        offsetFromParent = parentObj.transform.InverseTransformPoint(transform.position);
+        parentLastPos = surfaceParent.transform.position;
+        parentLastRot = surfaceParent.transform.rotation;
+
+    }
+    #region Getters / Setters
+    public void SetIntermediateRot(Quaternion inRot)
+    {
+        intermediateRot = inRot;
+    }
+
+    public Rigidbody2D GetRigidBody()
+    {
+        return rb;
+    }
+
+    #endregion
 }
