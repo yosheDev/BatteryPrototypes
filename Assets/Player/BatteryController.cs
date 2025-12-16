@@ -25,51 +25,60 @@ public class BatteryController : MonoBehaviour
     public MagneticSurface positiveMag;
     public MagneticSurface negativeMag;
 
-    private Vector3 parentLastPos;    /// Trying a delta method.
-    private GameObject surfaceParent;
-    private Quaternion parentLastRot;
-    private Vector3 offsetFromParent;
-
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
 
     // Weld
-    public float weldAngleClamp = 1.15f;
+    public float weldAngleClamp = 75f;
     [SerializeField] private LayerMask weldLayerMask;
 
     // Launch
     [SerializeField] private float launchMaxExponent = 1.13f;
     [SerializeField] private float launchBaseConstant = 500f;
 
+    //==============================================================================================================================
+    #region Private
+    // Surface Parent
+    private GameObject surfaceParent;
+    private Quaternion parentLastRot;
+    private Vector3 parentLastPos;
+    private Vector3 surfaceParentVelocity;
+
+    // Cursor
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
 
-    //==============================================================================================================================
-
-    private Vector3 startPos; /// Used for current restart. Remove variable when restart is tied into AreaManager/PlayerStart stuff.
-    [HideInInspector] public float velocity;
-    [HideInInspector] public float angularVelocity;
-    private Quaternion previousRotation; /// Used for calculating angular velocity.
-    private Vector3 previousWeldUp;    /// Used for determining input rotation direction.
-    private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
-    [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
-    [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
-    private Vector3 adjustedWeldAimDir;
-    private Vector2 moveInput;
-    private bool weldInput;
-    private bool launchInput;
-    private InputAction launchAction;
-
-    [HideInInspector] public WeldState weldState = WeldState.None;
-    private bool lockWeldState = false;
+    // Welding
     public enum WeldState
     {
         None,
         Welded,
         LaunchAim,
     }
+    [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
+    [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
+    private Collider2D weldedSurface;                           /// Surface player is welded to. Used mostly to get the gameObject.
+    private Vector3 adjustedWeldAimDir;
+    [HideInInspector] public WeldState weldState = WeldState.None;
+    private bool lockWeldState = false;
+
+    // Intermediary
+    [HideInInspector] public float velocity;
+    [HideInInspector] public float angularVelocity;
+    private Quaternion previousRotation; /// Used for calculating angular velocity.
+    private Vector3 previousWeldUp;    /// Used for determining input rotation direction.
+    private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
+
+    // Input System
+    private Vector2 moveInput;
+    private bool weldInput;
+    private bool launchInput;
+    private InputAction launchAction;
+
+    private Vector3 startPos; /// Used for current restart. REMOVE THIS LATER when restart is tied into AreaManager/PlayerStart stuff.
+    #endregion
     // =============================================================================================================================
-    #endregion 
+    #endregion
 
     void Start()
     {
@@ -105,19 +114,16 @@ public class BatteryController : MonoBehaviour
 
         if (surfaceParent != null)
         {
-            // How about first:
-            //  Getting offset from parents position.
-            //  Rotating this offset point around the parent when needed.
-            //  Setting position to be parents position + the offset.
-
-            #region Attempt 2 - Position w/ respect to parent rotations.
-            
-            // NOTE: Will need to ensure I have the parents proper rotation pivot. Make interface to retrieve it. If not exist, use transform.position.
+            // TO DO: Will need to ensure I have the parents proper rotation pivot. Make interface to retrieve it. If not exist, use surfaceParent.transform.position.
             Vector3 parentPivot = surfaceParent.transform.position;
 
             Vector3 surfaceParentPosDelta = surfaceParent.transform.position - parentLastPos;
-            float rotAngle = Quaternion.Angle(surfaceParent.transform.rotation, parentLastRot);
+            surfaceParentVelocity = surfaceParentPosDelta / Time.fixedDeltaTime;
 
+            float rotAngle = Quaternion.Angle(surfaceParent.transform.rotation, parentLastRot);
+            rotAngle = -1f * Vector3.SignedAngle((surfaceParent.transform.rotation * Vector3.up), (parentLastRot * Vector3.up), Vector3.forward);
+
+            // Rotate and Move Player
             if (gameObject.transform.parent == scalePivot.transform)
             {
                 scalePivot.transform.position += surfaceParentPosDelta;
@@ -129,10 +135,13 @@ public class BatteryController : MonoBehaviour
                 transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
             }
 
+            // Rotate Software Cursor
+            //Transform cursorRotated = cursorObj.transform;
+            //cursorRotated.RotateAround(parentPivot, Vector3.forward, rotAngle);
+            softwareCursor.RotateLocalPos(parentPivot, rotAngle);
+
             parentLastPos = surfaceParent.transform.position;
             parentLastRot = surfaceParent.transform.rotation;
-
-            #endregion
         }
 
         #endregion
@@ -161,47 +170,23 @@ public class BatteryController : MonoBehaviour
             if (weldInput)
             {
                 #region Weld
-                Collider2D weldMagSurface = null; /// Surface of the magnet to cling to.
+                Collider2D evalWeldSurface = null; /// Surface of the magnet to cling to.
                 bool magCharge = false;            /// The charge of the players magnet that is clinging.
 
                 #region Get Cling Magnet Surface
                 Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .5f, weldLayerMask);
                 Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .5f, weldLayerMask);
-                foreach (Collider2D col in positiveOverlap)
-                {
-                    MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                    // If can weld to this magnet.
-                    if (curMag != null && curMag._magData.charge == -1)
-                    {
-                        RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position, col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
-                        bool isOccluded = false;
-                        foreach (RaycastHit2D hit in hits)
-                        {
-                            if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
-                            {
-                                isOccluded = true;
-                                break;
-                            }
-                        }
 
-                        if (!isOccluded)
-                        {
-                            weldMagSurface = curMag.gameObject.GetComponent<Collider2D>();
-                            magCharge = true; /// Refers to players clinging magnet charge.
-                            break;
-                        }
-                    }
-                }
-
-                if (weldMagSurface == null)
+                // Positive
+                if (evalWeldSurface == null)
                 {
-                    foreach (Collider2D col in negativeOverlap)
+                    foreach (Collider2D col in positiveOverlap)
                     {
                         MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
                         // If can weld to this magnet.
-                        if (curMag != null && curMag._magData.charge == 1)
+                        if (curMag != null && curMag._magData.charge == -1)
                         {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position, col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
                             bool isOccluded = false;
                             foreach (RaycastHit2D hit in hits)
                             {
@@ -214,7 +199,37 @@ public class BatteryController : MonoBehaviour
 
                             if (!isOccluded)
                             {
-                                weldMagSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                evalWeldSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                magCharge = true; /// Refers to players clinging magnet charge.
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Negative
+                if (evalWeldSurface == null)
+                {
+                    foreach (Collider2D col in negativeOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == 1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalWeldSurface = curMag.gameObject.GetComponent<Collider2D>();
                                 magCharge = false; /// Refers to players clinging magnet charge.
                                 break;
                             }
@@ -223,30 +238,40 @@ public class BatteryController : MonoBehaviour
                 }
                 #endregion
 
-                if (weldMagSurface != null)
+                if (evalWeldSurface != null)
                 {
+                    // Update Weld Vectors to match.
+                    /// (Somewhat expensive, but can't be avoided as this needs done every frame to account for rotating/translating parent surfaces.)
+                    weldedSurface = evalWeldSurface;
+                    playerWeldMag = (magCharge ? positiveMag : negativeMag);
+                    Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
+                    // Apply Custom Force
+                    Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)playerWeldMag.transform.position).normalized;
+                    //Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldedSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
+                    Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+                    //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
+
+                    // Raycast to the point, get normal back.
+                    Debug.DrawLine(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f) + ((Vector3)weldAimDir * 1.5f), Color.green, .1f);
+                    RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), weldAimDir, 1.5f, weldLayerMask);
+                    Debug.Log("Num of Hits: " + hits.Length + " | Surface is: " + weldedSurface);
+                    foreach (RaycastHit2D hit in hits)
+                    {
+                        Debug.Log(hit.collider.gameObject);
+                        if (hit.collider == weldedSurface)
+                        {
+                            weldSurfaceNormal = hit.normal;
+                            Debug.Log("I hit the surface, updating normal right now.");
+                        }
+                    }
+
+                    //Debug.DrawLine(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .2f), playerWeldMag.transform.position + (-playerWeldMag.transform.up * .2f) + ((Vector3)weldSurfaceNormal * 1.5f), Color.green, .1f);
+
                     if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
                     {
-                        playerWeldMag = (magCharge ? positiveMag : negativeMag);
-                        Vector3 nearestWeldPoint = weldMagSurface.ClosestPoint(playerWeldMag.transform.position);
-
-                        // Apply Custom Force
-                        Vector3 weldAimDir = (nearestWeldPoint - playerWeldMag.transform.position).normalized;
-                        Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldMagSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
-                        Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-                        //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
-
-                        // Raycast to the point, get normal back.
-                        RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position, weldAimDir, 1f, weldLayerMask);
-                        foreach (RaycastHit2D hit in hits)
-                        {
-                            if (hit.collider == weldMagSurface)
-                            {
-                                weldSurfaceNormal = hit.normal;
-                            }
-                        }
                         ChangeWeldState(WeldState.Welded);
-                    }
+                    }   
+
                 }
                 else
                 {
@@ -284,7 +309,7 @@ public class BatteryController : MonoBehaviour
             else if (weldState == WeldState.Welded)
             {
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
+                //adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
                 //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
@@ -451,17 +476,19 @@ public class BatteryController : MonoBehaviour
         switch(weldState)
         {
             case WeldState.None:
-                cursorObj.GetComponent<SoftwareCursor>().parentForPos = gameObject;
+                weldedSurface = null;
+                cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(gameObject);
                 rotationFactor = 30f;
                 positiveMag.GetComponent<HingeJoint2D>().enabled = false;
                 negativeMag.GetComponent<HingeJoint2D>().enabled = false;
                 weldBlob.SetActive(false);
                 break;
             case WeldState.Welded:
-                cursorObj.GetComponent<SoftwareCursor>().parentForPos = playerWeldMag.gameObject;
+                cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(playerWeldMag.gameObject);
+                Vector2 adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
+                //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
+                float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, -playerWeldMag.transform.up, Vector3.forward);
 
-                adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
-                float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
                 // If weld is outside of constraint range, start coroutine to correct it.
                 if (Mathf.Abs(angleFromSurfNormal) > weldAngleClamp || Mathf.Abs(angleFromSurfNormal) < -weldAngleClamp)
                 {
@@ -569,16 +596,23 @@ public class BatteryController : MonoBehaviour
 
     public void AddParentSource(GameObject parentObj)
     {
-        /// Notes:
-        /// - When adding source, record initial offset from player to source? Would I need this?
-        /// - Set parent reference and get delta change of parent each frame and apply that to the player before player input is calculated.
-        Debug.Log("Parent is now: " + parentObj);
+        // For now, just supports one parent at a time. Unsure if will ever need multiple but that will be a challenge for a different time.
         surfaceParent = parentObj;
-        offsetFromParent = parentObj.transform.InverseTransformPoint(transform.position);
         parentLastPos = surfaceParent.transform.position;
         parentLastRot = surfaceParent.transform.rotation;
-
     }
+
+    public void ClearParentSource()
+    {
+        // Player maintains parent velocity when leaving.
+        if (surfaceParent != null)
+        {
+            rb.linearVelocity += (Vector2)surfaceParentVelocity;
+        }
+
+        surfaceParent = null;
+    }
+
     #region Getters / Setters
     public void SetIntermediateRot(Quaternion inRot)
     {
@@ -588,6 +622,11 @@ public class BatteryController : MonoBehaviour
     public Rigidbody2D GetRigidBody()
     {
         return rb;
+    }
+
+    public GameObject GetParentSource()
+    {
+        return surfaceParent;
     }
 
     #endregion

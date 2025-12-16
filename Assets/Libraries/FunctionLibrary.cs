@@ -1,4 +1,6 @@
-using UnityEngine; /// Include so nice functions are avaliable.
+using Unity.VisualScripting;
+using UnityEngine; 
+/// Include so nice functions are avaliable.
 
 // Magnet Data
 namespace FunctionLibrary
@@ -19,6 +21,12 @@ namespace FunctionLibrary
             {
                 return (value - input_min) / (input_max - input_min) * (output_max - output_min) + output_min;
             }
+        }
+
+        public static Vector3 InverseTransformPointUnscaled(this Transform transform, Vector3 position)
+        {
+            var worldToLocalMatrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one).inverse;
+            return worldToLocalMatrix.MultiplyPoint3x4(position);
         }
     }
 }

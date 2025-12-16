@@ -1,7 +1,5 @@
 using UnityEngine;
 using FunctionLibrary;
-using UnityEngine.Windows;
-using UnityEditor.Rendering;
 using System.Collections;
 
 public class SoftwareCursor : MonoBehaviour
@@ -11,6 +9,7 @@ public class SoftwareCursor : MonoBehaviour
     private Vector2 launchControlPos; /// Used only for launch controls.
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
     public GameObject parentForPos;
+    private Vector3 parentLastPos;
 	private Vector2 aimDir;
 	private Vector3 launchControlMin;
     private Vector3 launchControlMax;
@@ -20,9 +19,29 @@ public class SoftwareCursor : MonoBehaviour
     private Quaternion weldInitialQuat;
     private Quaternion targetQuat;
     private float correctWeldAlpha = 0f;
+    private bool rotTest = false;
+    public GameObject visObjTest;
+    public Quaternion surfaceParentRotAdjust;
 
     void Update()
     {
+        if (batteryController.GetParentSource() == null)
+        {
+            surfaceParentRotAdjust = Quaternion.identity;
+        }
+        else
+        {
+            //Debug.Log("RotQuat: " + surfaceParentRotAdjust.eulerAngles);
+            //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((surfaceParentRotAdjust * Vector3.up) * 2f), Color.red, .1f);
+        }
+            Vector3 parentPosDelta = parentForPos.transform.position - parentLastPos;
+
+        if (rotTest)
+        {
+            return;
+        }
+
+        //Debug.Log(localPos);
         #region Launch Aim Controls
         if (batteryController.weldState == BatteryController.WeldState.LaunchAim)
         {
@@ -71,10 +90,10 @@ public class SoftwareCursor : MonoBehaviour
 
         // Get angle between cursorObj dir and surface normal.
         aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
+        float angleFromNormal = Vector3.SignedAngle((Vector3)batteryController.weldSurfaceNormal, (Vector3)aimDir, Vector3.forward);
 
-        // This is not updating correctly after "correcting" after initial weld... prob aim dir.
-        float angleFromNormal = (float)System.Math.Round(Mathf.Atan2(batteryController.weldSurfaceNormal.y, batteryController.weldSurfaceNormal.x) - Mathf.Atan2(aimDir.y, aimDir.x), 2);
-        //Debug.Log("Cursor Angle From Norm: " + angleFromNormal);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)aimDir * 1.5f), Color.blue, .1f);
+
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
             // Clamp localPos back within range.
@@ -83,7 +102,7 @@ public class SoftwareCursor : MonoBehaviour
 
                 #region Interp To Clamped Range Method
                 Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
-                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
+                Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
                 //Debug.Log("Alpha: " + correctWeldAlpha);
                 Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
 
@@ -121,12 +140,16 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
+                // This is gonna be overriding the rotate around that is added when parented.
+
                 //Debug.Log("Normal Controls");
                 worldPos = (Vector2)parentForPos.transform.position + localPos;
                 transform.position = worldPos;
             }  
         }
         #endregion
+
+        parentLastPos = parentForPos.transform.position;
     }
 
     // Custom ClampMagnitude that includes min and max both.
@@ -162,6 +185,56 @@ public class SoftwareCursor : MonoBehaviour
         transform.position = (Vector2)parentForPos.transform.position + localPos;
     }
 
+    public void SetLocalPosFromWorld(Vector2 inWorldPos)
+    {
+        //localPos = parentForPos.transform.InverseTransformPoint(inWorldPos);
+        //localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+        //Debug.DrawLine(parentForPos.transform.position + (Vector3)localPos, (parentForPos.transform.position + (Vector3)localPos) + new Vector3(0f, .5f, 0f), Color.orange, 1f);
+        //transform.position = (Vector2)parentForPos.transform.position + localPos;
+    }
+
+    public void RotateLocalPos(Vector3 pivot, float angle)
+    {
+        // Either angle needs to change to be angle dif between its parent
+        // OR function needs to change to use the correct transform and pivot points for rotation.
+
+        // Okay how about instead I use the angle to just rotate the cursor around its own parentForPos. -> Can't, because the angle needed for that would be different.
+        if (angle == 0f)
+        {
+            return;
+        }
+        surfaceParentRotAdjust = surfaceParentRotAdjust * Quaternion.AngleAxis(angle, Vector3.forward);
+        //Debug.Log("Angle: " + angle);
+        //Time.timeScale = .05f;
+        // My manual set tests are wonky because it is not a child of the player. DUH. Should still inherit position from player, lets do that via delta method.
+        //Vector3 parentPosDelta = parentForPos.transform.position - parentLastPos;
+
+        // For some reason, these debug logs do NOT return the same thing...
+        //Debug.Log(FunctionLibraryF.InverseTransformPointUnscaled(parentForPos.transform, transform.position));
+        localPos = -1f * (parentForPos.transform.position - transform.position);
+        //Debug.Log("L: " + localPos);
+        localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+
+        transform.position = (Vector2)parentForPos.transform.position + localPos;
+        transform.RotateAround(pivot, Vector3.forward, angle);
+
+        visObjTest.transform.position = (Vector2)parentForPos.transform.position + localPos;
+        visObjTest.transform.RotateAround(pivot, Vector3.forward, angle);
+        
+        //if (batteryController.playerWeldMag != null)
+        //{
+        //    Debug.DrawLine((Vector2)batteryController.playerWeldMag.transform.position, (Vector2)batteryController.playerWeldMag.transform.position + (batteryController.weldSurfaceNormal * 2f), Color.cornflowerBlue, .1f);
+        //} 
+
+        //rotTest = true;
+        return;
+    }
+
+    public void SetNewPosParent(GameObject parent)
+    {
+        parentForPos = parent;
+        parentLastPos = parentForPos.transform.position;
+    }
     public IEnumerator WeldJustStarted(float duration)
     {
         // Get initial quat.

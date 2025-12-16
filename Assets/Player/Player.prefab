@@ -700,6 +700,7 @@ Transform:
   - {fileID: 2941665126616726414}
   - {fileID: 2457281506785981380}
   - {fileID: 652112300881806616}
+  - {fileID: 6097647039660893970}
   m_Father: {fileID: 2153969486156585816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &743935625478155525
@@ -984,19 +985,19 @@ MonoBehaviour:
   positiveMag: {fileID: 7244895146233200180}
   negativeMag: {fileID: 2989805380013838047}
   rotationFactor: 30
-  weldAngleClamp: 1.15
+  weldAngleClamp: 75
+  weldLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
   launchMaxExponent: 1.13
   launchBaseConstant: 500
   cursorPosWS: {x: 0, y: 0}
   mouseDelta: {x: 0, y: 0}
-  weldLayerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  velocity: 0
-  angularVelocity: 0
   weldSurfaceNormal: {x: 0, y: 0}
   playerWeldMag: {fileID: 0}
   weldState: 0
+  velocity: 0
+  angularVelocity: 0
 --- !u!1 &5928797191248678415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1102,6 +1103,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CursorConstraint
   batteryController: {fileID: 8047242034082428540}
   parentForPos: {fileID: 5159612945940311858}
+  visObjTest: {fileID: 0}
+  surfaceParentRotAdjust: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7547158745546023232
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,3 +1192,89 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   neutralDetected: 0
+--- !u!1 &9090244717835407417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6097647039660893970}
+  - component: {fileID: 4762840991959806023}
+  - component: {fileID: 2649839604640953938}
+  m_Layer: 0
+  m_Name: ParentSurfaceDetector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6097647039660893970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090244717835407417}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3630706780392114562}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &4762840991959806023
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090244717835407417}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1.27, y: 3.25}
+  m_Direction: 0
+--- !u!114 &2649839604640953938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9090244717835407417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca524b65eef6fd64bb82fc3bb2f5f65a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ParentSurfaceDetector
+  batteryController: {fileID: 8047242034082428540}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
