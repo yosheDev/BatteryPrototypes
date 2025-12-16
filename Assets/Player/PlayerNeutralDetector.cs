@@ -22,10 +22,7 @@ public class PlayerNeutralDetector : MonoBehaviour
         }
 
         neutralOverlaps.Add(collision.gameObject);
-        if (batteryController.positiveMag.affectFields.Count + batteryController.negativeMag.affectFields.Count <= 0)
-        {
-            neutralDetected = true;
-        }
+        neutralDetected = true;
     }
     private void OnTriggerExit2D(Collider2D collision)
     {

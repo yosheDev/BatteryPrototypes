@@ -246,12 +246,13 @@ public class BatteryController : MonoBehaviour
                     playerWeldMag = (magCharge ? positiveMag : negativeMag);
                     Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
                     // Apply Custom Force
-                    Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)playerWeldMag.transform.position).normalized;
+                    Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f))).normalized;
                     //Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldedSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
                     Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
                     //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
 
                     // Raycast to the point, get normal back.
+                    Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * .5f), Color.darkRed, .1f);
                     Debug.DrawLine(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f) + ((Vector3)weldAimDir * 1.5f), Color.green, .1f);
                     RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), weldAimDir, 1.5f, weldLayerMask);
                     Debug.Log("Num of Hits: " + hits.Length + " | Surface is: " + weldedSurface);
@@ -264,8 +265,6 @@ public class BatteryController : MonoBehaviour
                             Debug.Log("I hit the surface, updating normal right now.");
                         }
                     }
-
-                    //Debug.DrawLine(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .2f), playerWeldMag.transform.position + (-playerWeldMag.transform.up * .2f) + ((Vector3)weldSurfaceNormal * 1.5f), Color.green, .1f);
 
                     if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
                     {
