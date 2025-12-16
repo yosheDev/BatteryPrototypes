@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
-using UnityEngine; 
+using UnityEngine;
+using System.Linq;
 /// Include so nice functions are avaliable.
 
 // Magnet Data
@@ -28,5 +29,7 @@ namespace FunctionLibrary
             var worldToLocalMatrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one).inverse;
             return worldToLocalMatrix.MultiplyPoint3x4(position);
         }
+        public static bool IsInLayerMask(GameObject obj, LayerMask mask) => (mask.value & (1 << obj.layer)) != 0;
+        public static bool IsInLayerMask(int layer, LayerMask mask) => (mask.value & (1 << layer)) != 0;
     }
 }

@@ -55,6 +55,7 @@ public class BatteryController : MonoBehaviour
         Welded,
         LaunchAim,
     }
+
     [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
     [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
     private Collider2D weldedSurface;                           /// Surface player is welded to. Used mostly to get the gameObject.
@@ -118,7 +119,7 @@ public class BatteryController : MonoBehaviour
             Vector3 parentPivot = surfaceParent.transform.position;
 
             Vector3 surfaceParentPosDelta = surfaceParent.transform.position - parentLastPos;
-            surfaceParentVelocity = surfaceParentPosDelta / Time.fixedDeltaTime;
+            surfaceParentVelocity = surfaceParentPosDelta / dt;
 
             float rotAngle = Quaternion.Angle(surfaceParent.transform.rotation, parentLastRot);
             rotAngle = -1f * Vector3.SignedAngle((surfaceParent.transform.rotation * Vector3.up), (parentLastRot * Vector3.up), Vector3.forward);
@@ -252,17 +253,13 @@ public class BatteryController : MonoBehaviour
                     //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
 
                     // Raycast to the point, get normal back.
-                    Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * .5f), Color.darkRed, .1f);
-                    Debug.DrawLine(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f) + ((Vector3)weldAimDir * 1.5f), Color.green, .1f);
                     RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), weldAimDir, 1.5f, weldLayerMask);
-                    Debug.Log("Num of Hits: " + hits.Length + " | Surface is: " + weldedSurface);
                     foreach (RaycastHit2D hit in hits)
                     {
                         Debug.Log(hit.collider.gameObject);
                         if (hit.collider == weldedSurface)
                         {
                             weldSurfaceNormal = hit.normal;
-                            Debug.Log("I hit the surface, updating normal right now.");
                         }
                     }
 

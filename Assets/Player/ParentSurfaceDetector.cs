@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using FunctionLibrary;
 
 public class ParentSurfaceDetector : MonoBehaviour
 {
     [SerializeField] private BatteryController batteryController;
-    [SerializeField] private LayerMask mask;
+    [SerializeField] private LayerMask includeMask;
     private HashSet<GameObject> surfaceParents = new HashSet<GameObject>();
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -15,12 +16,13 @@ public class ParentSurfaceDetector : MonoBehaviour
             return;
         }
 
-        if (collision.gameObject.layer != LayerMask.NameToLayer("Default"))
+        if (FunctionLibraryF.IsInLayerMask(includeMask, collision.gameObject.layer))
         {
             return;
         }
 
         surfaceParents.Add(collision.gameObject);
+        
         UpdateHierarchy();
     }
     private void OnTriggerExit2D(Collider2D collision)
