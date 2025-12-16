@@ -256,7 +256,6 @@ public class BatteryController : MonoBehaviour
                     RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), weldAimDir, 1.5f, weldLayerMask);
                     foreach (RaycastHit2D hit in hits)
                     {
-                        Debug.Log(hit.collider.gameObject);
                         if (hit.collider == weldedSurface)
                         {
                             weldSurfaceNormal = hit.normal;

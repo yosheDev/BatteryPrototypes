@@ -25,6 +25,8 @@ public class SoftwareCursor : MonoBehaviour
 
     void Update()
     {
+        Vector2 lastFrameLocalPos = localPos;
+
         if (batteryController.GetParentSource() == null)
         {
             surfaceParentRotAdjust = Quaternion.identity;
@@ -92,7 +94,7 @@ public class SoftwareCursor : MonoBehaviour
         aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
         float angleFromNormal = Vector3.SignedAngle((Vector3)batteryController.weldSurfaceNormal, (Vector3)aimDir, Vector3.forward);
 
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)aimDir * 1.5f), Color.blue, .1f);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)aimDir * 1.5f), Color.blue, .1f);
 
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
@@ -127,8 +129,7 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
-                localPos -= (batteryController.mouseDelta * .02f);
-                localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+                localPos = lastFrameLocalPos;
             }  
         }
         else
