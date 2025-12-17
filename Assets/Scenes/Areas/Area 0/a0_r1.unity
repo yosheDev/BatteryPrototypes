@@ -167,6 +167,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1238861752603983975, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: _magData.charge
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_Name
       value: PosMag (1)
@@ -174,6 +178,18 @@ PrefabInstance:
     - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495114350482724548, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Color.b
+      value: 0.2689457
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495114350482724548, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Color.g
+      value: 0.2627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495114350482724548, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Color.r
+      value: 0.7137255
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1103,7 +1103,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CursorConstraint
   batteryController: {fileID: 8047242034082428540}
   parentForPos: {fileID: 5159612945940311858}
-  visObjTest: {fileID: 0}
   surfaceParentRotAdjust: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7547158745546023232
 GameObject:
@@ -1260,7 +1259,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1.27, y: 3.25}
+  m_Size: {x: 1.5, y: 3.55}
   m_Direction: 0
 --- !u!114 &2649839604640953938
 MonoBehaviour:
@@ -1275,6 +1274,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ParentSurfaceDetector
   batteryController: {fileID: 8047242034082428540}
-  mask:
+  includeMask:
     serializedVersion: 2
     m_Bits: 257

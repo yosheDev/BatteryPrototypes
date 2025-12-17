@@ -136,11 +136,6 @@ public class BatteryController : MonoBehaviour
                 transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
             }
 
-            // Rotate Software Cursor
-            //Transform cursorRotated = cursorObj.transform;
-            //cursorRotated.RotateAround(parentPivot, Vector3.forward, rotAngle);
-            softwareCursor.RotateLocalPos(parentPivot, rotAngle);
-
             parentLastPos = surfaceParent.transform.position;
             parentLastRot = surfaceParent.transform.rotation;
         }
@@ -175,8 +170,8 @@ public class BatteryController : MonoBehaviour
                 bool magCharge = false;            /// The charge of the players magnet that is clinging.
 
                 #region Get Cling Magnet Surface
-                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .5f, weldLayerMask);
-                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .5f, weldLayerMask);
+                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
+                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
 
                 // Positive
                 if (evalWeldSurface == null)
@@ -595,6 +590,7 @@ public class BatteryController : MonoBehaviour
         surfaceParent = parentObj;
         parentLastPos = surfaceParent.transform.position;
         parentLastRot = surfaceParent.transform.rotation;
+        softwareCursor.SetParentLastTransforms(parentLastPos, parentLastRot);
     }
 
     public void ClearParentSource()
