@@ -357,7 +357,6 @@ public class BatteryController : MonoBehaviour
                 for (int i = 0; i < negativeFields.Count; i++)
                 {
                     Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, velocity);
-
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
                     {
