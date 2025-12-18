@@ -119,6 +119,140 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &134158496
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1193583219}
+    m_Modifications:
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1238861752603983975, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: _magData.charge
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Name
+      value: PosMag (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495114350482724548, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Color.b
+      value: 0.2689457
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495114350482724548, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Color.g
+      value: 0.2627451
+      objectReference: {fileID: 0}
+    - target: {fileID: 6495114350482724548, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Color.r
+      value: 0.7137255
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 134158498}
+    - targetCorrespondingSourceObject: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 134158503}
+  m_SourcePrefab: {fileID: 100100000, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+--- !u!1 &134158497 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+  m_PrefabInstance: {fileID: 134158496}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &134158498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134158497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 243541cbc7ee40e428215f896ea6676a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConstantRotation
+  localRotationPivot: {x: 0, y: 0, z: 0}
+  rotationSpeed: 20
+--- !u!4 &134158502 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+  m_PrefabInstance: {fileID: 134158496}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &134158503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134158497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a08cf361938378c4fb43949a0188a4a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SplineTraversal
+  splineContainer: {fileID: 1193583218}
+  moveMethod: 1
+  speed: 0.1
+  duration: 0.1
+  curve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  endDelay: 2
+  playOnAwake: 1
+  startOffset: 0
+  startBackwards: 0
+  enableRotation: 0
 --- !u!1 &223730655
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +265,7 @@ GameObject:
   - component: {fileID: 223730659}
   - component: {fileID: 223730658}
   - component: {fileID: 223730657}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositivePointReal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -373,7 +507,7 @@ GameObject:
   - component: {fileID: 283552974}
   - component: {fileID: 283552973}
   - component: {fileID: 283552972}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositiveFloor (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -671,11 +805,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1096612667706407265, guid: 410e4d3d41092eb41b267c93fa8453f7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.68
+      value: -12.92
       objectReference: {fileID: 0}
     - target: {fileID: 1096612667706407265, guid: 410e4d3d41092eb41b267c93fa8453f7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.83
+      value: 8.31
       objectReference: {fileID: 0}
     - target: {fileID: 1096612667706407265, guid: 410e4d3d41092eb41b267c93fa8453f7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1327,7 +1461,7 @@ GameObject:
   - component: {fileID: 582015263}
   - component: {fileID: 582015262}
   - component: {fileID: 582015261}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NegativeFloor (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1486,7 +1620,7 @@ GameObject:
   - component: {fileID: 586361204}
   - component: {fileID: 586361203}
   - component: {fileID: 586361202}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositiveFloor (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1645,7 +1779,7 @@ GameObject:
   - component: {fileID: 590427578}
   - component: {fileID: 590427577}
   - component: {fileID: 590427576}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositivePointReal (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1878,7 +2012,7 @@ GameObject:
   - component: {fileID: 651995155}
   - component: {fileID: 651995154}
   - component: {fileID: 651995153}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositiveFloor (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2213,7 +2347,7 @@ GameObject:
   - component: {fileID: 743577911}
   - component: {fileID: 743577910}
   - component: {fileID: 743577909}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NegativeFloor (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2929,6 +3063,139 @@ Transform:
   - {fileID: 1950942946}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1193583217
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1193583219}
+  - component: {fileID: 1193583218}
+  m_Layer: 0
+  m_Name: Spline (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1193583218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193583217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dab5c7d4c32e743048dfca98e2d5914f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Splines::UnityEngine.Splines.SplineContainer
+  m_Spline:
+    m_EditModeType: 1
+    m_Knots: []
+    m_MetaData: []
+    m_Closed: 0
+    m_IntData:
+      m_Data: []
+    m_FloatData:
+      m_Data: []
+    m_Float4Data:
+      m_Data: []
+    m_ObjectData:
+      m_Data: []
+  m_Splines:
+  - m_EditModeType: 1
+    m_Knots:
+    - Position:
+        x: 0
+        y: 0
+        z: 0
+      TangentIn:
+        x: 0
+        y: 0
+        z: -9.062078
+      TangentOut:
+        x: 0
+        y: 0
+        z: 9.062078
+      Rotation:
+        value:
+          x: -0.5913742
+          y: 0.3876552
+          z: -0.3876552
+          w: 0.5913742
+    - Position:
+        x: 9.888782
+        y: 3.157762
+        z: 0
+      TangentIn:
+        x: -0
+        y: -0
+        z: -2.8386798
+      TangentOut:
+        x: 0
+        y: 0
+        z: 2.3057907
+      Rotation:
+        value:
+          x: -0.47286838
+          y: 0.52573323
+          z: -0.52573323
+          w: 0.47286838
+    - Position:
+        x: 15.83036
+        y: -0.24929714
+        z: 0
+      TangentIn:
+        x: -0
+        y: -0
+        z: -0.6849117
+      TangentOut:
+        x: 0
+        y: 0
+        z: 0.6849117
+      Rotation:
+        value:
+          x: -0.3544556
+          y: 0.6118507
+          z: -0.6118507
+          w: 0.3544556
+    m_MetaData:
+    - Mode: 2
+      Tension: 0.5
+    - Mode: 0
+      Tension: 0.5
+    - Mode: 0
+      Tension: 0.5
+    m_Closed: 0
+    m_IntData:
+      m_Data: []
+    m_FloatData:
+      m_Data: []
+    m_Float4Data:
+      m_Data: []
+    m_ObjectData:
+      m_Data: []
+  m_Knots:
+    m_KnotsLink: []
+--- !u!4 &1193583219
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1193583217}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -14.129161, y: 3.292645, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 134158502}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1228918378
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3292,7 +3559,7 @@ GameObject:
   - component: {fileID: 1424468682}
   - component: {fileID: 1424468681}
   - component: {fileID: 1424468680}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositiveFloor (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3544,7 +3811,7 @@ GameObject:
   - component: {fileID: 1603071054}
   - component: {fileID: 1603071053}
   - component: {fileID: 1603071052}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositivePointReal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3786,7 +4053,7 @@ GameObject:
   - component: {fileID: 1703409227}
   - component: {fileID: 1703409226}
   - component: {fileID: 1703409225}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NegativeFloor (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4122,6 +4389,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PosMag
       objectReference: {fileID: 0}
+    - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4429,7 +4700,7 @@ GameObject:
   - component: {fileID: 1950942949}
   - component: {fileID: 1950942948}
   - component: {fileID: 1950942947}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PositiveFloor (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5013,7 +5284,7 @@ GameObject:
   - component: {fileID: 2053518099}
   - component: {fileID: 2053518098}
   - component: {fileID: 2053518097}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NegativeFloor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5265,7 +5536,7 @@ GameObject:
   - component: {fileID: 2095291401}
   - component: {fileID: 2095291400}
   - component: {fileID: 2095291399}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NegativeFloor (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5514,3 +5785,4 @@ SceneRoots:
   - {fileID: 1228918378}
   - {fileID: 379420564}
   - {fileID: 1868821024}
+  - {fileID: 1193583219}
