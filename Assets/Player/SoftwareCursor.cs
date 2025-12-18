@@ -132,6 +132,7 @@ public class SoftwareCursor : MonoBehaviour
             else
             {
                 // TO DO: This needs to get the correct position, not just set to lastFrameLocalPos. Reason is because it needs to be compatable with rotating stuff. (wait to do this until rot stuff works in case the issue is resolved through that.)
+                lastFrameLocalPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * lastFrameLocalPos;
                 localPos = lastFrameLocalPos;
             }  
         }
