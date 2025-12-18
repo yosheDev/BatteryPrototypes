@@ -6,7 +6,6 @@ using Unity.Mathematics;
 using System.Linq;
 using Magnet;
 using FunctionLibrary;
-using UnityEngine.Animations;
 
 public class BatteryController : MonoBehaviour
 {
@@ -24,6 +23,7 @@ public class BatteryController : MonoBehaviour
     private SoftwareCursor softwareCursor;
     public MagneticSurface positiveMag;
     public MagneticSurface negativeMag;
+    public GameObject rotationIntermediary;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
@@ -132,8 +132,10 @@ public class BatteryController : MonoBehaviour
             }
             else
             {
+                // This works, but modifies transforms directly which causes rigidbody operations to fail.
                 transform.position += surfaceParentPosDelta;
                 transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
+                Physics2D.SyncTransforms(); /// Necessary.
             }
 
             parentLastPos = surfaceParent.transform.position;
@@ -301,7 +303,7 @@ public class BatteryController : MonoBehaviour
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
                 //adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-
+                
                 //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
                 intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                 rb.MoveRotation(intermediateRot);
@@ -379,10 +381,10 @@ public class BatteryController : MonoBehaviour
                 float angularMultiplier = 1f;//FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
 
                 rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
-                Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + combinedPositiveForces);
+                Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
 
                 rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
-                Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + combinedNegativeForces);
+                Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
 
             }
             #endregion
