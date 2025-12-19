@@ -24,7 +24,6 @@ public class BatteryController : MonoBehaviour
     private SoftwareCursor softwareCursor;
     public MagneticSurface positiveMag;
     public MagneticSurface negativeMag;
-    public GameObject rotationIntermediary;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
@@ -164,7 +163,7 @@ public class BatteryController : MonoBehaviour
         // If not in a room transition.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
         {
-            #region Weld To Surface / Handle Weld Input
+            #region Weld To Surface / Update Weld Surface Data
             // If Weld is inputted.
             if (weldInput)
             {
@@ -240,7 +239,7 @@ public class BatteryController : MonoBehaviour
                 if (evalWeldSurface != null)
                 {
                     // Update Weld Vectors to match.
-                    /// (Somewhat expensive, but can't be avoided as this needs done every frame to account for rotating/translating parent surfaces.)
+                    /// (Somewhat expensive, but can't be avoided as this needs done every frame to account for rotating/translating parent surfaces as well as sudden changes to level state.)
                     weldedSurface = evalWeldSurface;
                     playerWeldMag = (magCharge ? positiveMag : negativeMag);
                     Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
@@ -278,10 +277,11 @@ public class BatteryController : MonoBehaviour
             if (weldState == WeldState.None)
             {
                 // If on a neutral surface, use rigidbody for foddian movement or walk around.
-                if (neutralDetector.neutralDetected)//positiveMag.affectFields.Count + negativeMag.affectFields.Count <= 0 && hits.Length > 0)
+                if (neutralDetector.neutralDetected)
                 {
                     intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
+
                     if (velocity > 10f)
                     {
                         rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
@@ -298,10 +298,8 @@ public class BatteryController : MonoBehaviour
             else if (weldState == WeldState.Welded)
             {
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                //adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
                 
-                //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
                 intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                 rb.MoveRotation(intermediateRot);
 
@@ -310,23 +308,21 @@ public class BatteryController : MonoBehaviour
             }
             else if (weldState == WeldState.LaunchAim)
             {
+                // Okay still a few bugs left. Just the teleport nonsense that happens when launch aim is in Free Range mode.
+
+                Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, (playerWeldMag == positiveMag ? -1f * weldAimDir : weldAimDir));
+
+                ////Physics2D.SyncTransforms();
+                intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                rb.MoveRotation(intermediateRot);
+
+
                 scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                
+                scalePivot.transform.rotation = intermediateRot;
+
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
-
-                // Breaks some shit.
-                //Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                //Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-
-                //intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-                //rb.MoveRotation(intermediateRot);
-
-                //scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                //scalePivot.transform.rotation = intermediateRot;
-
-                //weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
-                //weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
             }
             #endregion
 
@@ -547,7 +543,6 @@ public class BatteryController : MonoBehaviour
             case WeldState.Welded:
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(playerWeldMag.gameObject);
                 Vector2 adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
-                //float angleFromSurfNormal = (float)System.Math.Round(Mathf.Atan2(weldSurfaceNormal.y, weldSurfaceNormal.x) - Mathf.Atan2(adjustedWeldAimDir.y, adjustedWeldAimDir.x), 2);
                 float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, -playerWeldMag.transform.up, Vector3.forward);
 
                 // If weld is outside of constraint range, start coroutine to correct it.
@@ -563,12 +558,12 @@ public class BatteryController : MonoBehaviour
                 weldBlob.SetActive(true);
                 break;
             case WeldState.LaunchAim:
-                rotationFactor = 0f;
+                //rotationFactor = 0f;
 
                 // Parent player to squash stretch pivot.
+                softwareCursor.LaunchAimStarted();
                 UpdateScalePivotTransforms();
                 gameObject.transform.parent = scalePivot.transform;
-                softwareCursor.LaunchAimStarted();
 
                 break;
             default:
@@ -605,7 +600,12 @@ public class BatteryController : MonoBehaviour
         if (playerWeldMag != null)
         {
             scalePivot.transform.position = playerWeldMag.transform.position;
-            scalePivot.transform.rotation = playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f);
+
+            Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+            Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+
+            intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+            scalePivot.transform.rotation = intermediateRot;
             Physics2D.SyncTransforms();
         }
     }

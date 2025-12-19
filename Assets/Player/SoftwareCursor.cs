@@ -27,8 +27,6 @@ public class SoftwareCursor : MonoBehaviour
     private Quaternion weldInitialQuat;
     private Quaternion targetQuat;
     private float correctWeldAlpha = 0f;
-    public Quaternion surfaceParentRotAdjust = Quaternion.identity;
-    private float cursorDistance = 2f;
     bool isReleasing = false;
 
     void Update()
@@ -123,7 +121,6 @@ public class SoftwareCursor : MonoBehaviour
                 transform.position = worldPos;
             }
 
-            cursorDistance = Vector2.Distance((Vector2)parentForPos.transform.position, (Vector2)transform.position);
             parentLastPos = parentForPos.transform.position;
             return;
         }
@@ -152,7 +149,6 @@ public class SoftwareCursor : MonoBehaviour
         //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)aimDir * 1.5f), Color.blue, .1f);
         //Debug.DrawLine(parentForPos.transform.position - new Vector3(-.2f, 0f, 0f), parentForPos.transform.position - new Vector3(.2f, 0f, 0f), Color.red, .1f);
         //Debug.DrawLine(parentForPos.transform.position - new Vector3(0f, -.2f, 0f), parentForPos.transform.position - new Vector3(0f, .2f, 0f), Color.red, .1f);
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * cursorDistance), Color.orange, .1f);
 
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
@@ -205,7 +201,6 @@ public class SoftwareCursor : MonoBehaviour
         #endregion
 
         parentLastPos = parentForPos.transform.position;
-        cursorDistance = Vector2.Distance((Vector2)parentForPos.transform.position, (Vector2)transform.position);
     }
 
     // Custom ClampMagnitude that includes min and max both.
@@ -231,7 +226,7 @@ public class SoftwareCursor : MonoBehaviour
         // Releasing : Winding Up
         float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
 
-        return Mathf.Lerp(mult, .5f, sideInputAlpha);
+        return Mathf.Lerp(mult, (parentForPos == batteryController.positiveMag) ? .6f : .5f, sideInputAlpha); /// Positive mag has more because its further out, thus moves slower when at same speed.
     }
 
     public float GetLaunchAlpha()
@@ -320,6 +315,7 @@ public class SoftwareCursor : MonoBehaviour
                 InvertLocalPos();
             }
             localPos = (parentForPos == batteryController.positiveMag.gameObject) ? ClampMagnitudeRange(localPos, 1f + playerSpriteLength, 1f + playerSpriteLength) : ClampMagnitudeRange(localPos, 1f, 1f);
+            transform.position = (Vector2)parentForPos.transform.position + localPos;
         }
     }
 }
