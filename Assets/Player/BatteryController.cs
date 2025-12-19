@@ -272,14 +272,6 @@ public class BatteryController : MonoBehaviour
                 }
                 #endregion
             }
-            else
-            {
-                if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
-                {
-                    softwareCursor.InvertLocalPos();
-                }
-                ChangeWeldState(WeldState.None);
-            }
             #endregion
 
             #region Weld State Update Functionality
@@ -453,6 +445,15 @@ public class BatteryController : MonoBehaviour
 
         else
         {
+            if (context.canceled)
+            {
+                if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
+                {
+                    softwareCursor.InvertLocalPos();
+                }
+                ChangeWeldState(WeldState.None);
+            }
+
             if (playerInput.currentControlScheme.Equals("Gamepad"))
             {
 
@@ -461,7 +462,7 @@ public class BatteryController : MonoBehaviour
             {
                 weldInput = (context.ReadValue<float>() == 1 ? true : false);
             }
-        } 
+        }
     }
 
     public void InitiateLaunch(InputAction.CallbackContext context)
