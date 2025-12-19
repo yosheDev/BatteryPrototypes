@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using System.Linq;
 using Magnet;
 using FunctionLibrary;
+using UnityEditor.Experimental.GraphView;
 
 public class BatteryController : MonoBehaviour
 {
@@ -273,6 +274,10 @@ public class BatteryController : MonoBehaviour
             }
             else
             {
+                if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
+                {
+                    softwareCursor.InvertLocalPos();
+                }
                 ChangeWeldState(WeldState.None);
             }
             #endregion
@@ -317,6 +322,19 @@ public class BatteryController : MonoBehaviour
                 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                // Breaks some shit.
+                //Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                //Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+
+                //intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                //rb.MoveRotation(intermediateRot);
+
+                //scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                //scalePivot.transform.rotation = intermediateRot;
+
+                //weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                //weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
             }
             #endregion
 
@@ -445,7 +463,58 @@ public class BatteryController : MonoBehaviour
             }
         } 
     }
-    
+
+    public void InitiateLaunch(InputAction.CallbackContext context)
+    {
+        if (context.canceled && weldState == WeldState.LaunchAim)
+        {
+            LaunchFromWeld();
+        }
+        else
+        {
+            if (!context.started && !context.canceled)
+            {
+                if (playerInput.currentControlScheme.Equals("Gamepad"))
+                {
+
+                }
+                else
+                {
+                    if (weldInput)
+                    {
+                        launchInput = (context.ReadValue<float>() == 1 ? true : false);
+                        ChangeWeldState(WeldState.LaunchAim);
+                    }
+                    else
+                    {
+                        launchInput = false;
+                    }
+                }
+            }
+        }
+    }
+    public void CancelLaunch(InputAction.CallbackContext context)
+    {
+        if(weldState == WeldState.LaunchAim)
+        {
+            //Debug.Log("Launch is cancelled.");
+            if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
+            {
+                softwareCursor.InvertLocalPos();
+            }
+
+            if (weldInput)
+            {
+                ChangeWeldState(WeldState.Welded);
+            }
+            else
+            {
+                ChangeWeldState(WeldState.None);
+            }
+        }
+        
+    }
+
     #endregion
     public void ChangeWeldState(WeldState newState)
     {
@@ -497,8 +566,9 @@ public class BatteryController : MonoBehaviour
 
                 // Parent player to squash stretch pivot.
                 UpdateScalePivotTransforms();
-
                 gameObject.transform.parent = scalePivot.transform;
+                softwareCursor.LaunchAimStarted();
+
                 break;
             default:
                 rotationFactor = 30f;
@@ -513,38 +583,14 @@ public class BatteryController : MonoBehaviour
         lockWeldState = false;
         yield break;
     }
-    public void InitiateLaunch(InputAction.CallbackContext context)
-    {
-        if (context.canceled && weldState == WeldState.LaunchAim)
-        {
-            LaunchFromWeld();
-        }
-        else
-        {
-            if (!context.started && !context.canceled)
-            {
-                if (playerInput.currentControlScheme.Equals("Gamepad"))
-                {
-
-                }
-                else
-                {
-                    if (weldInput)
-                    {
-                        launchInput = (context.ReadValue<float>() == 1 ? true : false);
-                        ChangeWeldState(WeldState.LaunchAim);
-                    }
-                    else
-                    {
-                        launchInput = false;
-                    }
-                }
-            }
-        } 
-    }
 
     public void LaunchFromWeld()
     {
+        if (softwareCursor.launchAimControlMethod == SoftwareCursor.LaunchAimControlMethods.FreeRange && playerWeldMag == positiveMag)
+        {
+            softwareCursor.InvertLocalPos();
+        }
+            
         ChangeWeldState(WeldState.None);
         //weldInput = false; /// Flush input (uncommenting means players will need to repress space to weld to another surface after launch.)
         StartCoroutine(LockWeldState(.2f));
@@ -559,12 +605,8 @@ public class BatteryController : MonoBehaviour
         {
             scalePivot.transform.position = playerWeldMag.transform.position;
             scalePivot.transform.rotation = playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f);
+            Physics2D.SyncTransforms();
         }
-    }
-    public void CancelLaunch(InputAction.CallbackContext context)
-    {
-        Debug.Log("Launch is cancelled.");
-        ChangeWeldState(WeldState.Welded);
     }
 
     public void ResetUponNewRoom(Vector3 startPos)
