@@ -463,9 +463,18 @@ public class BatteryController : MonoBehaviour
 
     public void InitiateLaunch(InputAction.CallbackContext context)
     {
+        launchInput = (context.ReadValue<float>() == 1 ? true : false);
+
         if (context.canceled && weldState == WeldState.LaunchAim)
         {
-            LaunchFromWeld();
+            if (softwareCursor.GetLaunchAlpha() <= .1f)
+            {
+                CancelLaunch();
+            }
+            else
+            {
+                LaunchFromWeld();
+            }
         }
         else
         {
@@ -477,14 +486,9 @@ public class BatteryController : MonoBehaviour
                 }
                 else
                 {
-                    if (weldInput)
+                    if (weldState == WeldState.Welded)
                     {
-                        launchInput = (context.ReadValue<float>() == 1 ? true : false);
                         ChangeWeldState(WeldState.LaunchAim);
-                    }
-                    else
-                    {
-                        launchInput = false;
                     }
                 }
             }
@@ -492,7 +496,12 @@ public class BatteryController : MonoBehaviour
     }
     public void CancelLaunch(InputAction.CallbackContext context)
     {
-        if(weldState == WeldState.LaunchAim)
+        CancelLaunch();  
+    }
+
+    private void CancelLaunch()
+    {
+        if (weldState == WeldState.LaunchAim)
         {
             //Debug.Log("Launch is cancelled.");
             if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
@@ -509,7 +518,6 @@ public class BatteryController : MonoBehaviour
                 ChangeWeldState(WeldState.None);
             }
         }
-        
     }
 
     #endregion
@@ -601,11 +609,16 @@ public class BatteryController : MonoBehaviour
         {
             scalePivot.transform.position = playerWeldMag.transform.position;
 
-            Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-            Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+            /// Leaving this here as a warning NOT to use the same code that is in FixedUpdate to update orientation here. The manual rotation set below works way better for here, the other breaks stuff.
+            #region Do Not Use!
+            //Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+            //Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
-            intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-            scalePivot.transform.rotation = intermediateRot;
+            //intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+            //scalePivot.transform.rotation = intermediateRot;
+            #endregion
+
+            scalePivot.transform.rotation = (playerWeldMag == negativeMag ? playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f) : playerWeldMag.transform.rotation);
             Physics2D.SyncTransforms();
         }
     }
