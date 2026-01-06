@@ -93,5 +93,10 @@ public static class SceneManagement
         int buildIndex = SceneUtility.GetBuildIndexByScenePath(GetSceneFormattedName(level));
         return (buildIndex != -1);
     }
+
+    public static string GetAreaDisplayName(Areas area)
+    {
+        return "Test";
+    }
     #endregion
 }
