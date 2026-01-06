@@ -61,6 +61,24 @@ public class AreaManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.sceneUnloaded += OnSceneUnloaded;
 
+        // Check if another scene is already open (for editor use only)
+        if (Application.isEditor)
+        {
+            if (SceneManager.sceneCount > 1)
+            {
+                /// Was going to make it so if no area scene is loaded, it will load a default one.
+                //for (int i = 0; i < SceneManager.sceneCount; i++)
+                //{
+                //    if (SceneManager.GetSceneByName)
+                //}
+                                   
+                Debug.LogWarning("Warning: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
+                SetTransitionState(AreaTransitionState.Spawn);
+                return;
+            }
+            
+        }
+
         // Officially start the level.
         Level startLevel = new Level(area, 1);
         SceneManagement.LoadScene(startLevel);
@@ -148,7 +166,16 @@ public class AreaManager : MonoBehaviour
         {
             case AreaTransitionState.Spawn:
                 GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-                playerController.ResetUponNewRoom(playerStart.transform.position);
+                if (playerStart == null)
+                {
+                    Debug.LogError("ERROR: No playerStart is placed in the scene " + area + "_" + roomNum + "! Defaulting to origin.");
+                    playerController.ResetUponNewRoom(new Vector3(0f, 0f, 0f));
+                }
+                else
+                {
+                    playerController.ResetUponNewRoom(playerStart.transform.position);
+                }
+                    
                 break;
             case AreaTransitionState.None:
                 playerRB.gravityScale = playerBaseGravity;
