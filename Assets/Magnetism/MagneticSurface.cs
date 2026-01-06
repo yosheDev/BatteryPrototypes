@@ -1,5 +1,6 @@
 using UnityEngine;
 using FunctionLibrary;
+using System.Collections;
 using Magnet;
 
 // Magnetic Point is derived from MagnetComponentBase. It uses a single point as reference for the field(currently, might change?)
@@ -18,7 +19,6 @@ public class MagneticSurface : MagnetComponentBase
     public float _fieldAttractDistance = 2f;
     [Tooltip("Exponential attenuation factor for forces. Stronger as it gets closer to the surface of the magnet.")]
     public float _attenuation = 2f;
-
     
     private void OnValidate()
     {

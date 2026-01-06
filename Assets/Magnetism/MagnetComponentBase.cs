@@ -15,11 +15,23 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
     [HideInInspector]public HashSet<MagnetComponentBase> affectFields = new HashSet<MagnetComponentBase>();
     //=======================================================================================================================
 
-    // ===[ IMagnetic Functions ]===========================
+    #region IMagnetic Functions
     public MagnetData GetMagData()
     {
         return GetMagDataOverride();
     }
+    public void SetMagData(MagnetData newMagData)
+    {
+        _magData = newMagData;
+    }
+
+    public void ReversePolarity()
+    {
+        MagnetData newMagData = _magData;
+        newMagData.charge *= -1f;
+        _magData = newMagData;
+    }
+
     public abstract MagnetData GetMagDataOverride();
 
     public Vector2 GetNearestPoint(Vector2 posWS) /// Returns nearest point on surface of magnets area. Used to get proper distance value that is not always reliant on pivot point.
@@ -40,4 +52,5 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
         return GetAppliedForceOverride(magData, posWS, radius, velocity);
     }
     public abstract Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, float velocity = 0f);
+    #endregion
 }
