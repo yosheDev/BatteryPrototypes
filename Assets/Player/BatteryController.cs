@@ -81,7 +81,7 @@ public class BatteryController : MonoBehaviour
     // =============================================================================================================================
     #endregion
 
-    void Start()
+    private void Awake()
     {
         #region Initialize References
         // Cursor
@@ -97,7 +97,9 @@ public class BatteryController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
         #endregion
-
+    }
+    void Start()
+    {
         #region Initialize Variables
         // Initialize
         startPos = transform.position;
