@@ -675,6 +675,8 @@ GameObject:
   - component: {fileID: 6563665004846503657}
   - component: {fileID: 7553798359228777383}
   - component: {fileID: 8047242034082428540}
+  - component: {fileID: 381572488973111425}
+  - component: {fileID: 1550937807734155731}
   m_Layer: 3
   m_Name: PlayerSprite
   m_TagString: Player
@@ -991,6 +993,7 @@ MonoBehaviour:
     m_Bits: 256
   launchMaxExponent: 1.13
   launchBaseConstant: 500
+  battery: {fileID: 381572488973111425}
   cursorPosWS: {x: 0, y: 0}
   mouseDelta: {x: 0, y: 0}
   weldSurfaceNormal: {x: 0, y: 0}
@@ -998,6 +1001,33 @@ MonoBehaviour:
   weldState: 0
   velocity: 0
   angularVelocity: 0
+--- !u!114 &381572488973111425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159612945940311858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a7199ab5bc9e9e4fadfd5daad5fb69c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Battery
+  initialPercent: 100
+  percent: 100
+--- !u!114 &1550937807734155731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159612945940311858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f38b70f799be1a04e95318ddda898afc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
+  batterySlider: {fileID: 0}
 --- !u!1 &5928797191248678415
 GameObject:
   m_ObjectHideFlags: 0
