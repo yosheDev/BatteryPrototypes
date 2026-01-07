@@ -9,15 +9,10 @@ public class PlayerHUD : MonoBehaviour
     {
         playerBattery.onPercentChanged += UpdateSlider;
     }
-    private void Start()
-    {
-        Debug.Log(batterySlider);
-        Debug.Log(playerBattery);
-    }
+
     // Listen for player battery value change.
     private void UpdateSlider()
     {
-        Debug.Log("Update Slider");
         batterySlider.value = (int)playerBattery.GetPercent();
     }
 }
