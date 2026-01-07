@@ -1,5 +1,7 @@
 #nullable enable
+using System.Collections.Generic;
 using System.Text;
+using Unity.Android.Gradle;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,6 +29,7 @@ public struct Level
 #endregion
 public static class SceneManagement
 {
+    public static Dictionary<Areas, string> areaDisplayNameData = new Dictionary<Areas, string>();
   
     #region Load / Unload Scene
     public static void LoadScene(Level level, string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
@@ -60,9 +63,15 @@ public static class SceneManagement
 
         SceneManager.UnloadSceneAsync(roomSceneName);
     }
+
+    public static void UnloadSceneAsync(string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
+    {
+        SceneManager.UnloadSceneAsync(overrideString);
+    }
     #endregion
 
     #region Utility
+    [Tooltip("Gets the scene name for an area or room scene.")]
     public static string GetSceneFormattedName(Level level)
     {
         // This function gets the scene name for an area / room scene. If an override string is passed, this function is not called as that will be used instead.
@@ -94,9 +103,54 @@ public static class SceneManagement
         return (buildIndex != -1);
     }
 
+    private static string SceneNameFromBuildIndex(int buildIndex)
+    {
+        string path = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+        int slash = path.LastIndexOf('/');
+        string name = path.Substring(slash + 1);
+        int dot = name.LastIndexOf('.');
+        return name.Substring(0, dot);
+    }
+
+    #region Area Display Name
     public static string GetAreaDisplayName(Areas area)
     {
-        return "Test";
+        /// If still need to retrieve the data.
+        if (areaDisplayNameData.Count <= 0)
+        {
+            ParseAreaDisplayNameDictionary();
+        }
+
+        string output = "";
+        areaDisplayNameData.TryGetValue(area, out output);
+        return output;
     }
+
+    ///  Move this to its own class at some point? Maybe not?
+    private static void ParseAreaDisplayNameDictionary(bool skipHeader = true)
+    {
+        TextAsset csv = Resources.Load<TextAsset>("areaDisplayNames");
+
+        // Split the csv into lines(rows).
+        string[] lines = csv.text.Split('\n');
+
+        // Loop through lines(rows) to seperate columns based on commas. (starting at 1 to skip header)
+        for (int i = skipHeader ? 1 : 0; i < lines.Length; i++)
+        {
+            if (string.IsNullOrWhiteSpace(lines[i])) continue;
+
+            // Split line into columns
+            string[] columns = lines[i].Split(',');
+
+            // Assuming CSV structure: Build Index, Name(English), 
+            int buildIndex = int.Parse(columns[0]);
+            string displayName = columns[1];
+
+            areaDisplayNameData.Add((Areas)areaDisplayNameData.Count, displayName);
+            Debug.Log("Loaded: " + (Areas)areaDisplayNameData.Count + " -> " + displayName);
+        }
+    }
+    #endregion
+
     #endregion
 }

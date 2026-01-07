@@ -62,22 +62,22 @@ public class AreaManager : MonoBehaviour
         SceneManager.sceneUnloaded += OnSceneUnloaded;
 
         // Check if another scene is already open (for editor use only)
-        if (Application.isEditor)
-        {
-            if (SceneManager.sceneCount > 1)
-            {
-                /// Was going to make it so if no area scene is loaded, it will load a default one.
-                //for (int i = 0; i < SceneManager.sceneCount; i++)
-                //{
-                //    if (SceneManager.GetSceneByName)
-                //}
+        //if (Application.isEditor)
+        //{
+        //    if (SceneManager.sceneCount > 1)
+        //    {
+        //        /// Was going to make it so if no area scene is loaded, it will load a default one.
+        //        //for (int i = 0; i < SceneManager.sceneCount; i++)
+        //        //{
+        //        //    if (SceneManager.GetSceneByName)
+        //        //}
                                    
-                Debug.LogWarning("Warning: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
-                SetTransitionState(AreaTransitionState.Spawn);
-                return;
-            }
+        //        Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
+        //        SetTransitionState(AreaTransitionState.Spawn);
+        //        return;
+        //    }
             
-        }
+        //}
 
         // Officially start the level.
         Level startLevel = new Level(area, 1);

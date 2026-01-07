@@ -257,7 +257,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7083823803322216054}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3249037078874715208}
+        m_TargetAssemblyTypeName: AreaSelectButton, Assembly-CSharp
+        m_MethodName: EnterArea
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3249037078874715208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,6 +282,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72ba4819a71dbee4b86058c62a206d80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AreaSelectButton
-  areaScene:
-    m_Handle: 0
+  area: 0
   _text: {fileID: 3370187418167068293}

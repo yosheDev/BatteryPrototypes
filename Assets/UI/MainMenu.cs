@@ -7,25 +7,20 @@ public class MainMenu : MonoBehaviour
 
     private bool newGame = false;
 
-    private void Awake()
-    {
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
-    }
     //  TO DO: Pretty much all of this.
     public void NewGame()
     {
         newGame = true;
+        SceneManager.sceneLoaded += UnloadMainMenu;
+        SceneManager.LoadScene("AreaSelection"); 
+    }
+
+    private void UnloadMainMenu(Scene scene, LoadSceneMode mode)
+    {
+        SceneManager.sceneLoaded -= UnloadMainMenu;
         SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
     }
 
-    void OnSceneUnloaded(Scene scene)
-    {
-        //if (newGame)
-        //{
-            Level level = new Level(Areas.Area0, 1);
-            SceneManagement.LoadScene(level);
-        //}
-    }
     public void LoadGame()
     {
 
