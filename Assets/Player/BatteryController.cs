@@ -36,6 +36,8 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private float launchMaxExponent = 1.13f;
     [SerializeField] private float launchBaseConstant = 500f;
 
+    // Battery
+    [HideInInspector] public Battery battery;
     //==============================================================================================================================
     #region Private
     // Surface Parent
@@ -95,6 +97,7 @@ public class BatteryController : MonoBehaviour
         surfaceCol = GetComponent<CapsuleCollider2D>();
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody2D>();
+        battery = GetComponent<Battery>();
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
         #endregion
     }
@@ -475,7 +478,15 @@ public class BatteryController : MonoBehaviour
             }
             else
             {
-                LaunchFromWeld();
+                if (battery.GetPercent() >= 25)
+                {
+                    LaunchFromWeld();
+                }
+                else
+                {
+                    Debug.Log("Not enough battery!");
+                    CancelLaunch();
+                }
             }
         }
         else
@@ -601,8 +612,12 @@ public class BatteryController : MonoBehaviour
         //weldInput = false; /// Flush input (uncommenting means players will need to repress space to weld to another surface after launch.)
         StartCoroutine(LockWeldState(.2f));
 
+        battery.SubtractPercent(FunctionLibraryF.MapRangeClamped(.25f, 1f, 5f, 25f, softwareCursor.GetLaunchAlpha()));
+
         float launchForce = Mathf.Pow(launchBaseConstant, FunctionLibraryF.MapRangeClamped(0f, 1f, 1f, launchMaxExponent, softwareCursor.GetLaunchAlpha()));
         rb.AddForceAtPosition(-playerWeldMag.transform.up * launchForce, playerWeldMag.transform.position);
+
+        
     }
 
     public void UpdateScalePivotTransforms()

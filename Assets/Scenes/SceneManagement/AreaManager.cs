@@ -71,12 +71,12 @@ public class AreaManager : MonoBehaviour
                 //{
                 //    if (SceneManager.GetSceneByName)
                 //}
-                                   
-                Debug.LogWarning("Warning: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
+
+                Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
                 SetTransitionState(AreaTransitionState.Spawn);
                 return;
             }
-            
+
         }
 
         // Officially start the level.
