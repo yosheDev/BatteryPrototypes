@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+///  NOTE: This should never have its collider have callbacks set for the Default channel. It is causing volume to sometimes block the player for some reason upon intial collisions. Just make new layer for other batteries.
+/// </summary>
 public class AffectBatteryVolume : MonoBehaviour
 {
     private enum VolumeType

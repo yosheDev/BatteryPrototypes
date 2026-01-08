@@ -10,7 +10,7 @@ public class ChargeParticleCollision : ParticleCollision
         _particleSystem.trigger.AddCollider(playerCol);
     }
 
-    protected override void ParticleCollected(Component otherCollider) /// Override this event in children.
+    protected override void ParticleCollected(Component otherCollider)
     {
         if (otherCollider.gameObject.GetComponent<Battery>() != null)
         {
