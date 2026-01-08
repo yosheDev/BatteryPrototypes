@@ -29,18 +29,18 @@ public class ParticleCollision : MonoBehaviour
 
             if (colliderData.GetCollider(i, 0) != null)
             {
-                ParticleCollected(colliderData.GetCollider(i, 0));
+                ParticleCollected(colliderData.GetCollider(i, 0), p.startSize);
             }
             else
             {
-                ParticleCollected(null);
+                ParticleCollected(null, p.startSize);
             }
         }
 
         _particleSystem.SetTriggerParticles(ParticleSystemTriggerEventType.Enter, collectedParticles);
     }
 
-    protected virtual void ParticleCollected(Component otherCollider) /// Override this event in children.
+    protected virtual void ParticleCollected(Component otherCollider, float particleSize) /// Override this event in children.
     {
 
     }
