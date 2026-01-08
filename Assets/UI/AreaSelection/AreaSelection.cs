@@ -20,6 +20,9 @@ public class AreaSelection : MonoBehaviour
             newButton.GetComponent<AreaSelectButton>().Initialize(buttonArea); // TO DO: Search database for correct name from the buttonScene area it is intending to load.
             newButton.transform.SetParent(buttonParent.transform);
             newButton.transform.localScale = Vector3.one;
-        }    
+        }
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 }
