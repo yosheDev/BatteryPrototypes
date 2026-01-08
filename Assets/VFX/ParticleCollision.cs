@@ -3,8 +3,8 @@ using System.Collections.Generic;
 
 public class ParticleCollision : MonoBehaviour
 {
-    [SerializeField] ParticleSystem _particleSystem;
-    List<ParticleSystem.Particle> collectedParticles = new List<ParticleSystem.Particle>();
+    [SerializeField] protected ParticleSystem _particleSystem;
+    protected List<ParticleSystem.Particle> collectedParticles = new List<ParticleSystem.Particle>();
 
     private void Start()
     {

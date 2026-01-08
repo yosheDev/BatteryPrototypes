@@ -62,7 +62,7 @@ public class AffectBatteryVolume : MonoBehaviour
         {
             foreach (Battery battery in affectedBatteries)
             {
-                Debug.Log(battery);
+                //Debug.Log(battery);
                 Affect(battery);
             }
 

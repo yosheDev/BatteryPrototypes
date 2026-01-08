@@ -5575,8 +5575,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2069373029}
   - component: {fileID: 2069373027}
-  - component: {fileID: 2069373028}
   - component: {fileID: 2069373030}
+  - component: {fileID: 2069373028}
   m_Layer: 0
   m_Name: ChargeParticles
   m_TagString: Untagged
@@ -10411,10 +10411,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2069373026}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ad9e7bb3b5e29a4d9b3dd07049f6dd0, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d3a0270714a7a943b6415e1da7ee364, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ParticleCollision
+  m_EditorClassIdentifier: Assembly-CSharp::ChargeParticleCollision
   _particleSystem: {fileID: 2069373027}
+  chargeAmount: 2
 --- !u!1 &2083740672
 GameObject:
   m_ObjectHideFlags: 0
