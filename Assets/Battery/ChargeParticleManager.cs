@@ -17,7 +17,7 @@ public class ChargeParticleManager : MonoBehaviour
 
     // Charge Particle Settings
     [Header("Particle Global Settings")]
-    public float chargeParGlobalSize = .2f;
+    public Vector2 chargeParGlobalSizeRange = new Vector2(.2f, .3f);
 
 
     private void Start()
@@ -31,7 +31,7 @@ public class ChargeParticleManager : MonoBehaviour
                 // Set start parameters for particle system module.
                 var emitParams = new ParticleSystem.EmitParams();
                 emitParams.startColor = Color.green;
-                emitParams.startSize = chargeParGlobalSize;
+                emitParams.startSize = Random.Range(chargeParGlobalSizeRange.x, chargeParGlobalSizeRange.y);
                 emitParams.startLifetime = 999999f;
                 emitParams.position = particleLocations[i];
 

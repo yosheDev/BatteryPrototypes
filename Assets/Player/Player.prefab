@@ -492,8 +492,8 @@ ParticleSystemForceField:
   m_Enabled: 1
   m_Parameters:
     m_Shape: 0
-    m_StartRange: 0.55
-    m_EndRange: 2.19
+    m_StartRange: 0.84
+    m_EndRange: 3
     m_Length: 1.63
     m_GravityFocus: 0
     m_RotationRandomness: {x: 0, y: 0}
@@ -659,7 +659,7 @@ ParticleSystemForceField:
     m_GravityCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 2.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -818,7 +818,7 @@ ParticleSystemForceField:
     m_DragCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 50
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1109,10 +1109,10 @@ ParticleSystemForceField:
   m_Enabled: 1
   m_Parameters:
     m_Shape: 2
-    m_StartRange: 0.51
-    m_EndRange: 4
-    m_Length: 1.63
-    m_GravityFocus: 0
+    m_StartRange: 0.5
+    m_EndRange: 5.76
+    m_Length: 2.73
+    m_GravityFocus: 0.26
     m_RotationRandomness: {x: 0, y: 0}
     m_DirectionCurveX:
       serializedVersion: 2
@@ -1276,7 +1276,7 @@ ParticleSystemForceField:
     m_GravityCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 2
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1435,7 +1435,7 @@ ParticleSystemForceField:
     m_DragCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 20
       minScalar: 0
       maxCurve:
         serializedVersion: 2
