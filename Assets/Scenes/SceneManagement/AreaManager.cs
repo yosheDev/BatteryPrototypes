@@ -99,7 +99,11 @@ public class AreaManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Scene does not exist. Has it been added to the build profile?");
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            SceneManager.LoadScene("AreaSelection");
+            // Need to unload the area scene after this scene finishes loading.
+            Debug.LogError("Area cleared!");
         }
     }
 
