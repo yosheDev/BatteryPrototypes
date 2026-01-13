@@ -11,6 +11,9 @@ public class Battery : MonoBehaviour
     public delegate void OnPercentChanged();
     public event OnPercentChanged onPercentChanged;
 
+    public delegate void OnCorrode();
+    public event OnCorrode onCorrode;
+
     private void Awake()
     {
         percent = initialPercent;
@@ -74,6 +77,10 @@ public class Battery : MonoBehaviour
         SubtractPercent((byte)Mathf.RoundToInt(amount));
     }
     #endregion
+    public void Corrode()
+    {
+        onCorrode?.Invoke();
+    }
 
     #region Getters / Setters
     public void SetPercent(byte newPercent)
