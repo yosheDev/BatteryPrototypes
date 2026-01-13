@@ -110,6 +110,10 @@ public class BatteryController : MonoBehaviour
         previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
         #endregion
+
+        #region Bind Delegates
+        battery.onCorrode += Death;
+        #endregion
     }
 
     private void FixedUpdate()
@@ -654,10 +658,17 @@ public class BatteryController : MonoBehaviour
 
     public void Restart()
     {
+        // TO DO: Should this reload room completely? Need to go about resetting the state of the room.
+
         transform.position = startPos;
         rb.linearVelocity = Vector3.zero;
     }
 
+    public void Death()
+    {
+        // Will definitely need to do more stuff here of course to reset everything like battery percents and room states.
+        Restart();
+    }
     public void AddParentSource(GameObject parentObj)
     {
         // For now, just supports one parent at a time. Unsure if will ever need multiple but that will be a challenge for a different time.
