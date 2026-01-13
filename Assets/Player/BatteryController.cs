@@ -105,7 +105,7 @@ public class BatteryController : MonoBehaviour
     {
         #region Initialize Variables
         // Initialize
-        startPos = transform.position;
+        startPos = GameObject.FindGameObjectWithTag("PlayerStart").transform.position;
         previousRotation = transform.rotation;
         previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
