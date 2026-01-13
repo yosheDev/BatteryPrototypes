@@ -134,7 +134,7 @@ public class SoftwareCursor : MonoBehaviour
         if (!justWelded)
         {
             localPos += (batteryController.mouseDelta * .02f);
-            localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2f, 2f)));
+            localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2.5f, 2.5f)));
         }
         localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
 
