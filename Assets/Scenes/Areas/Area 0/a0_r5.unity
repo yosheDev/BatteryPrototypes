@@ -2921,11 +2921,11 @@ MonoBehaviour:
   _magData:
     charge: 1
     strength: 1
-    proportionConst: 1
+    attenuation: 2
   fieldCol: {fileID: 1980342720}
   surfaceCol: {fileID: 1669392798}
   _fieldAttractDistance: 2
-  _attenuation: 2
+  _attenuationModifier: 1
 --- !u!61 &1669392798
 BoxCollider2D:
   m_ObjectHideFlags: 0

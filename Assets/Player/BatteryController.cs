@@ -288,6 +288,7 @@ public class BatteryController : MonoBehaviour
                 // If on a neutral surface, use rigidbody for foddian movement or walk around.
                 if (neutralDetector.neutralDetected)
                 {
+                    //Debug.Log("Neutral is detected!");
                     intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
 
@@ -348,7 +349,7 @@ public class BatteryController : MonoBehaviour
                 List<MagnetComponentBase> positiveFields = positiveMag.affectFields.ToList();
                 for (int i = 0; i < positiveFields.Count; i++)
                 {
-                    Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, velocity);
+                    Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, rb.linearVelocity);
 
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
@@ -360,8 +361,9 @@ public class BatteryController : MonoBehaviour
                     // Will not be accounted for if pole is facing opposite direction (for game feel.)
                     if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                     {
-                        float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
-                        combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f));
+                        //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
+                        float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                        combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
                     }
                 }
                 #endregion
@@ -373,19 +375,20 @@ public class BatteryController : MonoBehaviour
                 List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
                 for (int i = 0; i < negativeFields.Count; i++)
                 {
-                    Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, velocity);
+                    Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, rb.linearVelocity);
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
                     {
-                        curForce = Vector2.zero;
+                        curForce = Vector2.zero; 
                     }
 
                     Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
                     // Will not be accounted for if pole is facing opposite direction (for game feel.)
                     if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                     {
-                        float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
-                        combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f));
+                        //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
+                        float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                        combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
                     }
                 }
                 #endregion
