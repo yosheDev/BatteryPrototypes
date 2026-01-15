@@ -104,8 +104,6 @@ public class BatteryController : MonoBehaviour
     void Start()
     {
         #region Initialize Variables
-        // Initialize
-        startPos = GameObject.FindGameObjectWithTag("PlayerStart").transform.position;
         previousRotation = transform.rotation;
         previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
@@ -647,16 +645,15 @@ public class BatteryController : MonoBehaviour
         }
     }
 
-    public void ResetUponNewRoom(Vector3 startPos)
+    public void ResetUponNewRoom(Vector3 newStartPos)
     {
+        startPos = newStartPos;
         gameObject.transform.position = startPos;
         spawnCage.SetActive(true);
         spawnCage.transform.position = gameObject.transform.position;
         rb.linearVelocity = new Vector2(0f, 0f);
         rb.gravityScale = 0f;
         rb.WakeUp();
-
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().SnapToTarget();
     }
 
     public void Restart()

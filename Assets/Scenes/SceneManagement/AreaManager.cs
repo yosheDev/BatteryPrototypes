@@ -73,7 +73,6 @@ public class AreaManager : MonoBehaviour
                 //}
 
                 Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
-                CameraManager.instance.UpdateConfinedBounds();
                 SetTransitionState(AreaTransitionState.Spawn);
                 return;
             }
@@ -96,7 +95,7 @@ public class AreaManager : MonoBehaviour
         {
             Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
             transitionState = AreaTransitionState.Loading;
-            SceneManagement.LoadScene(nextRoom); 
+            SceneManagement.LoadScene(nextRoom);
         }
         else
         {
@@ -116,6 +115,7 @@ public class AreaManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CameraManager.instance.UpdateConfinedBounds();
+        CameraManager.instance.WarpCamera();
         SetTransitionState(AreaTransitionState.Spawn);
     }
 

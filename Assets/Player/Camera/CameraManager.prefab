@@ -59,6 +59,7 @@ GameObject:
   - component: {fileID: 1868512024844167458}
   - component: {fileID: 7661599812192423692}
   - component: {fileID: 6604098778060989046}
+  - component: {fileID: 1434076638324439345}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -175,6 +176,21 @@ MonoBehaviour:
     MaxWindowSize: 14
     Padding: 2
   m_LegacyMaxWindowSize: -2
+--- !u!114 &1434076638324439345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7949647630375390744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 762a4a1e7c633684f90deab7d7bcbfbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DollyVelocity
+  zoomRange: {x: 8, y: 14}
+  zoomVelocityRange: {x: 2, y: 10}
+  zoomInterpSpeed: 0.01
 --- !u!1001 &5859717848432252805
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -225,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5206630500372007617, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: orthographic size
-      value: 28.435425
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5206630500372007617, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_CullingMask.m_Bits
@@ -247,7 +263,8 @@ PrefabInstance:
       propertyPath: zoomRange.y
       value: 14
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9105528784654806935, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
