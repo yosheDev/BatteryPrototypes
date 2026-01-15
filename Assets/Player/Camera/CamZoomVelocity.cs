@@ -6,7 +6,7 @@ public class DollyVelocity : MonoBehaviour
 {
     [SerializeField] private Vector2 zoomRange = new Vector2(8f, 14f);
     [SerializeField] private Vector2 zoomVelocityRange = new Vector2(2f, 10f);
-    [SerializeField] private float zoomInterpSpeed = .01f;
+    [SerializeField] private float zoomInterpSpeed = .05f;
 
     private BatteryController batteryController;
     private CinemachineCamera cam; /// This is the cam that this script is attached to.
@@ -24,6 +24,7 @@ public class DollyVelocity : MonoBehaviour
         {
             float zoomVelocityAlpha = FunctionLibraryF.MapRangeClamped(zoomVelocityRange.x, zoomVelocityRange.y, 0f, 1f, batteryController.velocity);
             zoom = Mathf.MoveTowards(zoom, Mathf.Lerp(zoomRange.x, zoomRange.y, zoomVelocityAlpha), zoomInterpSpeed);
+            Debug.Log(zoom);
             CameraManager.instance.SetCameraDistance(zoom);
         }
     }

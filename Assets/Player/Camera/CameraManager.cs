@@ -64,6 +64,8 @@ public class CameraManager : MonoBehaviour
     public void SetCameraDistance(float camDistance)
     {
         _positionComposer.CameraDistance = camDistance;
+        _currentCamera.Lens.OrthographicSize = camDistance;
+        _confiner.InvalidateLensCache(); /// Expensive but this will not work without it.
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

@@ -508,6 +508,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1434076638324439345, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: zoomVelocityRange.x
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1806027618725748036, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: orthographic size
       value: 10
