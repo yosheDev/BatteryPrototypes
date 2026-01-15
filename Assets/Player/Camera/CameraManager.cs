@@ -4,6 +4,7 @@ using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager instance;
@@ -12,20 +13,27 @@ public class CameraManager : MonoBehaviour
     private CinemachineCamera _currentCamera;
 
     private CinemachinePositionComposer _positionComposer;
+    private CinemachineTargetGroup _targetGroup;
     private CinemachineConfiner2D _confiner;
     [SerializeField] private Collider2D _camBoundary;
 
+    private List<Coroutine> removeTargetCoroutines = new List<Coroutine>();
+
     void Awake()
     {
-        if (instance == null)
+        if (instance != null && instance != this)
         {
-            instance = this;
+            Debug.Log("Destroying duplicate of " + instance + ". The duplicate is: " + this);
+            Destroy(this.gameObject);
         }
         else
         {
-            Destroy(this);
+            instance = this;
         }
-            DontDestroyOnLoad(instance);
+
+        DontDestroyOnLoad(instance);
+
+        _targetGroup = gameObject.GetComponentInChildren<CinemachineTargetGroup>();
 
         _cameras = this.transform.GetComponentsInChildren<CinemachineCamera>();
 
@@ -42,6 +50,11 @@ public class CameraManager : MonoBehaviour
                 SceneManager.sceneLoaded += OnSceneLoaded;
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        Debug.Log("Camera manager was destroyed.");
     }
 
     #region Getters
@@ -61,6 +74,61 @@ public class CameraManager : MonoBehaviour
     }
     #endregion
 
+    public void SetFollowTarget(Transform newTarget)
+    {
+        Transform previousTarget = _targetGroup.Targets[0].Object.transform;
+        _targetGroup.AddMember(newTarget, 1f, 0f);
+        _targetGroup.RemoveMember(previousTarget);
+    }
+
+    public void AddFollowTarget(Transform newTarget)
+    {
+        try
+        {
+            if (!(_targetGroup.Targets.Contains(_targetGroup.Targets[_targetGroup.FindMember(newTarget)])))
+            {
+                _targetGroup.AddMember(newTarget, 1f, 0f);
+            }
+        }
+        catch
+        {
+            _targetGroup.AddMember(newTarget, 1f, 0f);
+        }
+    }
+    
+    public void RemoveFollowTarget(Transform target, float removeDuration = 0.5f)
+    {
+        if (removeDuration <= 0f)
+        {
+            _targetGroup.RemoveMember(target);
+        }
+        else
+        {
+            Coroutine removeTargetCoroutine = CameraManager.instance.StartCoroutine(BlendOutFollowTarget(target, removeDuration));
+            //CameraManager.instance.removeTargetCoroutines.Add(removeTargetCoroutine);
+        }
+    }
+
+    private IEnumerator BlendOutFollowTarget(Transform target, float duration)
+    {
+        // Currently this works linearly.
+
+        float counter = _targetGroup.Targets[_targetGroup.FindMember(target)].Weight;
+        float counterDecrement = counter / 10f;
+
+        while (counter > 0f)
+        {
+            Debug.Log("In while loop");
+            yield return new WaitForSeconds(duration / 10f); /// We are assuming loop runs 10 times.
+            counter -= counterDecrement;
+            _targetGroup.Targets[_targetGroup.FindMember(target)].Weight = counter;
+        }
+
+        _targetGroup.RemoveMember(target);
+        Debug.Log("I have finished");
+        yield break;
+    }
+
     public void SetCameraDistance(float camDistance)
     {
         _positionComposer.CameraDistance = camDistance;
@@ -74,10 +142,6 @@ public class CameraManager : MonoBehaviour
         if (SceneManagement.IsSceneARoom(scene))
         {
             UpdateConfinedBounds();
-        }
-        else
-        {
-            Destroy(this);
         }
     }
 
