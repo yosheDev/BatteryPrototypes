@@ -104,8 +104,6 @@ public class BatteryController : MonoBehaviour
     void Start()
     {
         #region Initialize Variables
-        // Initialize
-        startPos = transform.position;
         previousRotation = transform.rotation;
         previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
@@ -288,6 +286,7 @@ public class BatteryController : MonoBehaviour
                 // If on a neutral surface, use rigidbody for foddian movement or walk around.
                 if (neutralDetector.neutralDetected)
                 {
+                    //Debug.Log("Neutral is detected!");
                     intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
 
@@ -348,7 +347,7 @@ public class BatteryController : MonoBehaviour
                 List<MagnetComponentBase> positiveFields = positiveMag.affectFields.ToList();
                 for (int i = 0; i < positiveFields.Count; i++)
                 {
-                    Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, velocity);
+                    Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, rb.linearVelocity);
 
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
@@ -360,8 +359,9 @@ public class BatteryController : MonoBehaviour
                     // Will not be accounted for if pole is facing opposite direction (for game feel.)
                     if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                     {
-                        float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
-                        combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f));
+                        //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
+                        float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                        combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
                     }
                 }
                 #endregion
@@ -373,19 +373,20 @@ public class BatteryController : MonoBehaviour
                 List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
                 for (int i = 0; i < negativeFields.Count; i++)
                 {
-                    Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, velocity);
+                    Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, rb.linearVelocity);
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
                     {
-                        curForce = Vector2.zero;
+                        curForce = Vector2.zero; 
                     }
 
                     Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
                     // Will not be accounted for if pole is facing opposite direction (for game feel.)
                     if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                     {
-                        float aimDirInfluence = FunctionLibraryF.MapRangeClamped(0f, 10f, .6f, .3f, velocity);
-                        combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluence).normalized), 100f));
+                        //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
+                        float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                        combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
                     }
                 }
                 #endregion
@@ -547,6 +548,14 @@ public class BatteryController : MonoBehaviour
         {
             return;
         }
+
+        // When leaving weld, update cam follow.
+        if (weldState == WeldState.Welded)
+        {
+            CameraManager.instance.AddFollowTarget(gameObject.transform, 0.5f);
+            CameraManager.instance.RemoveFollowTarget(playerWeldMag.transform, 0.5f);
+        }
+
         // When leaving Launch Aim, unparent player from the squash/stretch pivot.
         if (weldState == WeldState.LaunchAim)
         {
@@ -581,6 +590,11 @@ public class BatteryController : MonoBehaviour
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
                 weldBlob.SetActive(true);
+
+                // Update camera follow target.
+                CameraManager.instance.AddFollowTarget(playerWeldMag.transform, 0.5f);
+                CameraManager.instance.RemoveFollowTarget(gameObject.transform, 0.5f);
+
                 break;
             case WeldState.LaunchAim:
                 //rotationFactor = 0f;
@@ -644,16 +658,15 @@ public class BatteryController : MonoBehaviour
         }
     }
 
-    public void ResetUponNewRoom(Vector3 startPos)
+    public void ResetUponNewRoom(Vector3 newStartPos)
     {
+        startPos = newStartPos;
         gameObject.transform.position = startPos;
         spawnCage.SetActive(true);
         spawnCage.transform.position = gameObject.transform.position;
         rb.linearVelocity = new Vector2(0f, 0f);
         rb.gravityScale = 0f;
         rb.WakeUp();
-
-        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraController>().SnapToTarget();
     }
 
     public void Restart()

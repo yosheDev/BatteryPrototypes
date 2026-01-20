@@ -32,6 +32,9 @@ public static class SceneManagement
     public static Dictionary<Areas, string> areaDisplayNameData = new Dictionary<Areas, string>();
   
     #region Load / Unload Scene
+    /// <summary>
+    /// Load a scene based on the Level struct passed in. If an override string is passed, load that scene instead.
+    /// </summary>
     public static void LoadScene(Level level, string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
     {
         string roomSceneName;
@@ -48,6 +51,9 @@ public static class SceneManagement
         SceneManager.LoadScene(roomSceneName, loadSceneMode);
     }
 
+    /// <summary>
+    /// Unload a scene based on the Level struct passed in. If an override string is passed, unload that scene instead.
+    /// </summary>
     public static void UnloadSceneAsync(Level level, string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
     {
         string roomSceneName;
@@ -64,6 +70,9 @@ public static class SceneManagement
         SceneManager.UnloadSceneAsync(roomSceneName);
     }
 
+    /// <summary>
+    /// Unload a scene based on the Level struct passed in. If an override string is passed, unload that scene instead.
+    /// </summary>
     public static void UnloadSceneAsync(string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
     {
         SceneManager.UnloadSceneAsync(overrideString);
@@ -71,7 +80,9 @@ public static class SceneManagement
     #endregion
 
     #region Utility
-    [Tooltip("Gets the scene name for an area or room scene.")]
+    /// <summary>
+    /// Given a level struct, returns the string of that scene. String is parsed based on the level struct, so scenes must be named correctly.
+    /// </summary>
     public static string GetSceneFormattedName(Level level)
     {
         // This function gets the scene name for an area / room scene. If an override string is passed, this function is not called as that will be used instead.
@@ -90,6 +101,9 @@ public static class SceneManagement
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Returns whether or not this scene is included in the build profile.
+    /// </summary>
     public static bool DoesSceneExist(string sceneName)
     {
         int buildIndex = SceneUtility.GetBuildIndexByScenePath(sceneName);
@@ -97,10 +111,22 @@ public static class SceneManagement
         return (buildIndex != -1);
     }
 
+    /// <summary>
+    /// Returns whether or not this scene is included in the build profile.
+    /// </summary>
     public static bool DoesSceneExist(Level level)
     {
         int buildIndex = SceneUtility.GetBuildIndexByScenePath(GetSceneFormattedName(level));
         return (buildIndex != -1);
+    }
+
+    /// <summary>
+    /// Returns whether or not the given scene is a room scene. Searches for "_r" in the scene.name.
+    /// </summary>
+    public static bool IsSceneARoom(Scene scene)
+    {
+        // May need to adjust this later, but for now since only the rooms have "_r" in the name(i.e a0_r1) use this confirm if this is a room.
+        return scene.name.Contains("_r");
     }
 
     private static string SceneNameFromBuildIndex(int buildIndex)

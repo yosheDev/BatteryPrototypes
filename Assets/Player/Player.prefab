@@ -51,11 +51,11 @@ MonoBehaviour:
   _magData:
     charge: -1
     strength: 1
-    proportionConst: 1
+    attenuation: 3
   fieldCol: {fileID: 2524472025444625254}
   surfaceCol: {fileID: 0}
   _fieldAttractDistance: 2
-  _attenuation: 2
+  _attenuationModifier: 1
 --- !u!114 &1905707077189402023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -325,11 +325,11 @@ MonoBehaviour:
   _magData:
     charge: 1
     strength: 1
-    proportionConst: 1
+    attenuation: 3
   fieldCol: {fileID: 7151766105230815459}
   surfaceCol: {fileID: 0}
   _fieldAttractDistance: 2
-  _attenuation: 2
+  _attenuationModifier: 1
 --- !u!114 &7749330453487282767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2189,6 +2189,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CursorConstraint
   batteryController: {fileID: 8047242034082428540}
+  cursorDistanceTweak: 0
   launchAimControlMethod: 1
   parentForPos: {fileID: 5159612945940311858}
 --- !u!1 &7547158745546023232

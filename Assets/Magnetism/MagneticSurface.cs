@@ -17,8 +17,8 @@ public class MagneticSurface : MagnetComponentBase
     // TO DO: Add toggle to switche between different attuentuation curves. I.E Exponential, Logarithmic, Linear.
 
     public float _fieldAttractDistance = 2f;
-    [Tooltip("Exponential attenuation factor for forces. Stronger as it gets closer to the surface of the magnet.")]
-    public float _attenuation = 2f;
+    [Tooltip("Multiplies with the attenuation in magData. Used for customizing feel of individual magnets. This applies only to the force given to those interacting with this magnet.")]
+    public float _attenuationModifier = 1f;
     
     private void OnValidate()
     {
@@ -84,7 +84,7 @@ public class MagneticSurface : MagnetComponentBase
         return (Vector2.Distance(transform.position, posWS) < (radius + _fieldAttractDistance));
     }
 
-    public override Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, float velocity) /// Parent interface function for IMagnetic calls this abstract function.
+    public override Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, Vector2 velocity) /// Parent interface function for IMagnetic calls this abstract function.
     {
         // _magData = this magnets data.
         // magData = input magnets data.
@@ -110,18 +110,42 @@ public class MagneticSurface : MagnetComponentBase
         }
         #endregion
 
-        // Multiply strength by charge for each.
-        float mag1Amp = magData.strength * magData.charge;
-        float mag2Amp = _magData.strength * _magData.charge;
+        #region Old Magnetism 
+        //// Multiply strength by charge for each.
+        //float mag1Amp = magData.strength * magData.charge;
+        //float mag2Amp = _magData.strength * _magData.charge;
 
-        // Multiply that result together, then multiply by proportionConst
-        float force = mag1Amp * mag2Amp;
+        //// Multiply that result together, then multiply by proportionConst
+        //float force = mag1Amp * mag2Amp;
 
-        // Divide by (distance ^ (attentuation * velocityRemap))
-        force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _attenuation * (velocity == 0f ? 1f : FunctionLibraryF.MapRangeClamped(0f, 10f, 1f, 2f, velocity)));
+        //// Divide by (distance ^ (attentuation * velocityRemap))
+        //force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _magData.attenuation * (velocity.magnitude == 0f ? 1f : FunctionLibraryF.MapRangeClamped(0f, 10f, 1f, 2f, velocity.magnitude)));
 
-        // Get force direction(normalized) and multiply with force.
-        Vector2 result = ((force * (posWS - nearestPoint).normalized) * _magFactor) * occlusion;
+        //// Get force direction(normalized) and multiply with force.
+        //Vector2 result = ((force * (posWS - nearestPoint).normalized) * _magFactor) * occlusion;
+        #endregion
+
+        #region Revised Magnetism
+        // 1 - Get correct charge.
+        float combinedAmp = magData.charge * _magData.charge;
+
+        // 2 - Inverse Exponent Formula. Ensure distance to always be above zero. Gets maximum attenuation of both magDatas to act with. Ensure attenuation is not under 1.
+        float force = combinedAmp * (1 / (Mathf.Pow(Mathf.Max(Vector2.Distance(posWS, nearestPoint), 0.01f), (Mathf.Max(1f, Mathf.Max(_magData.attenuation, magData.attenuation)) * _attenuationModifier))));
+
+        // 3 - Modify force magnitude. Account for magnets' strength. Account for target magnet's velocity.
+        /// Get direction of the magnetic field.
+        Vector2 magForceDir = (posWS - nearestPoint).normalized;
+        /// Get magnitude of magnetic force (magnetic force = cross(velocity, magnetic field)). Prevent from being under 1 at all times. Clamp max value for game feel.
+        float crossMagnitude = Mathf.Clamp((velocity.x * magForceDir.y) - (velocity.y * magForceDir.x), 1f, 3f);
+        /// Calculate magnitude of force to act on other magnet.
+        force *= magData.strength * _magData.strength * crossMagnitude;
+
+        // 4 - Create resulting vector2 force. Account for global magnet strength factor. Account for calculated occlusion scalar.
+        Vector2 result = ((force * magForceDir) * _magFactor) * occlusion;
+
+        //Debug.Log("Cross Magnitude: " + crossMagnitude);
+        //Debug.Log("Force: " + force + " | Result: " + result);
+        #endregion
 
         #endregion
         return result;

@@ -247,8 +247,8 @@ MonoBehaviour:
   _magData:
     charge: -1
     strength: 1
-    proportionConst: 1
+    attenuation: 2
   fieldCol: {fileID: 6060689524735298761}
   surfaceCol: {fileID: 1242040284218577903}
   _fieldAttractDistance: 2
-  _attenuation: 2
+  _attenuationModifier: 1

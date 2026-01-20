@@ -114,6 +114,8 @@ public class AreaManager : MonoBehaviour
     }
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        CameraManager.instance.UpdateConfinedBounds();
+        CameraManager.instance.WarpCamera();
         SetTransitionState(AreaTransitionState.Spawn);
     }
 

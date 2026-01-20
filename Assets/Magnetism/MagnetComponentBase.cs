@@ -9,7 +9,7 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
 {
     //=======================================================================================================================
     [Header("Magnet Data")]
-    public MagnetData _magData = new MagnetData();
+    public MagnetData _magData = new MagnetData(1f, 1f, 2f);
     protected const float _magFactor = 20f;/// This is a constant factor that is multiplied with all calculated forces. This will affect all magnets project-wide.
 
     [HideInInspector]public HashSet<MagnetComponentBase> affectFields = new HashSet<MagnetComponentBase>();
@@ -47,10 +47,10 @@ public abstract class MagnetComponentBase : MonoBehaviour, IMagnetic
     public abstract bool AffectsRadiusOverride(Vector2 posWS, float radius);
 
     // Multiple overrides for the different types of magnet shapes?
-    public Vector2 GetAppliedForce(MagnetData magData, Vector2 posWS, float radius, float velocity = 0f)
+    public Vector2 GetAppliedForce(MagnetData magData, Vector2 posWS, float radius, Vector2 velocity)
     {
         return GetAppliedForceOverride(magData, posWS, radius, velocity);
     }
-    public abstract Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, float velocity = 0f);
+    public abstract Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, Vector2 velocity);
     #endregion
 }

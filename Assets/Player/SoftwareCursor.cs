@@ -11,6 +11,7 @@ public class SoftwareCursor : MonoBehaviour
         FreeRange
     }
     [SerializeField] private BatteryController batteryController;
+    [SerializeField] private float cursorDistanceTweak = 1f;
     public LaunchAimControlMethods launchAimControlMethod = LaunchAimControlMethods.FreeRange;
     private Vector2 localPos;
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
@@ -58,8 +59,8 @@ public class SoftwareCursor : MonoBehaviour
                 aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
 
                 // Move along aimDir as axis. Placement falls within range that aligns with the intensity of the launch.
-                launchControlMin = parentForPos.transform.position + (-(Vector3)aimDir * (parentForPos == batteryController.positiveMag.gameObject ? 1f + playerSpriteLength : 1f));
-                launchControlMax = parentForPos.transform.position + (-(Vector3)aimDir * (parentForPos == batteryController.positiveMag.gameObject ? 4f + playerSpriteLength : 4f));
+                launchControlMin = parentForPos.transform.position + (-(Vector3)aimDir * GetDesiredCursorDistance(1f, 1f));
+                launchControlMax = parentForPos.transform.position + (-(Vector3)aimDir * GetDesiredCursorDistance(4f, 4f));
 
                 // Will be replaced with graphics later.
                 Debug.DrawLine(launchControlMin, launchControlMax, Color.white, Time.deltaTime);
@@ -86,7 +87,7 @@ public class SoftwareCursor : MonoBehaviour
                 //Debug.Log(Vector2.Dot(batteryController.mouseDelta.normalized, aimDir));
                 localPos += (batteryController.mouseDelta * (.02f * Mathf.Clamp(CursorMagSpringFormula(launchControlAlpha, isReleasing), 0f, 1f)));
                 localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
-                localPos = (parentForPos == batteryController.positiveMag.gameObject) ? ClampMagnitudeRange(localPos, 4f + playerSpriteLength, 1f + playerSpriteLength) : ClampMagnitudeRange(localPos, 4f, 1f);
+                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(4f - playerSpriteLength, 4f), GetDesiredCursorDistance(1f - playerSpriteLength, 1f));
 
                 aimDir = (parentForPos == batteryController.positiveMag.gameObject ? 1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
 
@@ -94,8 +95,8 @@ public class SoftwareCursor : MonoBehaviour
                 angleFromNormal = Vector3.SignedAngle((Vector3)batteryController.weldSurfaceNormal, (Vector3)aimDir, Vector3.forward);
 
                 // Get start/end points for the axis. Passes through the cursor.
-                launchControlMin = parentForPos.transform.position + (-(Vector3)aimDir * (parentForPos == batteryController.positiveMag.gameObject ? 1f + playerSpriteLength : 1f));
-                launchControlMax = parentForPos.transform.position + (-(Vector3)aimDir * (parentForPos == batteryController.positiveMag.gameObject ? 4f + playerSpriteLength : 4f));
+                launchControlMin = parentForPos.transform.position + (-(Vector3)aimDir * GetDesiredCursorDistance(1f - playerSpriteLength, 1f));
+                launchControlMax = parentForPos.transform.position + (-(Vector3)aimDir * GetDesiredCursorDistance(4f - playerSpriteLength, 4f));
 
                 // Will be replaced with graphics later.
                 Debug.DrawLine(launchControlMin, launchControlMax, Color.white, Time.deltaTime);
@@ -107,7 +108,7 @@ public class SoftwareCursor : MonoBehaviour
 
                 // Alpha should be magnitude 
 
-                launchControlAlpha = FunctionLibraryF.MapRangeClamped((parentForPos == batteryController.positiveMag.gameObject ? 1f + playerSpriteLength : 1f), (parentForPos == batteryController.positiveMag.gameObject ? 4f + playerSpriteLength : 4f), 0f, 1f, (parentForPos.transform.position - transform.position).magnitude);
+                launchControlAlpha = FunctionLibraryF.MapRangeClamped(GetDesiredCursorDistance(1f - playerSpriteLength, 1f), GetDesiredCursorDistance(4f - playerSpriteLength, 4f), 0f, 1f, (parentForPos.transform.position - transform.position).magnitude);
                 //launchControlAlpha *= Mathf.Clamp(CursorMagSpringFormula(launchControlAlpha, false), 0f, 1f);
 
                 //    launchControlAlpha = Mathf.Clamp(launchControlAlpha + DeltaMagSpringFormula(deltaMag, launchControlAlpha), 0f, 1f);
@@ -133,7 +134,7 @@ public class SoftwareCursor : MonoBehaviour
         if (!justWelded)
         {
             localPos += (batteryController.mouseDelta * .02f);
-            localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+            localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2.5f, 2.5f)));
         }
         localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
 
@@ -161,10 +162,10 @@ public class SoftwareCursor : MonoBehaviour
                 //Debug.Log("Alpha: " + correctWeldAlpha);
                 Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
 
-                transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f));
+                transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * GetDesiredCursorDistance(-4f, 2.5f));
 
                 localPos = transform.position - parentForPos.transform.position;
-                localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
+                localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2f, 2f)));
                 localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
                 #endregion
 
@@ -247,6 +248,11 @@ public class SoftwareCursor : MonoBehaviour
         transform.position = (Vector2)parentForPos.transform.position + localPos;
     }
 
+    public float GetDesiredCursorDistance(float posMagValue = 1f, float negMagValue = 1f)
+    {
+        return parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak;
+    }
+
     public void SetNewPosParent(GameObject parent)
     {
         parentForPos = parent;
@@ -314,7 +320,7 @@ public class SoftwareCursor : MonoBehaviour
             {
                 InvertLocalPos();
             }
-            localPos = (parentForPos == batteryController.positiveMag.gameObject) ? ClampMagnitudeRange(localPos, 1f + playerSpriteLength, 1f + playerSpriteLength) : ClampMagnitudeRange(localPos, 1f, 1f);
+            localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(1f - playerSpriteLength, 1f), GetDesiredCursorDistance(1f - playerSpriteLength, 1f));
             transform.position = (Vector2)parentForPos.transform.position + localPos;
         }
     }
