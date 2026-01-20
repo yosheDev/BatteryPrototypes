@@ -552,8 +552,6 @@ public class BatteryController : MonoBehaviour
         // When leaving weld, update cam follow.
         if (weldState == WeldState.Welded)
         {
-            CameraManager.instance.GetCurrentCamera().PreviousStateIsValid = false;
-            //CameraManager.instance.SetFollowTarget(playerWeldMag.transform);
             CameraManager.instance.RemoveFollowTarget(playerWeldMag.transform, 0.5f);
         }
 
@@ -593,9 +591,7 @@ public class BatteryController : MonoBehaviour
                 weldBlob.SetActive(true);
 
                 // Update camera follow target.
-                CameraManager.instance.GetCurrentCamera().PreviousStateIsValid = false;
-                //CameraManager.instance.SetFollowTarget(playerWeldMag.transform);
-                CameraManager.instance.AddFollowTarget(playerWeldMag.transform);
+                CameraManager.instance.AddFollowTarget(playerWeldMag.transform, 0.5f);
 
                 break;
             case WeldState.LaunchAim:

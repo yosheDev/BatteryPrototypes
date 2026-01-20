@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Cinemachine;
@@ -17,7 +18,8 @@ public class CameraManager : MonoBehaviour
     private CinemachineConfiner2D _confiner;
     [SerializeField] private Collider2D _camBoundary;
 
-    private List<Coroutine> removeTargetCoroutines = new List<Coroutine>();
+    private Dictionary<Transform, Coroutine> removeTargetCoroutines = new Dictionary<Transform, Coroutine>();
+    private Dictionary<Transform, Coroutine> addTargetCoroutines = new Dictionary<Transform, Coroutine>();
 
     void Awake()
     {
@@ -74,61 +76,122 @@ public class CameraManager : MonoBehaviour
     }
     #endregion
 
+    #region Follow Target Utility
     public void SetFollowTarget(Transform newTarget)
     {
+        // THIS MAY NOT WORK ANYMORE / BE DEPRECATED AFTER ADDING NEW FUNCTIONS BELOW FOR ADDING AND REMOVING FOLLOW TARGETS.
         Transform previousTarget = _targetGroup.Targets[0].Object.transform;
         _targetGroup.AddMember(newTarget, 1f, 0f);
         _targetGroup.RemoveMember(previousTarget);
     }
 
-    public void AddFollowTarget(Transform newTarget)
+    public void AddFollowTarget(Transform target, float addDuration = 0.5f)
     {
-        try
+        // If there is still a remove routine with this target in it, cancel it and remove from the Dictionary.
+        if (removeTargetCoroutines.ContainsKey(target))
         {
-            if (!(_targetGroup.Targets.Contains(_targetGroup.Targets[_targetGroup.FindMember(newTarget)])))
+            // If a coroutine is still running to remove this target, cancel it.
+            removeTargetCoroutines.TryGetValue(target, out Coroutine removeRoutine);
+            if (removeRoutine != null)
             {
-                _targetGroup.AddMember(newTarget, 1f, 0f);
+                Debug.Log("Upon adding new target: Stopping and removing existing remove coroutine on that target.");
+                StopCoroutine(removeRoutine);
+            }
+
+            removeTargetCoroutines.Remove(target);
+        }
+
+        if (addDuration <= 0f)
+        {
+            if (_targetGroup.FindMember(target) == -1)
+            {
+                _targetGroup.AddMember(target, 1f, 0f);
             }
         }
-        catch
+        else
         {
-            _targetGroup.AddMember(newTarget, 1f, 0f);
+            if (_targetGroup.FindMember(target) == -1)
+            {
+                _targetGroup.AddMember(target, 0f, 0f);
+            }
+            
+            // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
+            Coroutine addTargetCoroutine = CameraManager.instance.StartCoroutine(BlendInFollowTarget(target, addDuration));
+            addTargetCoroutines.Add(target, addTargetCoroutine);
         }
     }
     
     public void RemoveFollowTarget(Transform target, float removeDuration = 0.5f)
     {
+        // If there is still an add routine with this target in it, cancel it and remove from both the target group and Dictionary.
+        if (addTargetCoroutines.ContainsKey(target))
+        {            
+            addTargetCoroutines.TryGetValue(target, out Coroutine addRoutine);
+            if (addRoutine != null)
+            {
+                Debug.Log("Upon removing target: Stopping and removing existing add coroutine on that target.");
+                StopCoroutine(addRoutine);
+            }
+
+            addTargetCoroutines.Remove(target);
+        }
+
         if (removeDuration <= 0f)
         {
             _targetGroup.RemoveMember(target);
         }
         else
         {
+            // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
             Coroutine removeTargetCoroutine = CameraManager.instance.StartCoroutine(BlendOutFollowTarget(target, removeDuration));
-            //CameraManager.instance.removeTargetCoroutines.Add(removeTargetCoroutine);
+            removeTargetCoroutines.Add(target, removeTargetCoroutine);
         }
     }
 
-    private IEnumerator BlendOutFollowTarget(Transform target, float duration)
+    private IEnumerator BlendOutFollowTarget(Transform targetTrans, float duration)
     {
-        // Currently this works linearly.
+        CinemachineTargetGroup.Target targetToRemove = _targetGroup.Targets[_targetGroup.FindMember(targetTrans)];
 
-        float counter = _targetGroup.Targets[_targetGroup.FindMember(target)].Weight;
-        float counterDecrement = counter / 10f;
-
-        while (counter > 0f)
+        float curBlendVelocity = 0f;
+        float newWeight = 0f;
+        while (Mathf.Abs(1f - targetToRemove.Weight) < .98f)
         {
-            Debug.Log("In while loop");
-            yield return new WaitForSeconds(duration / 10f); /// We are assuming loop runs 10 times.
-            counter -= counterDecrement;
-            _targetGroup.Targets[_targetGroup.FindMember(target)].Weight = counter;
+            newWeight = Mathf.SmoothDamp(targetToRemove.Weight, 0f, ref curBlendVelocity, duration, Mathf.Infinity, Time.fixedDeltaTime);
+            targetToRemove.Weight = newWeight;
+            
+            //Debug.Log("Blend Out: " + targetToRemove.Weight);
+            yield return new WaitForSeconds(.01f);
         }
 
-        _targetGroup.RemoveMember(target);
-        Debug.Log("I have finished");
+        _targetGroup.RemoveMember(targetTrans);
+        removeTargetCoroutines.Remove(targetTrans);
+        Debug.Log("I have finished removing the target.");
         yield break;
     }
 
+    private IEnumerator BlendInFollowTarget(Transform targetTrans, float duration)
+    {
+        CinemachineTargetGroup.Target targetToAdd = _targetGroup.Targets[_targetGroup.FindMember(targetTrans)];
+
+        float curBlendVelocity = 0f;
+        float newWeight = 0f;
+        while (Mathf.Abs(1f - targetToAdd.Weight) > .02f)
+        {
+            newWeight = Mathf.SmoothDamp(targetToAdd.Weight, 1f, ref curBlendVelocity, duration, Mathf.Infinity, Time.fixedDeltaTime);
+            targetToAdd.Weight = newWeight;
+
+            //Debug.Log("Blend In: " + targetToAdd.Weight);
+            yield return new WaitForSeconds(.01f);
+        }
+
+        addTargetCoroutines.Remove(targetTrans);
+        Debug.Log("I have finished adding the target.");
+        yield break;
+    }
+
+    #endregion
+
+    #region Other Camera Utility
     public void SetCameraDistance(float camDistance)
     {
         _positionComposer.CameraDistance = camDistance;
@@ -181,4 +244,6 @@ public class CameraManager : MonoBehaviour
         _currentCamera.PreviousStateIsValid = false;
         _currentCamera.OnTargetObjectWarped(_currentCamera.Follow, _currentCamera.Follow.position - _currentCamera.transform.position);
     }
+
+    #endregion
 }
