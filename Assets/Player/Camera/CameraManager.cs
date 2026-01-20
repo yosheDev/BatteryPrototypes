@@ -77,14 +77,9 @@ public class CameraManager : MonoBehaviour
     #endregion
 
     #region Follow Target Utility
-    public void SetFollowTarget(Transform newTarget)
-    {
-        // THIS MAY NOT WORK ANYMORE / BE DEPRECATED AFTER ADDING NEW FUNCTIONS BELOW FOR ADDING AND REMOVING FOLLOW TARGETS.
-        Transform previousTarget = _targetGroup.Targets[0].Object.transform;
-        _targetGroup.AddMember(newTarget, 1f, 0f);
-        _targetGroup.RemoveMember(previousTarget);
-    }
-
+    /// <summary>
+    /// Adds a follow target to the cinemachine target group. Duration controls how quickly the weight blends in from 0 to 1. Uses fixedDeltaTime.
+    /// </summary>
     public void AddFollowTarget(Transform target, float addDuration = 0.5f)
     {
         // If there is still a remove routine with this target in it, cancel it and remove from the Dictionary.
@@ -94,7 +89,7 @@ public class CameraManager : MonoBehaviour
             removeTargetCoroutines.TryGetValue(target, out Coroutine removeRoutine);
             if (removeRoutine != null)
             {
-                Debug.Log("Upon adding new target: Stopping and removing existing remove coroutine on that target.");
+                //Debug.Log("Upon adding new target: Stopping and removing existing remove coroutine on that target.");
                 StopCoroutine(removeRoutine);
             }
 
@@ -120,7 +115,10 @@ public class CameraManager : MonoBehaviour
             addTargetCoroutines.Add(target, addTargetCoroutine);
         }
     }
-    
+
+    /// <summary>
+    /// Adds a follow target to the cinemachine target group. Duration controls how quickly the weight blends in from 0 to 1. Uses fixedDeltaTime.
+    /// </summary>
     public void RemoveFollowTarget(Transform target, float removeDuration = 0.5f)
     {
         // If there is still an add routine with this target in it, cancel it and remove from both the target group and Dictionary.
@@ -129,7 +127,7 @@ public class CameraManager : MonoBehaviour
             addTargetCoroutines.TryGetValue(target, out Coroutine addRoutine);
             if (addRoutine != null)
             {
-                Debug.Log("Upon removing target: Stopping and removing existing add coroutine on that target.");
+                //Debug.Log("Upon removing target: Stopping and removing existing add coroutine on that target.");
                 StopCoroutine(addRoutine);
             }
 
@@ -165,7 +163,7 @@ public class CameraManager : MonoBehaviour
 
         _targetGroup.RemoveMember(targetTrans);
         removeTargetCoroutines.Remove(targetTrans);
-        Debug.Log("I have finished removing the target.");
+        //Debug.Log("I have finished removing the target.");
         yield break;
     }
 
@@ -185,7 +183,7 @@ public class CameraManager : MonoBehaviour
         }
 
         addTargetCoroutines.Remove(targetTrans);
-        Debug.Log("I have finished adding the target.");
+        //Debug.Log("I have finished adding the target.");
         yield break;
     }
 
