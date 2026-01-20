@@ -23,7 +23,7 @@ public class SoftwareCursor : MonoBehaviour
     private Vector3 launchControlMin;
     private Vector3 launchControlMax;
     private float launchControlAlpha;
-    private float playerSpriteLength = 1.5f;
+    private float playerSpriteLength = 1f;
     private bool justWelded = false;
     private Quaternion weldInitialQuat;
     private Quaternion targetQuat;
@@ -158,7 +158,7 @@ public class SoftwareCursor : MonoBehaviour
             {
                 #region Interp To Clamped Range Method
                 Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
-                Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
+                //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
                 //Debug.Log("Alpha: " + correctWeldAlpha);
                 Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
 

@@ -549,11 +549,20 @@ public class BatteryController : MonoBehaviour
             return;
         }
 
-        // When leaving weld, update cam follow.
+        // When leaving weld
         if (weldState == WeldState.Welded)
         {
             CameraManager.instance.AddFollowTarget(gameObject.transform, 0.5f);
             CameraManager.instance.RemoveFollowTarget(playerWeldMag.transform, 0.5f);
+
+            if (surfaceParent != null)
+            {
+                rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 5f + surfaceParentVelocity.magnitude); 
+            }
+            else
+            {
+                rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 5f);
+            }
         }
 
         // When leaving Launch Aim, unparent player from the squash/stretch pivot.
