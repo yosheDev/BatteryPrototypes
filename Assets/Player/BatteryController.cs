@@ -124,7 +124,7 @@ public class BatteryController : MonoBehaviour
         var dt = Time.fixedDeltaTime;
 
         #region Inherit Surface Parent Delta
-        Debug.Log(gameObject.transform.parent + " is parent. " + surfaceParent + " is surfaceParent.");
+        //Debug.Log(gameObject.transform.parent + " is parent. " + surfaceParent + " is surfaceParent.");
         if (surfaceParent != null)
         {
             // TO DO: Will need to ensure I have the parents proper rotation pivot. Make interface to retrieve it. If not exist, use surfaceParent.transform.position.
@@ -140,8 +140,7 @@ public class BatteryController : MonoBehaviour
             // Rotate and Move Player
             if (gameObject.transform.parent == scalePivot.transform)
             {
-                Debug.Log("ScalePivot is parent.");
-                Debug.DrawLine(scalePivot.transform.position + surfaceParentPosDelta, scalePivot.transform.position + surfaceParentPosDelta + new Vector3(0f, 3f, 0f), Color.red, 1.5f);
+                //Debug.Log("ScalePivot is parent.");
                 scalePivot.transform.position += surfaceParentPosDelta;
                 scalePivot.transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
                 //scalePivot.transform.position += surfaceParentPosDelta;

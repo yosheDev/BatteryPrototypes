@@ -36,7 +36,7 @@ public class AreaManager : MonoBehaviour
 
     [Header("Checkpoint Data")]
     [HideInInspector] public Level checkpointLevel;
-    [HideInInspector] public Vector2 checkpointRespawnPos;
+    [HideInInspector] public Vector2 checkpointRespawnPos = new Vector2(0f, 0f);
     private uint checkpointRespawnCount = 0;
     private bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
 
@@ -88,6 +88,10 @@ public class AreaManager : MonoBehaviour
             }
 
         }
+
+        // Set checkpoint level default to the first room.
+        checkpointLevel.area = area;
+        checkpointLevel.room = 1;
 
         // Officially start the level.
         Level startLevel = new Level(area, 1);
@@ -243,6 +247,16 @@ public class AreaManager : MonoBehaviour
 
                 if (isRespawning)
                 {
+                    // If respawnPos was never set.
+                    if (checkpointRespawnPos == new Vector2(0f, 0f))
+                    {
+                        GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+                        if (playerStart != null)
+                        {
+                            checkpointRespawnPos = playerStart.transform.position;
+                        }
+                    }
+
                     playerController.ResetUponNewRoom(checkpointRespawnPos);
                 }
                 else
