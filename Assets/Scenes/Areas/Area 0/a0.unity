@@ -367,6 +367,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 822281594154032208, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.0000000018626451
+      objectReference: {fileID: 0}
     - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: visObjTest
       value: 
@@ -425,6 +429,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3955226068871467359, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4915376550056661838, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4915376550056661838, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4981228276706610175, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
