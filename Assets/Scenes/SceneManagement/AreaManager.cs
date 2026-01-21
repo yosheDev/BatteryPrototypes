@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FunctionLibrary;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 
 public class AreaManager : MonoBehaviour
 {
@@ -32,6 +33,15 @@ public class AreaManager : MonoBehaviour
     private float playerBaseGravity = 1f;
     private Vector3 endPlayerPosTarget;
     private Vector3 endPlayerVel = new Vector3(0f, 0f, 0f);
+
+    [Header("Checkpoint Data")]
+    [HideInInspector] public Level checkpointLevel;
+    [HideInInspector] public Vector2 checkpointRespawnPos;
+    private uint checkpointRespawnCount = 0;
+    private bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
+
+    [Header("Player Data")] // Should I make this into its own script?
+    public byte playerLives = 5; // Player lives.
 
     #region Singleton
     public static AreaManager instance;
@@ -121,7 +131,14 @@ public class AreaManager : MonoBehaviour
 
     void OnSceneUnloaded(Scene scene)
     {
-        LoadNextRoom();
+        if (!isRespawning)
+        {
+            LoadNextRoom();
+        }
+        else
+        {
+            RespawnAtCheckpoint();
+        }
     }
 
     #endregion
@@ -154,6 +171,58 @@ public class AreaManager : MonoBehaviour
         SetTransitionState(AreaTransitionState.ObjectiveReached);
     }
 
+    #region Checkpoint
+    /// <summary>
+    /// Update the checkpoint room and respawn position. Automatically resets respawn counter if this is a newly registered checkpoint room.
+    /// </summary>
+    public void UpdateCheckpointData(Level level, Vector2 respawnPos)
+    {
+        // Is this a newly registered checkpoint?
+        if (!(checkpointLevel.area == level.area && checkpointLevel.room == level.room)) 
+        {
+            // Reset checkpoint respawn counter.
+            checkpointRespawnCount = 0;
+            checkpointLevel = level;
+            checkpointRespawnPos = respawnPos;
+        }
+    }
+
+    public void Respawn()
+    {
+        isRespawning = true;
+        // Unload current room.
+        Level curRoom = new Level(area, roomNum);
+        SceneManagement.UnloadSceneAsync(curRoom);
+
+        // RespawnAtCheckpoint is called via OnSceneUnloaded delegate, as it should not be loaded until previous room is unloaded.
+    }
+    public void RespawnAtCheckpoint()
+    {
+        /// This function is called from OnSceneUnloaded.
+
+        checkpointRespawnCount++;
+        GameInstance.instance.ResetPlayerLives();
+        Debug.Log("Player Lives: " + GameInstance.instance.playerLives);
+
+        roomNum = checkpointLevel.room;
+        if (SceneManagement.DoesSceneExist(checkpointLevel))
+        {
+            Debug.Log("Respawning at Checkpoint: " + checkpointLevel.area + " " + checkpointLevel.room);
+            
+            transitionState = AreaTransitionState.Loading;
+            SceneManagement.LoadScene(checkpointLevel);
+        }
+        else
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            SceneManager.LoadScene("AreaSelection");
+            // Need to unload the area scene after this scene finishes loading.
+            Debug.LogError("Area cleared!");
+        }
+    }
+
+    #endregion
     #region Utility
     public bool IsTransitionState(AreaTransitionState state)
     {
@@ -171,16 +240,24 @@ public class AreaManager : MonoBehaviour
         switch (state)
         {
             case AreaTransitionState.Spawn:
-                GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-                if (playerStart == null)
+
+                if (isRespawning)
                 {
-                    Debug.LogError("ERROR: No playerStart is placed in the scene " + area + "_" + roomNum + "! Defaulting to origin.");
-                    playerController.ResetUponNewRoom(new Vector3(0f, 0f, 0f));
+                    playerController.ResetUponNewRoom(checkpointRespawnPos);
                 }
                 else
                 {
-                    playerController.ResetUponNewRoom(playerStart.transform.position);
-                }
+                    GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+                    if (playerStart == null)
+                    {
+                        Debug.LogError("ERROR: No playerStart is placed in the scene " + area + "_" + roomNum + "! Defaulting to origin.");
+                        playerController.ResetUponNewRoom(new Vector3(0f, 0f, 0f));
+                    }
+                    else
+                    {
+                        playerController.ResetUponNewRoom(playerStart.transform.position);
+                    }
+                } 
                     
                 break;
             case AreaTransitionState.None:
@@ -219,6 +296,21 @@ public class AreaManager : MonoBehaviour
                 break;
         }
         #endregion
+    }
+
+    public Level GetCurrentRoom()
+    {
+        Level currentRoom;
+
+        currentRoom.area = area;
+        currentRoom.room = roomNum;
+
+        return currentRoom;
+    }
+
+    public int GetRoomNum()
+    {
+        return roomNum;
     }
     #endregion
 }
