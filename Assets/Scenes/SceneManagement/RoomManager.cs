@@ -4,8 +4,12 @@ public class RoomManager : MonoBehaviour
 {
     [Header("Room Data")]
     public bool isCheckpointRoom = false;
-    [Header("!!Respawn Pos will be set to location of this object!!")]
-    private Vector2 respawnPos; // This should be different than PlayerStart position is most cases. Think "metroid save room" where checkpoint device is not where player enters the room.
+
+    [TextArea]
+    [Tooltip("Doesn't do anything. Just comments shown in inspector")]
+    public string Notes = "Respawn Pos will be set to location of this object!";
+
+    [SerializeField] private Vector2 respawnPos; // This should be different than PlayerStart position is most cases. Think "metroid save room" where checkpoint device is not where player enters the room.
 
     private void Start()
     {
