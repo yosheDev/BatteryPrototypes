@@ -182,6 +182,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &190943688 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7819478811370910259, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 194574934}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &194574934
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -283,8 +294,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 8812841804855978224, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
@@ -371,6 +381,14 @@ PrefabInstance:
       propertyPath: m_ConnectedAnchor.x
       value: -0.0000000018626451
       objectReference: {fileID: 0}
+    - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.028410792
+      objectReference: {fileID: 0}
+    - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: -0.0046361685
+      objectReference: {fileID: 0}
     - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: visObjTest
       value: 
@@ -391,6 +409,10 @@ PrefabInstance:
       propertyPath: playerBattery
       value: 
       objectReference: {fileID: 1515492333}
+    - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: playerLivesText
+      value: 
+      objectReference: {fileID: 190943688}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.028410792

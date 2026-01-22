@@ -10,6 +10,9 @@ public class GameInstance : MonoBehaviour
     [Header("Player Data")]
     public byte playerLives = 5;
 
+    public delegate void OnPlayerLivesChanged();
+    public event OnPlayerLivesChanged onPlayerLivesChanged;
+
     #region Singleton
     public static GameInstance instance;
 
@@ -30,6 +33,13 @@ public class GameInstance : MonoBehaviour
     public void ResetPlayerLives()
     {
         playerLives = 5;
+        onPlayerLivesChanged?.Invoke();
+    }
+
+    public void SetPlayerLives(byte amount)
+    {
+        playerLives = amount;
+        instance.onPlayerLivesChanged?.Invoke();
     }
     #endregion
 }
