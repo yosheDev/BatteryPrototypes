@@ -49,7 +49,7 @@ public class CameraManager : MonoBehaviour
                 _confiner = _currentCamera.gameObject.GetComponent<CinemachineConfiner2D>();
 
                 // Bind event to scene loaded. This event will be responsible for handling dynamic adjustements to _confiner and _camBoundary upon loading new rooms.
-                SceneManager.sceneLoaded += OnSceneLoaded;
+                SceneManager.sceneLoaded += OnRoomLoaded;
             }
         }
     }
@@ -197,7 +197,7 @@ public class CameraManager : MonoBehaviour
         _confiner.InvalidateLensCache(); /// Expensive but this will not work without it.
     }
 
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
         // If this is a room, update confined camera bounds with those found in the room's scene.
         if (SceneManagement.IsSceneARoom(scene))

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FunctionLibrary;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 
 public class AreaManager : MonoBehaviour
 {
@@ -33,6 +34,15 @@ public class AreaManager : MonoBehaviour
     private Vector3 endPlayerPosTarget;
     private Vector3 endPlayerVel = new Vector3(0f, 0f, 0f);
 
+    [Header("Checkpoint Data")]
+    [HideInInspector] public Level checkpointLevel;
+    [HideInInspector] public Vector2 checkpointRespawnPos = new Vector2(0f, 0f);
+    private uint checkpointRespawnCount = 0;
+    private bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
+
+    [Header("Player Data")] // Should I make this into its own script?
+    public byte playerLives = 5; // Player lives.
+
     #region Singleton
     public static AreaManager instance;
 
@@ -58,8 +68,8 @@ public class AreaManager : MonoBehaviour
         playerBaseGravity = playerRB.gravityScale;
 
         // Bind delegates.
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        SceneManager.sceneLoaded += OnRoomLoaded;
+        SceneManager.sceneUnloaded += OnRoomUnloaded;
 
         // Check if another scene is already open (for editor use only)
         if (Application.isEditor)
@@ -79,6 +89,10 @@ public class AreaManager : MonoBehaviour
 
         }
 
+        // Set checkpoint level default to the first room.
+        checkpointLevel.area = area;
+        checkpointLevel.room = 1;
+
         // Officially start the level.
         Level startLevel = new Level(area, 1);
         SceneManagement.LoadScene(startLevel);
@@ -87,41 +101,78 @@ public class AreaManager : MonoBehaviour
     #region Loading/Unloading Rooms
     public void LoadNextRoom()
     {
-        // TO DO: Condition for last level cleared. Probably a roomNum >= int check.
-        roomNum++;
-        Level nextRoom = new Level(area, roomNum);
+        Level nextRoom = new Level(area, roomNum + 1);
 
         if (SceneManagement.DoesSceneExist(nextRoom))
         {
+            roomNum++;
             Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
             transitionState = AreaTransitionState.Loading;
             SceneManagement.LoadScene(nextRoom);
         }
         else
         {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
-            SceneManager.LoadScene("AreaSelection");
-            // Need to unload the area scene after this scene finishes loading.
-            Debug.LogError("Area cleared!");
+            UnloadArea();
         }
     }
 
-    public void UnloadCurrentRoom()
+    public void UnloadArea()
+    {
+        // Unbind delegates and replace with more specific ones.
+        SceneManager.sceneLoaded -= OnRoomLoaded;
+        SceneManager.sceneUnloaded -= OnRoomUnloaded;
+        SceneManager.sceneLoaded += OnAreaSelectLoaded;
+
+        Debug.LogError("Area cleared!");
+        SceneManager.LoadScene("AreaSelection");
+        // Once Area Selection is done loading, OnRoomLoaded() will delete cameraManager, and unload area scene. When area scene is unloaded, this gameObject is destroyed.
+    }
+    public void RebindOnRoomUnloaded()
     {
         // TO DO: Finish this.
-        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        SceneManager.sceneUnloaded += OnRoomUnloaded;
     }
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log("On Room Loaded.");
         CameraManager.instance.UpdateConfinedBounds();
         CameraManager.instance.WarpCamera();
-        SetTransitionState(AreaTransitionState.Spawn);
+        SetTransitionState(AreaTransitionState.Spawn);      
     }
 
-    void OnSceneUnloaded(Scene scene)
+    void OnRoomUnloaded(Scene scene)
     {
-        LoadNextRoom();
+        Debug.Log("On Room Unloaded.");
+
+        if (!isRespawning)
+        {
+            LoadNextRoom();
+        }
+        else
+        {
+            RespawnAtCheckpoint();
+        }
+    }
+
+    void OnAreaSelectLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("OnAreaSelectLoaded!");
+        // Destroy camera manager.
+        Destroy(CameraManager.instance.gameObject);
+
+        // Unload the area scene.
+        Level areaScene = new Level(area, -1);
+
+        SceneManager.sceneUnloaded += OnAreaUnloaded;
+        SceneManagement.UnloadSceneAsync(areaScene); // Replace this with non Async method?
+        // Upon unloaded, OnAreaUnloaded() destroyes this gameobject.
+    }
+    void OnAreaUnloaded(Scene scene)
+    {
+        Debug.Log("OnAreaUnloaded!");
+        SceneManager.sceneLoaded -= OnAreaSelectLoaded;
+        SceneManager.sceneUnloaded -= OnAreaUnloaded;
+        Destroy(this.gameObject);
     }
 
     #endregion
@@ -140,10 +191,8 @@ public class AreaManager : MonoBehaviour
         Debug.Log("End Room Transition is over.");
         reachedObjective = null;
 
-        // Unload current room.
-        Level curRoom = new Level(area, roomNum);
-        SceneManagement.UnloadSceneAsync(curRoom);
-        /// Load next room is binded to unload delegate with OnSceneUnloaded() in this class.
+        UnloadCurrentRoom();
+        /// Load next room is binded to unload delegate with OnRoomUnloaded() in this class.
         
         yield break;
     }
@@ -154,6 +203,55 @@ public class AreaManager : MonoBehaviour
         SetTransitionState(AreaTransitionState.ObjectiveReached);
     }
 
+    #region Checkpoint
+    /// <summary>
+    /// Update the checkpoint room and respawn position. Automatically resets respawn counter if this is a newly registered checkpoint room.
+    /// </summary>
+    public void UpdateCheckpointData(Level level, Vector2 respawnPos)
+    {
+        // Is this a newly registered checkpoint?
+        if (!(checkpointLevel.area == level.area && checkpointLevel.room == level.room)) 
+        {
+            // Reset checkpoint respawn counter.
+            checkpointRespawnCount = 0;
+            checkpointLevel = level;
+            checkpointRespawnPos = respawnPos;
+        }
+    }
+
+    public void Respawn()
+    {
+        isRespawning = true;
+        UnloadCurrentRoom();
+        // RespawnAtCheckpoint is called via OnRoomUnloaded delegate, as it should not be loaded until previous room is unloaded.
+    }
+    public void RespawnAtCheckpoint()
+    {
+        /// This function is called from OnRoomUnloaded.
+
+        checkpointRespawnCount++;
+        GameInstance.instance.ResetPlayerLives();
+        Debug.Log("Player Lives: " + GameInstance.instance.playerLives);
+
+        roomNum = checkpointLevel.room;
+        if (SceneManagement.DoesSceneExist(checkpointLevel))
+        {
+            Debug.Log("Respawning at Checkpoint: " + checkpointLevel.area + " " + checkpointLevel.room);
+            
+            transitionState = AreaTransitionState.Loading;
+            SceneManagement.LoadScene(checkpointLevel);
+        }
+        else
+        {
+            SceneManager.sceneLoaded -= OnRoomLoaded;
+            SceneManager.sceneUnloaded -= OnRoomUnloaded;
+            SceneManager.LoadScene("AreaSelection");
+            // Need to unload the area scene after this scene finishes loading.
+            Debug.LogError("Area cleared!");
+        }
+    }
+
+    #endregion
     #region Utility
     public bool IsTransitionState(AreaTransitionState state)
     {
@@ -171,16 +269,34 @@ public class AreaManager : MonoBehaviour
         switch (state)
         {
             case AreaTransitionState.Spawn:
-                GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-                if (playerStart == null)
+
+                if (isRespawning)
                 {
-                    Debug.LogError("ERROR: No playerStart is placed in the scene " + area + "_" + roomNum + "! Defaulting to origin.");
-                    playerController.ResetUponNewRoom(new Vector3(0f, 0f, 0f));
+                    // If respawnPos was never set.
+                    if (checkpointRespawnPos == new Vector2(0f, 0f))
+                    {
+                        GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+                        if (playerStart != null)
+                        {
+                            checkpointRespawnPos = playerStart.transform.position;
+                        }
+                    }
+
+                    playerController.ResetUponNewRoom(checkpointRespawnPos);
                 }
                 else
                 {
-                    playerController.ResetUponNewRoom(playerStart.transform.position);
-                }
+                    GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+                    if (playerStart == null)
+                    {
+                        Debug.LogError("ERROR: No playerStart is placed in the scene " + area + "_" + roomNum + "! Defaulting to origin.");
+                        playerController.ResetUponNewRoom(new Vector3(0f, 0f, 0f));
+                    }
+                    else
+                    {
+                        playerController.ResetUponNewRoom(playerStart.transform.position);
+                    }
+                } 
                     
                 break;
             case AreaTransitionState.None:
@@ -219,6 +335,28 @@ public class AreaManager : MonoBehaviour
                 break;
         }
         #endregion
+    }
+
+    public Level GetCurrentRoom()
+    {
+        Level currentRoom;
+
+        currentRoom.area = area;
+        currentRoom.room = roomNum;
+
+        return currentRoom;
+    }
+
+    public void UnloadCurrentRoom()
+    {
+        Debug.Log("Unload Current Room");
+        // Unload current room.
+        Level curRoom = new Level(area, roomNum);
+        SceneManagement.UnloadSceneAsync(curRoom);
+    }
+    public int GetRoomNum()
+    {
+        return roomNum;
     }
     #endregion
 }

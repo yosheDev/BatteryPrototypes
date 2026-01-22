@@ -124,7 +124,7 @@ public class BatteryController : MonoBehaviour
         var dt = Time.fixedDeltaTime;
 
         #region Inherit Surface Parent Delta
-        Debug.Log(gameObject.transform.parent + " is parent. " + surfaceParent + " is surfaceParent.");
+        //Debug.Log(gameObject.transform.parent + " is parent. " + surfaceParent + " is surfaceParent.");
         if (surfaceParent != null)
         {
             // TO DO: Will need to ensure I have the parents proper rotation pivot. Make interface to retrieve it. If not exist, use surfaceParent.transform.position.
@@ -140,8 +140,7 @@ public class BatteryController : MonoBehaviour
             // Rotate and Move Player
             if (gameObject.transform.parent == scalePivot.transform)
             {
-                Debug.Log("ScalePivot is parent.");
-                Debug.DrawLine(scalePivot.transform.position + surfaceParentPosDelta, scalePivot.transform.position + surfaceParentPosDelta + new Vector3(0f, 3f, 0f), Color.red, 1.5f);
+                //Debug.Log("ScalePivot is parent.");
                 scalePivot.transform.position += surfaceParentPosDelta;
                 scalePivot.transform.RotateAround(parentPivot, Vector3.forward, rotAngle);
                 //scalePivot.transform.position += surfaceParentPosDelta;
@@ -565,10 +564,12 @@ public class BatteryController : MonoBehaviour
             return;
         }
 
+        #region Exec Based on Exitting Specific State
         // When leaving weld
         if (weldState == WeldState.Welded)
         {
-            // Reset Capsule Collider Offset
+            #region Handle Player Data
+            // Reset Capsule Collider
             gameObject.GetComponent<CapsuleCollider2D>().offset = playerColOffset;
             gameObject.GetComponent<CapsuleCollider2D>().size = playerColSize;
 
@@ -576,34 +577,40 @@ public class BatteryController : MonoBehaviour
             scalePivot.transform.localScale = Vector3.one;
             gameObject.transform.parent = scalePivot.transform.parent;
 
-            // Update camera follow targets.
-            CameraManager.instance.AddFollowTarget(gameObject.transform, 0.5f);
-            CameraManager.instance.RemoveFollowTarget(playerWeldMag.transform, 0.5f);
-
-            // Clamp velocity
+            // Clamp rigidbody velocity
             if (surfaceParent != null)
             {
-                rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 5f + surfaceParentVelocity.magnitude); 
+                rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 5f + surfaceParentVelocity.magnitude);
             }
             else
             {
                 rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity, 5f);
             }
+            #endregion
+
+            // Update camera follow targets.
+            CameraManager.instance.AddFollowTarget(gameObject.transform, 0.5f);
+            CameraManager.instance.RemoveFollowTarget(playerWeldMag.transform, 0.5f);
         }
 
         // When leaving Launch Aim, unparent player from the squash/stretch pivot.
         if (weldState == WeldState.LaunchAim)
         {
+            #region Handle Player Data
             // Reset Capsule Collider Offset
             gameObject.GetComponent<CapsuleCollider2D>().offset = playerColOffset;
             gameObject.GetComponent<CapsuleCollider2D>().size = playerColSize;
 
             scalePivot.transform.localScale = Vector3.one;
             gameObject.transform.parent = scalePivot.transform.parent;
+            #endregion
         }
+        #endregion
 
         weldState = newState;
-        switch(weldState)
+
+        #region Exec Based on Entering Specific State
+        switch (weldState)
         {
             case WeldState.None:
                 weldedSurface = null;
@@ -660,6 +667,7 @@ public class BatteryController : MonoBehaviour
                 rotationFactor = 30f;
                 break;
         }
+        #endregion
     }
 
     public IEnumerator LockWeldState(float duration)
@@ -720,9 +728,25 @@ public class BatteryController : MonoBehaviour
         rb.WakeUp();
     }
 
+    public void RestartInput()
+    {
+        /// This event plays when player presses restart key.
+        
+        // If player is not in the air? Or maybe do velocity?
+
+        if (velocity <= .5f)
+        {
+            Restart();
+        }
+        else
+        {
+            Debug.Log("Cannot Restart while moving!");
+        }
+    }
     public void Restart()
     {
         // TO DO: Should this reload room completely? Need to go about resetting the state of the room.
+        // NOTE: Make sure restarting does NOT use up a player life.
 
         transform.position = startPos;
         rb.linearVelocity = Vector3.zero;
@@ -730,9 +754,21 @@ public class BatteryController : MonoBehaviour
 
     public void Death()
     {
-        // Will definitely need to do more stuff here of course to reset everything like battery percents and room states.
-        Restart();
+        // TO DO: Ensure reset room state when respawning in the same room.
+        // TO DO: Reset battery percentage to be what is was upon entering the room.
+        // TO DO: Checkpoint logic
+        if (GameInstance.instance.playerLives <= 0)
+        {
+            AreaManager.instance.Respawn();
+        }
+        else
+        {
+            GameInstance.instance.playerLives--;
+            Restart();
+        }    
     }
+
+    #region Parent Source
     public void AddParentSource(GameObject parentObj)
     {
         // For now, just supports one parent at a time. Unsure if will ever need multiple but that will be a challenge for a different time.
@@ -752,6 +788,7 @@ public class BatteryController : MonoBehaviour
 
         surfaceParent = null;
     }
+    #endregion
 
     #region Getters / Setters
     public void SetIntermediateRot(Quaternion inRot)
