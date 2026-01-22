@@ -728,9 +728,25 @@ public class BatteryController : MonoBehaviour
         rb.WakeUp();
     }
 
+    public void RestartInput()
+    {
+        /// This event plays when player presses restart key.
+        
+        // If player is not in the air? Or maybe do velocity?
+
+        if (velocity <= .5f)
+        {
+            Restart();
+        }
+        else
+        {
+            Debug.Log("Cannot Restart while moving!");
+        }
+    }
     public void Restart()
     {
         // TO DO: Should this reload room completely? Need to go about resetting the state of the room.
+        // NOTE: Make sure restarting does NOT use up a player life.
 
         transform.position = startPos;
         rb.linearVelocity = Vector3.zero;

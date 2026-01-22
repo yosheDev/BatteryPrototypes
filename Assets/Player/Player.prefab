@@ -1934,7 +1934,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8047242034082428540}
         m_TargetAssemblyTypeName: BatteryController, Assembly-CSharp
-        m_MethodName: Restart
+        m_MethodName: RestartInput
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

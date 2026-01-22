@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 using Unity.Android.Gradle;
 using UnityEngine;
@@ -66,8 +67,16 @@ public static class SceneManagement
         {
             roomSceneName = GetSceneFormattedName(level);
         }
-
-        SceneManager.UnloadSceneAsync(roomSceneName);
+        Debug.Log("Unloading: " + roomSceneName);
+        try
+        {
+            SceneManager.UnloadSceneAsync(roomSceneName);
+        }
+        catch
+        {
+            Debug.LogError("Unable to unload " + roomSceneName + " as it was invalid. Has this scene already been unloaded?");
+        }
+        
     }
 
     /// <summary>
