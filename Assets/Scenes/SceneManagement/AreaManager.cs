@@ -90,8 +90,7 @@ public class AreaManager : MonoBehaviour
         }
 
         // Set checkpoint level default to the first room.
-        checkpointLevel.area = area;
-        checkpointLevel.room = 1;
+        checkpointLevel = new Level(area, 1);
 
         // Officially start the level.
         Level startLevel = new Level(area, 1);
@@ -123,18 +122,13 @@ public class AreaManager : MonoBehaviour
         SceneManager.sceneUnloaded -= OnRoomUnloaded;
         SceneManager.sceneLoaded += OnAreaSelectLoaded;
 
-        Debug.LogError("Area cleared!");
+        Debug.Log("Area cleared! Returning to area selection screen.");
         SceneManager.LoadScene("AreaSelection");
         // Once Area Selection is done loading, OnRoomLoaded() will delete cameraManager, and unload area scene. When area scene is unloaded, this gameObject is destroyed.
     }
-    public void RebindOnRoomUnloaded()
-    {
-        // TO DO: Finish this.
-        SceneManager.sceneUnloaded += OnRoomUnloaded;
-    }
     void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("On Room Loaded.");
+        //Debug.Log("On Room Loaded.");
         CameraManager.instance.UpdateConfinedBounds();
         CameraManager.instance.WarpCamera();
         SetTransitionState(AreaTransitionState.Spawn);      
@@ -142,7 +136,7 @@ public class AreaManager : MonoBehaviour
 
     void OnRoomUnloaded(Scene scene)
     {
-        Debug.Log("On Room Unloaded.");
+        //Debug.Log("On Room Unloaded.");
 
         if (!isRespawning)
         {
@@ -231,7 +225,6 @@ public class AreaManager : MonoBehaviour
 
         checkpointRespawnCount++;
         GameInstance.instance.ResetPlayerLives();
-        Debug.Log("Player Lives: " + GameInstance.instance.playerLives);
 
         roomNum = checkpointLevel.room;
         if (SceneManagement.DoesSceneExist(checkpointLevel))
@@ -243,11 +236,11 @@ public class AreaManager : MonoBehaviour
         }
         else
         {
-            SceneManager.sceneLoaded -= OnRoomLoaded;
-            SceneManager.sceneUnloaded -= OnRoomUnloaded;
-            SceneManager.LoadScene("AreaSelection");
-            // Need to unload the area scene after this scene finishes loading.
-            Debug.LogError("Area cleared!");
+            Debug.LogError("No checkpoint was found. Defaulting to first room of the current area.");
+            checkpointLevel.area = area;
+            checkpointLevel.room = 1;
+            transitionState = AreaTransitionState.Loading;
+            SceneManagement.LoadScene(checkpointLevel);
         }
     }
 
@@ -269,6 +262,9 @@ public class AreaManager : MonoBehaviour
         switch (state)
         {
             case AreaTransitionState.Spawn:
+
+                playerController.GetComponent<CapsuleCollider2D>().enabled = true;
+                playerController.GetComponent<Battery>().enabled = true;
 
                 if (isRespawning)
                 {
@@ -305,6 +301,8 @@ public class AreaManager : MonoBehaviour
             case AreaTransitionState.ObjectiveReached:
                 playerRB.linearVelocity = new Vector2(0f, 0f);
                 playerRB.gravityScale = 0f;
+                playerController.GetComponent<CapsuleCollider2D>().enabled = false;
+                playerController.GetComponent<Battery>().enabled = false;
                 endPlayerPosTarget = reachedObjective.transform.position;
                 endPlayerPosTarget.z = playerController.gameObject.transform.position.z;
 

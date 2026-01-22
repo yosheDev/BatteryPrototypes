@@ -763,7 +763,7 @@ public class BatteryController : MonoBehaviour
         }
         else
         {
-            GameInstance.instance.playerLives--;
+            GameInstance.instance.SetPlayerLives((byte)(GameInstance.instance.playerLives - 1));
             Restart();
         }    
     }
