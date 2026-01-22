@@ -81,8 +81,21 @@ public class AreaManager : MonoBehaviour
                 //{
                 //    if (SceneManager.GetSceneByName)
                 //}
+                
+                // Update room number to be correct here.
+                string curScene = SceneManager.GetActiveScene().name;
+                string[] splitSceneName = curScene.Split("_r");
+                try
+                {
+                    roomNum = int.Parse(splitSceneName[1]);
+                }
+                catch 
+                { 
+                    Debug.LogError("The room NEEDS to be the active scene when loading into a specific room in the editor, or else AreaManager.roomNum will not parse correctly. Right click and select Set Active Scene.");
+                }
 
-                Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager.");
+                Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager. AreaManager.roomNum is parsed to be " + roomNum);
+
                 SetTransitionState(AreaTransitionState.Spawn);
                 return;
             }
@@ -129,6 +142,7 @@ public class AreaManager : MonoBehaviour
     void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
         //Debug.Log("On Room Loaded.");
+        SceneManager.SetActiveScene(scene);
         CameraManager.instance.UpdateConfinedBounds();
         CameraManager.instance.WarpCamera();
         SetTransitionState(AreaTransitionState.Spawn);      
@@ -222,7 +236,6 @@ public class AreaManager : MonoBehaviour
     public void RespawnAtCheckpoint()
     {
         /// This function is called from OnRoomUnloaded.
-
         checkpointRespawnCount++;
         GameInstance.instance.ResetPlayerLives();
 
@@ -278,6 +291,7 @@ public class AreaManager : MonoBehaviour
                         }
                     }
 
+                    isRespawning = false; // Set respawn value back to false when respawning in a room.
                     playerController.ResetUponNewRoom(checkpointRespawnPos);
                 }
                 else
@@ -347,7 +361,7 @@ public class AreaManager : MonoBehaviour
 
     public void UnloadCurrentRoom()
     {
-        Debug.Log("Unload Current Room");
+        //Debug.Log("Unload Current Room");
         // Unload current room.
         Level curRoom = new Level(area, roomNum);
         SceneManagement.UnloadSceneAsync(curRoom);
