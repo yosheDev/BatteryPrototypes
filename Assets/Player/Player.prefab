@@ -188,7 +188,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1054502265016936750}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2091,6 +2091,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
   batterySlider: {fileID: 0}
   playerBattery: {fileID: 0}
+  playerLivesText: {fileID: 0}
 --- !u!233 &833065636794077562
 HingeJoint2D:
   m_ObjectHideFlags: 0
