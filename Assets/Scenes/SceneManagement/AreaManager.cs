@@ -1,10 +1,9 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
+using FunctionLibrary;
 using System.Collections;
 using System.Collections.Generic;
-using FunctionLibrary;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using static UnityEngine.GUILayout;
 
 public class AreaManager : MonoBehaviour
 {
@@ -53,9 +52,18 @@ public class AreaManager : MonoBehaviour
         {
             // Set the static instance to this instance
             instance = this;
+            Debug.Log("Area Manager is created.");
         }
         else
         {
+            Debug.Log("Area Manager destroyed because an instance already exists.");
+
+            // Ensure delegates are unbinded before destroying.
+            SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
+            SceneManager.sceneLoaded -= instance.OnRoomLoaded;
+            SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+            SceneManager.sceneUnloaded -= instance.OnAreaUnloaded;
+
             Destroy(gameObject);
         }
     }
@@ -67,9 +75,11 @@ public class AreaManager : MonoBehaviour
         playerRB = playerController.gameObject.GetComponent<Rigidbody2D>();
         playerBaseGravity = playerRB.gravityScale;
 
-        // Bind delegates.
-        SceneManager.sceneLoaded += OnRoomLoaded;
-        SceneManager.sceneUnloaded += OnRoomUnloaded;
+        roomNum = 1;
+
+        // Bind delegates. (do these need to be bound at end of start instead of anytime in start?)
+        SceneManager.sceneLoaded += instance.OnRoomLoaded;
+        SceneManager.sceneUnloaded += instance.OnRoomUnloaded;
 
         // Check if another scene is already open (for editor use only)
         if (Application.isEditor)
@@ -109,8 +119,28 @@ public class AreaManager : MonoBehaviour
         Level startLevel = new Level(area, 1);
         SceneManagement.LoadScene(startLevel);
     }
-    
+
     #region Loading/Unloading Rooms
+    public void UnloadCurrentRoom()
+    {
+        //Debug.Log("Unload Current Room");
+        // Unload current room.
+        Level curRoom = new Level(area, roomNum);
+        SceneManagement.UnloadSceneAsync(curRoom);
+    }
+    void OnRoomUnloaded(Scene scene)
+    {
+        //Debug.Log("On Room Unloaded.");
+
+        if (!isRespawning)
+        {
+            LoadNextRoom(); /// If there is no next room, this function instead will unload area / return to area selection screen.
+        }
+        else
+        {
+            RespawnAtCheckpoint();
+        }
+    }
     public void LoadNextRoom()
     {
         Level nextRoom = new Level(area, roomNum + 1);
@@ -118,72 +148,82 @@ public class AreaManager : MonoBehaviour
         if (SceneManagement.DoesSceneExist(nextRoom))
         {
             roomNum++;
-            Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
+            //Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
             transitionState = AreaTransitionState.Loading;
             SceneManagement.LoadScene(nextRoom);
         }
         else
         {
-            UnloadArea();
+            //Debug.Log("No next room was found. Assuming area is complete and begin Unloading Area instead.");
+            BeginUnloadAreaSequence();
         }
     }
 
-    public void UnloadArea()
-    {
-        // Unbind delegates and replace with more specific ones.
-        SceneManager.sceneLoaded -= OnRoomLoaded;
-        SceneManager.sceneUnloaded -= OnRoomUnloaded;
-        SceneManager.sceneLoaded += OnAreaSelectLoaded;
-
-        Debug.Log("Area cleared! Returning to area selection screen.");
-        SceneManager.LoadScene("AreaSelection");
-        // Once Area Selection is done loading, OnRoomLoaded() will delete cameraManager, and unload area scene. When area scene is unloaded, this gameObject is destroyed.
-    }
     void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
-        //Debug.Log("On Room Loaded.");
+        Debug.Log("On Room Loaded.");
         SceneManager.SetActiveScene(scene);
         CameraManager.instance.UpdateConfinedBounds();
         CameraManager.instance.WarpCamera();
         SetTransitionState(AreaTransitionState.Spawn);      
     }
 
-    void OnRoomUnloaded(Scene scene)
-    {
-        //Debug.Log("On Room Unloaded.");
+    #endregion
 
-        if (!isRespawning)
-        {
-            LoadNextRoom();
-        }
-        else
-        {
-            RespawnAtCheckpoint();
-        }
+    #region Load / Unload Areas
+    public void BeginUnloadAreaSequence()
+    {
+        /// This event begins the SEQUENCE for unloading an area. The sequence is...
+        /// 1. Unload Current Room (if any) 
+        /// 2. Load Area Selection Scene
+        /// 3. Unload Area Scene
+    
+        // Unbind delegates and replace with more specific ones for handling entire areas rather than rooms.
+        SceneManager.sceneLoaded -= instance.OnRoomLoaded;
+        SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+
+        SceneManager.sceneLoaded += instance.OnAreaSelectLoaded;
+        //Debug.Log("Binded OnAreaSelectLoaded.");
+
+        //Debug.Log("Area cleared! Loading area selection screen. Next message should be OnAreaSelectLoaded. Something wrong if not probably.");
+        SceneManagement.LoadScene("AreaSelection");
+        // Once Area Selection is done loading, OnRoomLoaded() will delete cameraManager, and unload area scene. When area scene is unloaded, this gameObject is destroyed.
     }
 
     void OnAreaSelectLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("OnAreaSelectLoaded!");
+        //Debug.Log("OnAreaSelectLoaded! Loaded: " + scene.name + ". The AreaSelectScene should be open by now.");
         // Destroy camera manager.
         Destroy(CameraManager.instance.gameObject);
 
-        // Unload the area scene.
-        Level areaScene = new Level(area, -1);
+        SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
+        SceneManager.sceneLoaded -= instance.OnRoomLoaded;
+        SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+        SceneManager.sceneUnloaded += instance.OnAreaUnloaded;
 
-        SceneManager.sceneUnloaded += OnAreaUnloaded;
-        SceneManagement.UnloadSceneAsync(areaScene); // Replace this with non Async method?
-        // Upon unloaded, OnAreaUnloaded() destroyes this gameobject.
+        //Debug.Log("Binded OnAreaUnloaded. Going to attempt to unload the area in 1 frame.");
+        //AreaManager.instance.StartCoroutine(UnloadCurrentArea()); /// Uses a coroutine so it can wait a frame.
+        Level areaScene = new Level(area, -1);
+        SceneManagement.UnloadSceneAsync(areaScene);
     }
+
     void OnAreaUnloaded(Scene scene)
     {
-        Debug.Log("OnAreaUnloaded!");
-        SceneManager.sceneLoaded -= OnAreaSelectLoaded;
-        SceneManager.sceneUnloaded -= OnAreaUnloaded;
-        Destroy(this.gameObject);
+        //Debug.Log("OnAreaUnloaded! The area has been unloaded.");
+        
+        //Debug.Log("Unbinded OnAreaUnloaded.");
+
+        // Ensure delegates are unbinded before destroying.
+        SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
+        SceneManager.sceneLoaded -= instance.OnRoomLoaded;
+        SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+        SceneManager.sceneUnloaded -= instance.OnAreaUnloaded;
+
+        Destroy(instance);
     }
 
     #endregion
+
     private void FixedUpdate()
     {
         // TO DO: Replace this with something that looks nicer. Like attraction field or something... OR just make entire objective a point that has strong field around it. Touch point does this.
@@ -357,14 +397,6 @@ public class AreaManager : MonoBehaviour
         currentRoom.room = roomNum;
 
         return currentRoom;
-    }
-
-    public void UnloadCurrentRoom()
-    {
-        //Debug.Log("Unload Current Room");
-        // Unload current room.
-        Level curRoom = new Level(area, roomNum);
-        SceneManagement.UnloadSceneAsync(curRoom);
     }
     public int GetRoomNum()
     {

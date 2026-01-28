@@ -52,6 +52,13 @@ public static class SceneManagement
         SceneManager.LoadScene(roomSceneName, loadSceneMode);
     }
 
+    public static void LoadScene(string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    {
+        /// This function forwards to the main LoadScene function with a dummy Level struct. For when loading scene with just the string for the name.
+        Level dummyLevel = new Level(0, -1);
+        SceneManagement.LoadScene(dummyLevel, overrideString, loadSceneMode);
+    }
+
     /// <summary>
     /// Unload a scene based on the Level struct passed in. If an override string is passed, unload that scene instead.
     /// </summary>
@@ -74,7 +81,7 @@ public static class SceneManagement
         }
         catch
         {
-            Debug.LogError("Unable to unload " + roomSceneName + " as it was invalid. Has this scene already been unloaded?");
+            Debug.LogError("Unable to unload " + roomSceneName + " as it was invalid. Has this scene already been unloaded? Is this the only currently loaded scene? " + SceneManager.sceneCount);
         }
         
     }
@@ -84,7 +91,9 @@ public static class SceneManagement
     /// </summary>
     public static void UnloadSceneAsync(string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
     {
-        SceneManager.UnloadSceneAsync(overrideString);
+        /// This function forwards to the main UnloadScene function with a dummy Level struct. For when loading scene with just the string for the name.
+        Level dummyLevel = new Level(0, -1);
+        SceneManagement.UnloadSceneAsync(dummyLevel, overrideString, unloadSceneOptions);
     }
     #endregion
 

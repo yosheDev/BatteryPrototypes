@@ -57,6 +57,7 @@ public class CameraManager : MonoBehaviour
     private void OnDestroy()
     {
         Debug.Log("Camera manager was destroyed.");
+        SceneManager.sceneLoaded -= OnRoomLoaded;
     }
 
     #region Getters
