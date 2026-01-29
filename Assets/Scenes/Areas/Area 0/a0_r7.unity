@@ -1130,9 +1130,17 @@ PrefabInstance:
       propertyPath: _fieldAttractDistance
       value: 2.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1242040284218577903, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_Name
       value: PosMag (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6060689524735298761, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6060689524735298761, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_EdgeRadius
