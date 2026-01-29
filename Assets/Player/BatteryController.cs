@@ -7,6 +7,7 @@ using System.Linq;
 using Magnet;
 using FunctionLibrary;
 using UnityEditor.Experimental.GraphView;
+using Unity.VisualScripting;
 
 public class BatteryController : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private GameObject scalePivot;
     [SerializeField] private GameObject weldBlob;
     [SerializeField] private GameObject spawnCage;
+    [SerializeField] private GameObject scoutTarget;
     private Camera mainCam;
     private Rigidbody2D rb;
     private Collider2D surfaceCol;
@@ -74,11 +76,22 @@ public class BatteryController : MonoBehaviour
     private Vector3 previousWeldUp;    /// Used for determining input rotation direction.
     private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
 
+    // Scouting
+    private Vector2 scoutInput;
+    private Vector2 scoutPosOffset = Vector2.zero;
+    Vector2 scoutVelocity = Vector2.zero;
+    float scoutDistance = 10f;
+    private enum ScoutState
+    {
+        None,
+        Scouting,
+        Returning
+    }
+    private ScoutState scoutState;
+
     // Input System
-    private Vector2 moveInput;
     private bool weldInput;
     private bool launchInput;
-    private InputAction launchAction;
 
     private Vector3 startPos; /// Used for current restart. REMOVE THIS LATER when restart is tied into AreaManager/PlayerStart stuff.
     #endregion
@@ -419,6 +432,24 @@ public class BatteryController : MonoBehaviour
 
             }
             #endregion
+
+            if (scoutState == ScoutState.Scouting)
+            {
+                scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.ClampMagnitude(scoutPosOffset + (scoutInput * 9999999f * Time.fixedDeltaTime), scoutDistance), ref scoutVelocity, .3f);
+            }
+            else if (scoutState == ScoutState.Returning)
+            {
+                scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.zero, ref scoutVelocity, .2f);
+                Debug.Log(scoutPosOffset);
+                if (FunctionLibraryF.VectorsApproximatelyEqual(scoutPosOffset, Vector2.zero))
+                {
+                    scoutState = ScoutState.None;
+                    scoutTarget.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                    CameraManager.instance.RemoveFollowTarget(scoutTarget.transform);
+                    scoutPosOffset = Vector2.zero;
+                }
+            }
+                scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
         }
         else
         {
@@ -442,16 +473,25 @@ public class BatteryController : MonoBehaviour
         mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : mouseDelta; /// Magnitude check protects against mouse connectivity errors.
     }
 
-    // Currently unused.
-    public void Move(InputAction.CallbackContext context)
+    public void Scout(InputAction.CallbackContext context)
     {
         if (playerInput.currentControlScheme.Equals("Gamepad"))
         {
-
+            scoutInput = context.ReadValue<Vector2>();
         }
         else
         {
-            moveInput = context.ReadValue<Vector2>();
+            if (context.started)
+            {
+                scoutState = ScoutState.Scouting;
+                CameraManager.instance.AddFollowTarget(scoutTarget.transform);
+                scoutTarget.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            }
+            else if (context.canceled)
+            {
+                scoutState = ScoutState.Returning;
+            }
+            scoutInput = context.ReadValue<Vector2>();
         }
     }
 
@@ -631,7 +671,7 @@ public class BatteryController : MonoBehaviour
                     StartCoroutine(softwareCursor.WeldJustStarted(.1f));
                 }
                     
-                rotationFactor = 60f;
+                rotationFactor = 15f;
                 UpdateScalePivotTransforms();
                 gameObject.transform.parent = scalePivot.transform;
                 // Set anchor data for the hingejoint
@@ -768,6 +808,14 @@ public class BatteryController : MonoBehaviour
         }    
     }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        ICollect collectScript = collision.gameObject.GetComponent<ICollect>();
+        if (collectScript != null)
+        {
+            collectScript.Collect(surfaceCol);
+        }
+    }
     #region Parent Source
     public void AddParentSource(GameObject parentObj)
     {

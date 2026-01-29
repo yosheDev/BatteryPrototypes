@@ -24,6 +24,10 @@ namespace FunctionLibrary
             }
         }
 
+        public static bool VectorsApproximatelyEqual(Vector2 a, Vector2 b, float threshold = .03f)
+        {
+            return ((Mathf.Abs(a.x - b.x) <= threshold) && (Mathf.Abs(a.y - b.y) <= threshold));
+        }
         public static Vector3 InverseTransformPointUnscaled(this Transform transform, Vector3 position)
         {
             var worldToLocalMatrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one).inverse;

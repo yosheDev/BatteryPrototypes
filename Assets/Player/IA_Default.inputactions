@@ -34,7 +34,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Move",
+                    "name": "Scout",
                     "type": "Value",
                     "id": "4f1d2ab0-f3c6-4ec7-9222-c92996975bba",
                     "expectedControlType": "Vector2",
@@ -106,6 +106,17 @@
                 },
                 {
                     "name": "",
+                    "id": "1a53e648-4505-4be8-b970-febc4937bf06",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": ";Gamepad",
+                    "action": "MouseDelta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "fa28b8ad-418c-4cd4-823c-06a48ddc661f",
                     "path": "<Keyboard>/r",
                     "interactions": "",
@@ -122,7 +133,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Scout",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -133,7 +144,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
-                    "action": "Move",
+                    "action": "Scout",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -144,7 +155,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
-                    "action": "Move",
+                    "action": "Scout",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -155,7 +166,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
-                    "action": "Move",
+                    "action": "Scout",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -166,9 +177,20 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
-                    "action": "Move",
+                    "action": "Scout",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "5af077d7-90f9-4f23-8529-a29c834005c9",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "StickDeadzone",
+                    "groups": ";Gamepad",
+                    "action": "Scout",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
