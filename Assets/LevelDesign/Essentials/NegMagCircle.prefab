@@ -119,7 +119,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: bbd8d491a9aa1ae44a98431ecd62f350, type: 3}
-  m_Color: {r: 0.7137255, g: 0.2636737, b: 0.2627451, a: 1}
+  m_Color: {r: 0.2627451, g: 0.3281377, b: 0.7137255, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticPoint
   _magData:
-    charge: 1
+    charge: -1
     strength: 1
     attenuation: 2
   fieldCol: {fileID: 6731885336624087628}
@@ -159,7 +159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1515213846094552245}
   m_Layer: 0
-  m_Name: PosMagCircle
+  m_Name: NegMagCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348,7 +348,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c6433b9fc821ef0408235669b4bd05a3, type: 2}
+  - {fileID: 2100000, guid: e2aa17749bdb8ab44b9aad692489ad72, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

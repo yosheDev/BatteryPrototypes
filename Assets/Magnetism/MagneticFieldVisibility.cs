@@ -1,41 +1,97 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class MagneticFieldVisibility : MonoBehaviour
 {
-    [SerializeField] private Collider2D fieldCol;
-    private Bounds fieldLocalBounds;
+    #region References
+    // Transforms
+    [SerializeField] private Transform magTransform;
 
-    [SerializeField] private SpriteRenderer vfxSprite;
-    private Bounds vfxLocalBounds;
+    // Magnetic Field
+    [SerializeField] private Collider2D fieldCol;
+
+    // VFX
+    [SerializeField] private Mesh shapeMesh;
+    [SerializeField] private MeshFilter meshFilter;
+    //========================================================
+    #endregion
+     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void OnDestroy()
+    {
+        Destroy(shapeMesh);
+    }
+    
     void Start()
     {
-        CalculateVFXBounds();
+        CreateShapeMesh();
     }
 
-    private void CalculateVFXBounds()
+    private void CreateShapeMesh()
     {
-        // This is NOT accounting for rotations! I think GetShapeBounds / fieldLocalBounds is not actually doing what I want.
+        shapeMesh = fieldCol.CreateMesh(true, true);  
+        
+        // Update mesh vertices to account for localScale.
+        SetMeshLocalScale(new Vector3(transform.localScale.x / magTransform.lossyScale.x, transform.localScale.y / magTransform.lossyScale.y, 1f));
 
-        // Get AABB that accounts for orientation.
-        List<Bounds> fieldBoundsList = new List<Bounds>();
-        fieldLocalBounds = fieldCol.GetShapeBounds(fieldBoundsList, true, false);
+        // Update mesh vertices to account for localPosition.
+        Vector3 offset = new Vector3(-1f * (magTransform.position.x / magTransform.lossyScale.x), -1f * (magTransform.position.y / magTransform.lossyScale.y), 0f);
+        SetMeshPivot(offset);
 
-        // Get AABB that accounts for orientation.
-        vfxLocalBounds = vfxSprite.localBounds;
-        Vector3 curVFXBoundsScale = vfxLocalBounds.size;
+        // Orientation here.
+        transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, Mathf.Abs(180f - Mathf.Abs(magTransform.rotation.z)));
+        // Apply shape mesh to the meshFilter mesh.
+        meshFilter.mesh = shapeMesh;
+    }
 
-        // Calculate the required scale factor for each axis
-        float xScale = fieldLocalBounds.size.x / curVFXBoundsScale.x;
-        float yScale = fieldLocalBounds.size.y / curVFXBoundsScale.y;
-        float zScale = 1f;
+    // IF THESE WORK, COMBINE INTO FUNCTION SO ONLY 1 FOR LOOP RUNS INSTEAD OF 2 SEPERATE ONES?
+    private void SetMeshPivot(Vector3 pivotPosLS)
+    {
+        // Retrieve generated vertices
+        Vector3[] newTris = shapeMesh.vertices;
 
-        // Apply the new local scale
-        transform.localScale = new Vector3(xScale / transform.parent.lossyScale.x, yScale / transform.parent.lossyScale.y, zScale);
+        // Apply scaling to each vertex individually
+        for (int i = 0; i < newTris.Length; i++)
+        {
+            // Add offset
+            newTris[i].x += pivotPosLS.x;
+            newTris[i].y += pivotPosLS.y;
+            newTris[i].z += pivotPosLS.z;
+        }
+
+        // Assign the modified vertices back to the mesh
+        shapeMesh.vertices = newTris;
+
+        // Recalculate essential mesh properties
+        shapeMesh.RecalculateNormals();
+        shapeMesh.RecalculateBounds();
+    }
+
+    private void SetMeshLocalScale(Vector3 localScale)
+    {
+        // Retrieve generated vertices
+        Vector3[] newTris = shapeMesh.vertices;
+
+        // Apply scaling to each vertex individually
+        for (int i = 0; i < newTris.Length; i++)
+        {
+            // Multiplying vector components applies the local scale
+            newTris[i].x *= localScale.x;
+            newTris[i].y *= localScale.y;
+            newTris[i].z *= localScale.z;
+        }
+
+        // Assign the modified vertices back to the mesh
+        shapeMesh.vertices = newTris;
+
+        // Recalculate essential mesh properties
+        shapeMesh.RecalculateNormals();
+        shapeMesh.RecalculateBounds();
     }
 
     #region Inspector Buttons
@@ -47,10 +103,10 @@ public class MagneticFieldVisibility : MonoBehaviour
         {
             DrawDefaultInspector();
 
-            if (GUILayout.Button("Orient Field VFX"))
+            if (GUILayout.Button("Create Shape Mesh"))
             {
                 _fieldVisibility = (MagneticFieldVisibility)target;
-                _fieldVisibility.CalculateVFXBounds();
+                _fieldVisibility.CreateShapeMesh();
             }
         }
     }
