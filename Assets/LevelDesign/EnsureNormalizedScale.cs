@@ -8,4 +8,8 @@ public class EnsureNormalizedScale : MonoBehaviour
         transform.localScale = new Vector3(1f, 1f, 1f);
     }
 
+    private void OnValidate()
+    {
+        transform.localScale = new Vector3(1f, 1f, 1f);
+    }
 }

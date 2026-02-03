@@ -40,6 +40,8 @@ public class BatteryController : MonoBehaviour
 
     // Battery
     [HideInInspector] public Battery battery;
+
+    [HideInInspector] public float playerGravity;
     //==============================================================================================================================
     #region Private
     // Surface Parent
@@ -112,6 +114,7 @@ public class BatteryController : MonoBehaviour
         surfaceCol = GetComponent<CapsuleCollider2D>();
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody2D>();
+        playerGravity = rb.gravityScale;
         battery = GetComponent<Battery>();
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
 
@@ -301,6 +304,92 @@ public class BatteryController : MonoBehaviour
                 }
                 #endregion
             }
+            else if (!weldInput && weldState == WeldState.None && !lockWeldState)
+            {
+                #region Reduce Gravity When Touching Surface (Game Feel for Climbing / Sticking)
+                Collider2D evalAttractSurface = null;
+
+                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
+                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+
+                // Positive
+                if (evalAttractSurface == null)
+                {
+                    foreach (Collider2D col in positiveOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == -1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Negative
+                if (evalAttractSurface == null)
+                {
+                    foreach (Collider2D col in negativeOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == 1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Reduce gravity
+                if (evalAttractSurface != null)
+                {
+                    rb.gravityScale = playerGravity * 0f;
+                    rb.linearDamping = 20f;
+                }
+                else
+                {
+                    rb.gravityScale = playerGravity;
+                    rb.linearDamping = .01f;
+                }
+                #endregion
+                Debug.Log(rb.gravityScale);
+            }
+            else
+            {
+                // This is so can still launch off without damping and gravity being different.
+                rb.gravityScale = playerGravity;
+                rb.linearDamping = .01f;
+            }
             #endregion
 
             #region Weld State Update Functionality
@@ -330,7 +419,7 @@ public class BatteryController : MonoBehaviour
             {
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-                
+
                 intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                 rb.MoveRotation(intermediateRot);
 
@@ -401,6 +490,7 @@ public class BatteryController : MonoBehaviour
                 List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
                 for (int i = 0; i < negativeFields.Count; i++)
                 {
+                    Debug.Log("1" + negativeFields[i]); // new null ref after gravity and field visibiltiy stuff.
                     Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, rb.linearVelocity);
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
@@ -701,6 +791,9 @@ public class BatteryController : MonoBehaviour
                 // Parent player to squash stretch pivot.
                 UpdateScalePivotTransforms();
                 gameObject.transform.parent = scalePivot.transform;
+
+                rb.gravityScale = playerGravity;
+                rb.linearDamping = .01f;
 
                 break;
             default:

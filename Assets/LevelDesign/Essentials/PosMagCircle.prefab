@@ -146,7 +146,7 @@ MonoBehaviour:
     strength: 1
     attenuation: 2
   fieldCol: {fileID: 6731885336624087628}
-  surfaceCol: {fileID: 0}
+  surfaceCol: {fileID: 381894118803918520}
   _fieldAttractDistance: 0.5
   _attenuationModifier: 1
 --- !u!1 &2272906680127013443
@@ -158,6 +158,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1515213846094552245}
+  - component: {fileID: 6423776874946586962}
   m_Layer: 0
   m_Name: PosMagCircle
   m_TagString: Untagged
@@ -175,13 +176,25 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 5.39, y: -49.2, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4200211113273447844}
   - {fileID: 8857943934454192128}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6423776874946586962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2272906680127013443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bc1292b596fed746987fdc817b67dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnsureNormalizedScale
 --- !u!1 &3651762625066045517
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 0}
+  magnetComponent: {fileID: 6728573169404028219}
   isOnPlayer: 0
 --- !u!58 &6731885336624087628
 CircleCollider2D:

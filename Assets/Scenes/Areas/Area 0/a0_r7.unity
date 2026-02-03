@@ -2191,12 +2191,24 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1515213846094552245, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1515213846094552245, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1515213846094552245, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1515213846094552245, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.9
+      value: 4.88
       objectReference: {fileID: 0}
     - target: {fileID: 1515213846094552245, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -43.05
+      value: -43.17
       objectReference: {fileID: 0}
     - target: {fileID: 1515213846094552245, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2236,23 +2248,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4200211113273447844, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.4884
+      value: 1.9134248
       objectReference: {fileID: 0}
     - target: {fileID: 4200211113273447844, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.4884
+      value: 1.9134248
       objectReference: {fileID: 0}
     - target: {fileID: 4200211113273447844, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.4884
+      value: 1.9134248
       objectReference: {fileID: 0}
     - target: {fileID: 4200211113273447844, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.2558
+      value: -1.01
       objectReference: {fileID: 0}
     - target: {fileID: 4200211113273447844, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.2558
+      value: 1.21
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2585,14 +2597,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 1146501980}
     m_Modifications:
     - target: {fileID: 1515213846094552245, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1515213846094552245, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1515213846094552245, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 12
       objectReference: {fileID: 0}
@@ -2636,21 +2640,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: PosMagCircle (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 5124576941017395817, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
-      propertyPath: m_Color.b
-      value: 0.2761428
+    - target: {fileID: 4200211113273447844, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.49088
       objectReference: {fileID: 0}
-    - target: {fileID: 5124576941017395817, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
-      propertyPath: m_Color.g
-      value: 0.2627451
+    - target: {fileID: 4200211113273447844, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.49088
       objectReference: {fileID: 0}
-    - target: {fileID: 5124576941017395817, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
-      propertyPath: m_Color.r
-      value: 0.7137255
-      objectReference: {fileID: 0}
-    - target: {fileID: 8477003581635298751, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
-      propertyPath: _magData.charge
-      value: 1
+    - target: {fileID: 4200211113273447844, guid: de234ede0520e5c4c831bbcc86d596f5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.49088
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -28,6 +28,10 @@ public class GravityVolume : MonoBehaviour
 
         // Set gravity value
         otherRB.gravityScale = overrideGravity ? gravityOverride : otherRB.gravityScale * gravityMultiplier;
+        if (otherRB.gameObject.GetComponent<BatteryController>() != null)
+        {
+            otherRB.gameObject.GetComponent<BatteryController>().playerGravity = overrideGravity ? gravityOverride : otherRB.gameObject.GetComponent<BatteryController>().playerGravity * gravityMultiplier;
+        }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
@@ -44,10 +48,15 @@ public class GravityVolume : MonoBehaviour
         if (affectedObjects.TryGetValue(otherObj, out value))
         {
             otherRB.gravityScale = value;
+            if (otherRB.gameObject.GetComponent<BatteryController>() != null)
+            {
+                otherRB.gameObject.GetComponent<BatteryController>().playerGravity = value;
+            }
         }
         else
         {
             otherRB.gravityScale = 1f;
+            otherRB.gameObject.GetComponent<BatteryController>().playerGravity = 1f;
             Debug.LogWarning("Was not able to retrieve initial gravity value of " + otherObj + " from dictionary in GravityVolume.cs");
         }
         
