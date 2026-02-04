@@ -555,6 +555,7 @@ public class BatteryController : MonoBehaviour
         // TO DO: Look into using VectorArrays so that other objects can also affect the magnetic field (not just the two player magnets)
         Shader.SetGlobalVector("_PlayerPosMag", positiveMag.transform.position);
         Shader.SetGlobalVector("_PlayerNegMag", negativeMag.transform.position);
+        Shader.SetGlobalVector("_PlayerNegMagScreen", Camera.main.WorldToScreenPoint(negativeMag.transform.position));
 
         #endregion
     }
