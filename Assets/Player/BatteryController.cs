@@ -523,6 +523,7 @@ public class BatteryController : MonoBehaviour
             }
             #endregion
 
+            #region Scouting
             if (scoutState == ScoutState.Scouting)
             {
                 scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.ClampMagnitude(scoutPosOffset + (scoutInput * 9999999f * Time.fixedDeltaTime), scoutDistance), ref scoutVelocity, .3f);
@@ -539,7 +540,9 @@ public class BatteryController : MonoBehaviour
                     scoutPosOffset = Vector2.zero;
                 }
             }
-                scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
+            
+            scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
+            #endregion
         }
         else
         {
@@ -547,6 +550,13 @@ public class BatteryController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
             intermediateRot = transform.rotation;
         }
+
+        #region Update Global Shader Values
+        // TO DO: Look into using VectorArrays so that other objects can also affect the magnetic field (not just the two player magnets)
+        Shader.SetGlobalVector("_PlayerPosMag", positiveMag.transform.position);
+        Shader.SetGlobalVector("_PlayerNegMag", negativeMag.transform.position);
+
+        #endregion
     }
 
     #region Input Actions
