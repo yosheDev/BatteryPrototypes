@@ -382,7 +382,7 @@ public class BatteryController : MonoBehaviour
                     rb.linearDamping = .01f;
                 }
                 #endregion
-                Debug.Log(rb.gravityScale);
+                //Debug.Log(rb.gravityScale);
             }
             else
             {

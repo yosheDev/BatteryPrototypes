@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f464ef508b992542b69ce18cecb9d33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
+  _currentCamera: {fileID: 0}
   _camBoundary: {fileID: 0}
 --- !u!1 &7949647630375390744
 GameObject:
@@ -298,7 +299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5206630500372007617, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_CullingMask.m_Bits
-      value: 383
+      value: 895
       objectReference: {fileID: 0}
     - target: {fileID: 5223270091004895403, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_Name

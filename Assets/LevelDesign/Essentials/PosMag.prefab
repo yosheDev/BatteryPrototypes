@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 8382187692721093916}
   - component: {fileID: 7139631911868960946}
   - component: {fileID: 792804880035937590}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FieldVFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticFieldVisibility
   magTransform: {fileID: 191675872032133748}
-  rotParentTransform: {fileID: 0}
   fieldCol: {fileID: 6060689524735298761}
   shapeMesh: {fileID: 0}
   meshFilter: {fileID: 7139631911868960946}
