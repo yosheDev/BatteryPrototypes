@@ -211,7 +211,7 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
                     renderingData,
                     cameraData,
                     lightData,
-                    SortingCriteria.CommonTransparent
+                    SortingCriteria.BackToFront
                 );
 
                 drawingSettings.overrideMaterial = settings._maskMaterial;
