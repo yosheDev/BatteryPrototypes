@@ -1,47 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8426782645830122488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
-  m_Name: RenderObjects
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.RenderObjects
-  m_Active: 1
-  settings:
-    passTag: RenderObjects
-    Event: 500
-    filterSettings:
-      RenderQueueType: 1
-      LayerMask:
-        serializedVersion: 2
-        m_Bits: 512
-      PassNames: []
-    overrideMaterial: {fileID: 2100000, guid: 1f08e9002b4bcaf4da7f9612d0b4dc30, type: 2}
-    overrideMaterialPassIndex: 0
-    overrideShader: {fileID: 0}
-    overrideShaderPassIndex: 0
-    overrideMode: 1
-    overrideDepthState: 1
-    depthCompareFunction: 5
-    enableWrite: 1
-    stencilSettings:
-      overrideStencilState: 0
-      stencilReference: 0
-      stencilCompareFunction: 8
-      passOperation: 0
-      failOperation: 0
-      zFailOperation: 0
-    cameraSettings:
-      overrideCamera: 0
-      restoreCamera: 1
-      offset: {x: 0, y: 0, z: 0, w: 0}
-      cameraFieldOfView: 60
 --- !u!114 &-5875324532630826800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,10 +45,9 @@ MonoBehaviour:
     probeSamplingDebugTexture: {fileID: 2800000, guid: 24ec0e140fb444a44ab96ee80844e18e, type: 3}
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
-  - {fileID: -8426782645830122488}
-  - {fileID: 3245385436492029003}
+  - {fileID: 4524411697367900055}
   - {fileID: -5875324532630826800}
-  m_RendererFeatureMap: 0884dea3d40d0e8b4b5c5515dcec092dd0d0666477a776ae
+  m_RendererFeatureMap: 975f3ca777f0c93ed0d0666477a776ae
   m_UseNativeRenderPass: 0
   m_LayerMask:
     serializedVersion: 2
@@ -133,6 +90,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6875f58e89f63846a689aed3613be6f, type: 3}
   m_Name: MagFieldRTRendererFeatuer
   m_EditorClassIdentifier: Assembly-CSharp::MagFieldRTRendererFeatuer
+  m_Active: 1
+  maskMaterial: {fileID: 2100000, guid: 1f08e9002b4bcaf4da7f9612d0b4dc30, type: 2}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  filterRenderQueueRange: 2
+--- !u!114 &4524411697367900055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6875f58e89f63846a689aed3613be6f, type: 3}
+  m_Name: MagFieldRTRendererFeature
+  m_EditorClassIdentifier: Assembly-CSharp::MagFieldRTRendererFeature
   m_Active: 1
   maskMaterial: {fileID: 2100000, guid: 1f08e9002b4bcaf4da7f9612d0b4dc30, type: 2}
   layerMask:
