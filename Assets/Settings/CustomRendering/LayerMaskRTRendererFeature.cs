@@ -10,7 +10,7 @@ using static UnityEngine.Rendering.Universal.ShaderInput;
 
 // Use this class to pass around settings from the feature to the pass
 [System.Serializable]
-public class MagFieldRTRendererFeatureSettings
+public class LayerMaskRTRendererFeatureSettings
 {
     [Header("Properties")]
     public Material _maskMaterial { get; set; }
@@ -18,7 +18,7 @@ public class MagFieldRTRendererFeatureSettings
     public RenderQueueRange _renderQueueRange { get; set; }
 }
 
-public class MagFieldRTRendererFeature : ScriptableRendererFeature
+public class LayerMaskRTRendererFeature : ScriptableRendererFeature
 {
     public enum FilterRenderQueueRange
     {
@@ -26,13 +26,17 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
         Opaque,
         Transparent
     }
-    public MagFieldRTRendererFeatureSettings settings = new MagFieldRTRendererFeatureSettings();
-    MagFieldRTRendererFeaturePass m_ScriptablePass;
+    public const string passName = "Layer Mask Pass";
+    public const string outputGlobalPropertyName = "_MagFieldMask";
+    public const string shaderTagID = "ShadowCaster";
+    public LayerMaskRTRendererFeatureSettings settings = new LayerMaskRTRendererFeatureSettings();
+    LayerMaskRTRendererFeaturePass m_ScriptablePass;
     public Material maskMaterial;
     public LayerMask layerMask;
     public FilterRenderQueueRange filterRenderQueueRange;
     // This is unable to show in the editor for some reason, so I used enum.
     private RenderQueueRange renderQueueRange = RenderQueueRange.all;
+    
 
     /// <inheritdoc/>
     public override void Create()
@@ -56,7 +60,7 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
                 settings._renderQueueRange = RenderQueueRange.all;
                 break;
         }
-        m_ScriptablePass = new MagFieldRTRendererFeaturePass(settings);
+        m_ScriptablePass = new LayerMaskRTRendererFeaturePass(settings);
 
         // Configures where the render pass should be injected.
         m_ScriptablePass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
@@ -81,12 +85,12 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
         renderer.EnqueuePass(m_ScriptablePass);
     }
 
-    class MagFieldRTRendererFeaturePass : ScriptableRenderPass
+    class LayerMaskRTRendererFeaturePass : ScriptableRenderPass
     {
-        readonly MagFieldRTRendererFeatureSettings settings;
-        private int globalTextureID = Shader.PropertyToID("_MagFieldMask");
+        readonly LayerMaskRTRendererFeatureSettings settings;
+        private int globalTextureID = Shader.PropertyToID(outputGlobalPropertyName);
 
-        public MagFieldRTRendererFeaturePass(MagFieldRTRendererFeatureSettings settings)
+        public LayerMaskRTRendererFeaturePass(LayerMaskRTRendererFeatureSettings settings)
         {
             this.settings = settings;
         }
@@ -109,9 +113,6 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
-            const string passName = "Magnetic Field Mask Pass";
-            const string globalShaderIdentifier = "_MagFieldMask";
-
             #region Old AddCopyPass Test
             // Alternatively, using AddCopyPass
             // Can be more performant, but requires source/destination to be the same size in pixels and same number of MSAA samples and array slices
@@ -134,58 +135,7 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
                 UniversalRenderingData renderingData = frameData.Get<UniversalRenderingData>(); // May not need this one?
                 UniversalLightData lightData = frameData.Get<UniversalLightData>(); // May not need this one?
 
-                #region My Method First Attempt
-                //// NOTE: The reason it is probably passing NOTHING through the render texture is probably related to how the render texture is created / setup. Its curing cameraColor? Is this fine? Learn more about this.
-                //// Create Destination Texture
-                //var desc = renderGraph.GetTextureDesc(resourceData.cameraColor);
-                ////desc.width = Screen.width; // i added
-                ////desc.height = Screen.height; //i added
-                //desc.colorFormat = GraphicsFormat.R8_UInt; // I added
-                //desc.name = passName;
-                //desc.clearBuffer = false;
-                //TextureHandle cameraCopyTexture = renderGraph.CreateTexture(desc);
-
-                // Blit
-                //renderGraph.AddBlitPass(resourceData.cameraColor, cameraCopyTexture, Vector2.one, Vector2.zero, passName: "Mag Field Mask");
-                //var blitParams = new RenderGraphUtils.BlitMaterialParameters(resourceData.cameraColor, cameraCopyTexture, settings._maskMaterial, 0);
-                //renderGraph.AddBlitPass(blitParams, passName: "Mag Field Mask");
-
-                #region Renderer List (Material, Layermask)
-
-                //===[ Settings for which GameObjects to render in this pass. ]===
-
-                #region Create Render Settings
-
-                //// Culling Settings
-                //var cullContextData = frameData.Get<CullContextData>();
-                //cameraData.camera.TryGetCullingParameters(false, out var cullingParams);
-                //CullingResults cullingResults = cullContextData.Cull(ref cullingParams);
-
-                //// Drawing Settings (Override Material)
-                //// NOTE: I am unsure of what string to pass through when creating the ShaderTagID. https://docs.unity3d.com/6000.3/Documentation/Manual/SL-PassTags.html
-                //DrawingSettings drawingSettings = new DrawingSettings(new ShaderTagId("Always"), new SortingSettings(cameraData.camera));
-                //drawingSettings.overrideMaterial = settings._maskMaterial; /// Apply the mask material.
-
-                //// Filtering Settings (LayerMask)
-                //FilteringSettings filteringSettings = new FilteringSettings(settings._renderQueueRange, settings._layerMask); // Set to transparent since this is intended for the magnetic fields.
-
-                #endregion
-
-                //// Create RendererListParams struct consisting of settings above.
-                //RendererListParams rendererListParams = new RendererListParams(cullingResults, drawingSettings, filteringSettings);
-
-                //// Create renderer list for this pass.
-                //RendererListHandle rendererListHandle = renderGraph.CreateRendererList(rendererListParams);
-
-                #endregion
-
-                //// Setup passData to have correct rendererListHandle.
-                //passData.rendererListHandle = rendererListHandle;
-                //passData.source = cameraCopyTexture;
-
-                #endregion 
-
-                #region Attempt #2
+                #region Setup
                 // Create descriptor for occluders texture with scaled resolution
                 RenderTextureDescriptor maskDesc = cameraData.cameraTargetDescriptor;
                 maskDesc.depthBufferBits = 0;
@@ -196,30 +146,24 @@ public class MagFieldRTRendererFeature : ScriptableRendererFeature
                 TextureHandle maskTexture = UniversalRenderer.CreateRenderGraphTexture(
                     renderGraph,
                     maskDesc,
-                    globalShaderIdentifier,
+                    outputGlobalPropertyName,
                     false,
                     FilterMode.Bilinear,
                     TextureWrapMode.Clamp
                 );
 
-                //create renderer list to draw occluders
-                // NOTE: The ShaderTagID might be wrong and unable to do transparents?? idk this should be for drawing though not filtering so i doubt it.
+                #region Drawing Settings (Material, Target Shaders, Sorting Criteria)
                 DrawingSettings drawingSettings = RenderingUtils.CreateDrawingSettings(
                     // "UniversalForward" will not work, as the material is created with ShaderGraph (which has NO lightmode tags for main pass.) ShadowCaster is one that is included, so I am doing that one.
                     // Other potential ones?, "MotionVectors", "DepthNormalsOnly", "UniversalGBuffer", 
-                    new ShaderTagId("ShadowCaster"), //https://docs.unity3d.com/6000.3/Documentation/Manual/SL-PassTags.html    https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.1/manual/urp-shaders/urp-shaderlab-pass-tags.html
+                    new ShaderTagId(shaderTagID), //https://docs.unity3d.com/6000.3/Documentation/Manual/SL-PassTags.html    https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.1/manual/urp-shaders/urp-shaderlab-pass-tags.html
                     renderingData,
                     cameraData,
                     lightData,
                     SortingCriteria.BackToFront
                 );
-
                 drawingSettings.overrideMaterial = settings._maskMaterial;
-
-                //// Culling Settings Attempt #1
-                //var cullContextData = frameData.Get<CullContextData>();
-                //cameraData.camera.TryGetCullingParameters(false, out var cullingParams);
-                //CullingResults cullingResults = cullContextData.Cull(ref cullingParams);
+                #endregion
 
                 RendererListParams rendererListParams = new RendererListParams(
                     renderingData.cullResults,
