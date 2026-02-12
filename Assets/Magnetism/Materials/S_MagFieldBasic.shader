@@ -4,6 +4,7 @@ Shader "Custom/S_MagFieldBasic"
     {
         [MainColor] _BaseColor("Base Color", Color) = (1, 1, 1, 1)
         [Opacity] _Opacity("Opacity", Float) = .2
+        [IntRange] _StencilRef ("Stencil Reference Value", Range(0,255)) = 1
         [MainTexture] _BaseMap("Base Map", 2D) = "white" {}
     }
 
@@ -17,7 +18,7 @@ Shader "Custom/S_MagFieldBasic"
         ZWrite On
 
         Stencil {
-            Ref 1
+            Ref [_StencilRef]
             Comp Always
             Pass Replace
             Fail Keep

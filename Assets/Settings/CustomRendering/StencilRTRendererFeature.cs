@@ -10,6 +10,7 @@ using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 using static UnityEngine.Rendering.Universal.ShaderInput;
 using UnityEngine.Scripting.APIUpdating;
+using System.Linq.Expressions;
 
 // Use this class to pass around settings from the feature to the pass
 [System.Serializable]
@@ -23,9 +24,20 @@ public class StencilRTRendererFeatureSettings
 
     public string _shaderTagID = "SRPDefaultUnlit";             // This is used for the shaderTag used in drawing settings. Should(?) match the shader pass LightMode tag being evaluated.(?)
 
+    [Header("Stencil")]
+    public bool _useStencil = true;                          // Toggles StencilStateBlock
     public int _stencilRef = 0;                             // This is the stencil ref value that will result in the render texture mask.
+    public CompareFunction _stencilCompare = CompareFunction.Equal; // This the compare function for stencil ref.
+    public StencilOp _stencilPassOp = StencilOp.Replace;    // What should happen to stencil buffer when passing the _stencilCompare?
+    public StencilOp _stencilFailOp = StencilOp.Keep;    // What should happen to stencil buffer when failing the _stencilCompare?
+    public StencilOp _stencilZFailOp = StencilOp.Keep;    // What should happen to stencil buffer when failing the ZBuffer test?
 
     public Material _stencilWriteMaterial;                  // This one writes _stencilRef to the stencil buffer over magnetic fields.
+
+    [Header("Depth")]
+    public bool _useDepth = true;
+    public bool _writeDepth = false;
+    public CompareFunction _depthCompare = CompareFunction.LessEqual;
 
     public Material _overrideMaterial;                   // This one is pure white where stencil value passes ZBuffer pass and is equal to _stencilRef.
 
@@ -44,13 +56,24 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
     public override void Create()
     {
         // Construct the pass classes with proper settings.
-        m_writePass = new StencilRTRendererFeatureWritePass(settings);
+        //m_writePass = new StencilRTRendererFeatureWritePass(settings);
         m_drawPass = new StencilRTRendererFeatureDrawPass(settings);
 
         // Configures where the render pass should be injected.
-        m_writePass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
-        m_drawPass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing + 1;
+        //m_writePass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
+        m_drawPass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
 
+        // Setup the Stencil State
+        if (settings._useStencil)
+        {
+            m_drawPass.SetStencilState(settings._stencilRef, settings._stencilCompare, settings._stencilPassOp, settings._stencilFailOp, settings._stencilZFailOp);
+        }
+
+        // Setup the Depth State
+        if (settings._useDepth)
+        {
+            m_drawPass.SetDepthState(settings._writeDepth, settings._depthCompare);
+        }
         #region Include Extra Stuff? Might need this.
         // You can request URP color texture and depth buffer as inputs by uncommenting the line below,
         // URP will ensure copies of these resources are available for sampling before executing the render pass.
@@ -69,8 +92,8 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
     {
         //m_writePass.rendererStateBlocks.Dispose();
         //m_writePass.rendererStateBlockIDs.Dispose();
-        //m_drawPass.rendererStateBlocks.Dispose();
-        //m_drawPass.rendererStateBlockIDs.Dispose();
+        m_drawPass.rendererStateBlocks.Dispose();
+        m_drawPass.rendererStateBlockIDs.Dispose();
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -223,7 +246,6 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
         //        passData.source = resourceData.activeColorTexture;
         //        passData.mask = maskTexture;
         //        passData.rendererListHandle = renderGraph.CreateRendererList(rendererListParams);
-        //        passData.overrideMaterial = settings._stencilWriteMaterial;
         //        #endregion
 
         //        // Declare texture usage 
@@ -308,13 +330,42 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
     class StencilRTRendererFeatureDrawPass : ScriptableRenderPass
     {
         readonly StencilRTRendererFeatureSettings settings;
+        RenderStateBlock renderStateBlock;
+
         private int globalTextureID;
-        public NativeArray<RenderStateBlock> rendererStateBlocks = new NativeArray<RenderStateBlock>(1, Allocator.Temp);
-        public NativeArray<ShaderTagId> rendererStateBlockIDs = new NativeArray<ShaderTagId>(1, Allocator.Temp);
+        public NativeArray<RenderStateBlock> rendererStateBlocks = new NativeArray<RenderStateBlock>(1, Allocator.Persistent);
+        public NativeArray<ShaderTagId> rendererStateBlockIDs = new NativeArray<ShaderTagId>(1, Allocator.Persistent);
+
+        #region Construction
         public StencilRTRendererFeatureDrawPass(StencilRTRendererFeatureSettings settings)
         {
             this.settings = settings;
+            // Create blank Render State Block. 
+            renderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
         }
+
+        public void SetStencilState(int reference, CompareFunction compareFunction, StencilOp passOp, StencilOp failOp, StencilOp zFailOp)
+        {
+            StencilState stencilState = StencilState.defaultValue;
+            stencilState.enabled = true;
+            stencilState.SetCompareFunction(compareFunction);
+            stencilState.SetPassOperation(passOp);
+            stencilState.SetFailOperation(failOp);
+            stencilState.SetZFailOperation(zFailOp);
+
+            // Setup Stencil Block
+            renderStateBlock.mask |= RenderStateMask.Stencil; /// Includes Stencil settings to the renderStateBlock include flags.
+            renderStateBlock.stencilState = stencilState;
+            renderStateBlock.stencilReference = reference;
+        }
+
+        public void SetDepthState(bool writeEnabled, CompareFunction function = CompareFunction.Less)
+        {
+            renderStateBlock.mask |= RenderStateMask.Depth;
+            renderStateBlock.depthState = new DepthState(writeEnabled, function);
+        }
+
+        #endregion
 
         private class PassData
         {
@@ -322,7 +373,6 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
             public TextureHandle source;
             public TextureHandle mask;
             public RendererListHandle rendererListHandle;
-            public Material overrideMaterial;
         }
 
         static void ExecutePass(PassData data, RasterGraphContext context)
@@ -359,13 +409,19 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
                 UniversalLightData lightData = frameData.Get<UniversalLightData>(); // May not need this one?
 
                 #region Setup
-                // Create descriptor for occluders texture with scaled resolution
-                RenderTextureDescriptor maskDesc = cameraData.cameraTargetDescriptor;
-                maskDesc.depthBufferBits = 24; /// Needs to be 24 or 32 to include stencil data.
-                maskDesc.width = Mathf.RoundToInt(maskDesc.width * 1f); // float here affects resolution. 1f means 1x the screen resolution.
-                maskDesc.height = Mathf.RoundToInt(maskDesc.height * 1f);
 
-                // Create the occluders texture handle
+                #region Create Render Texture
+
+                // Create descriptor for occluders texture with scaled resolution
+                RenderTextureDescriptor maskDesc = cameraData.cameraTargetDescriptor;  /// Get descriptor data from the main camera.
+
+                //maskDesc.depthStencilFormat = GraphicsFormat.D24_UNorm_S8_UInt;      /// The recommended format. 24 bit depth and 8 bit stencil. Comment this if RT should not have depth or stencil.
+                maskDesc.depthBufferBits = 0;                                          /// Uncomment this if RT should not have depth or stencil.
+
+                maskDesc.width = Mathf.RoundToInt(maskDesc.width * 1f);                /// Float values affect resolution of texture. (i.e: 1f = 100% of screen res)
+                maskDesc.height = Mathf.RoundToInt(maskDesc.height * 1f);              /// ^
+
+                // Create Render Graph Texture. This texture is a resource managed by Render Graph and will be destroyed after the current frames rendering is complete. Takes RenderTextureDescriptor as input.
                 TextureHandle maskTexture = UniversalRenderer.CreateRenderGraphTexture(
                     renderGraph,
                     maskDesc,
@@ -374,6 +430,13 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
                     FilterMode.Bilinear,
                     TextureWrapMode.Clamp
                 );
+
+                // Assign Render Graph Texture to passData.
+                passData.mask = maskTexture;
+
+                #endregion
+
+                #region Create Renderer List Handle
 
                 #region Drawing Settings (Material, Target Shaders, Sorting Criteria)
                 DrawingSettings drawingSettings = RenderingUtils.CreateDrawingSettings(
@@ -397,25 +460,26 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
 
                 #region Render State Blocks + Assign to RendererListParams (Stencil Mask, ZBuffer/Depth Testing)
 
-                // Create blank Render State Block. 
-                RenderStateBlock renderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
-
                 // TO DO: Make booleans to control whether or not to include stencil state or depth state (just like how Render Objects does it.)
 
-                #region Stencil State
-                // Setup Stencil State
-                StencilState stencilState = StencilState.defaultValue;
-                stencilState.enabled = true;
-                stencilState.SetCompareFunction(CompareFunction.Equal);
-                stencilState.SetPassOperation(StencilOp.Replace);
-                stencilState.SetFailOperation(StencilOp.Keep);
-                stencilState.SetZFailOperation(StencilOp.Keep);
+                if (settings._useStencil)
+                {
+                    #region Stencil State
+                    // Setup Stencil State
+                    StencilState stencilState = StencilState.defaultValue;
+                    stencilState.enabled = true;
+                    stencilState.SetCompareFunction(settings._stencilCompare);
+                    stencilState.SetPassOperation(settings._stencilPassOp);
+                    stencilState.SetFailOperation(settings._stencilFailOp);
+                    stencilState.SetZFailOperation(settings._stencilZFailOp);
 
-                // Setup Stencil Block
-                renderStateBlock.mask |= RenderStateMask.Stencil; /// Includes Stencil settings to the renderStateBlock include flags.
-                renderStateBlock.stencilState = stencilState;
-                renderStateBlock.stencilReference = settings._stencilRef;
-                #endregion
+                    // Setup Stencil Block
+                    renderStateBlock.mask |= RenderStateMask.Stencil; /// Includes Stencil settings to the renderStateBlock include flags.
+                    renderStateBlock.stencilState = stencilState;
+                    renderStateBlock.stencilReference = settings._stencilRef;
+                    #endregion
+                }
+
 
                 #region Depth State
                 // Setup Depth State
@@ -438,25 +502,54 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
                 rendererListParams.isPassTagName = false; // RenderObjectsPass uses this set to false as well.
                 #endregion
 
-                // ---------------------------------------------------------------
+                #endregion
+                
+                passData.rendererListHandle = renderGraph.CreateRendererList(rendererListParams);
+
                 #endregion
 
-                // Set up pass data.
+                // Set up remaining pass data.
                 passData.source = resourceData.activeColorTexture;
-                passData.mask = maskTexture;
-                passData.rendererListHandle = renderGraph.CreateRendererList(rendererListParams);
-                passData.overrideMaterial = settings._overrideMaterial;
+
                 #endregion
+
+                // https://docs.unity3d.com/Packages/com.unity.render-pipelines.core@17.2/api/UnityEngine.Rendering.RenderGraphModule.IRasterRenderGraphBuilder.html#UnityEngine_Rendering_RenderGraphModule_IRasterRenderGraphBuilder_SetRenderAttachmentDepth_UnityEngine_Rendering_RenderGraphModule_TextureHandle_UnityEngine_Rendering_RenderGraphModule_AccessFlags_
 
                 // Declare texture usage 
+                //builder.UseTexture(resourceData.activeColorTexture, AccessFlags.Read); /// Active color target texture.
+                //builder.UseTexture(resourceData.activeDepthTexture, AccessFlags.Read); /// Do I need this? Active depth texture from color target texture.
+                //builder.UseTexture(resourceData.backBufferDepth, AccessFlags.Read); /// Do I need this? Active depth texture from color target texture.
+                //builder.UseTexture(resourceData.cameraDepth, AccessFlags.Read); /// Do I need this? Main offscreen camera depth target.
+                //builder.UseTexture(resourceData.cameraDepthTexture, AccessFlags.Read); /// Do I need this? Contains scene depth is CopyDepth or DepthPrepass have been executed already.
+
+                // Set Render Attachments
+                //builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
+                //builder.SetRenderAttachment(maskTexture, 0);
+
+                // Which should I use? Does the render attachment need depth for rendererListParams to accurately draw the mask?
+                //builder.SetRenderAttachment(maskTexture, 0); /// Specifies that we are going to write this texture in our ExecutePass. This results in an error because the render texture has depth format. Does it need that for stencils to work in the rendererParams?
+                //builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write); /// Specifies that we are going to write this texture in our ExecutePass.
+
+                // Stuff from my LayerMask feature.
                 builder.UseTexture(resourceData.activeColorTexture, AccessFlags.Read);
                 builder.UseRendererList(passData.rendererListHandle);
-                builder.SetRenderAttachmentDepth(maskTexture, 0);
+                builder.SetRenderAttachment(maskTexture, 0);
+
+                // Stuff taken from RenderObjectsPass to use as example
+                //builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
+                //if (cameraData.imageScalingMode != ImageScalingMode.Upscaling || passData.renderPassEvent != RenderPassEvent.AfterRenderingPostProcessing)
+                //    builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write);
+
+
+                // Declare RendererList
+                //builder.UseRendererList(passData.rendererListHandle);
+
+                
+                //builder.SetRenderAttachmentDepth(maskTexture, 0); /// Not sure if this is what I want or need?
 
                 // Set a texture to the global texture
                 builder.SetGlobalTextureAfterPass(maskTexture, globalTextureID); /// Allows to sample this shader later in the rendering process.
-
-                builder.AllowPassCulling(false); /// Prevent RenderGraph from removing this RasterRenderPass
+                builder.AllowPassCulling(false); /// Prevent RenderGraph from removing this RasterRenderPass. Once things are working, see if removing this breaks the effect. Wondering cause I should only want this for this frame anyways.
 
                 // Execute the render pass.
                 builder.SetRenderFunc((PassData data, RasterGraphContext context) => ExecutePass(data, context));

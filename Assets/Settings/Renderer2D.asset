@@ -133,14 +133,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5dea8023e38d3f4f84b2ff89a3cd429, type: 3}
   m_Name: StencilRTRendererFeature
   m_EditorClassIdentifier: Assembly-CSharp::StencilRTRendererFeature
-  m_Active: 0
+  m_Active: 1
   settings:
     _passName: Stencil Mask Pass
     _outputGlobalPropertyName: _MagFieldMask
     _shaderTagID: SRPDefaultUnlit
+    _useStencil: 1
     _stencilRef: 1
+    _stencilCompare: 3
+    _stencilPassOp: 2
+    _stencilFailOp: 0
+    _stencilZFailOp: 0
     _stencilWriteMaterial: {fileID: 2100000, guid: 9dbd95c28d5241f4aa381224c1d28102, type: 2}
-    _stencilMaskMaterial: {fileID: 2100000, guid: 984a1ea6a2061e24d9184d591ad73d1f, type: 2}
+    _useDepth: 1
+    _writeDepth: 0
+    _depthCompare: 4
+    _overrideMaterial: {fileID: 2100000, guid: 3aa6a88f62195164fa4d7e0603e7308f, type: 2}
     _layerMask:
       serializedVersion: 2
       m_Bits: 512
