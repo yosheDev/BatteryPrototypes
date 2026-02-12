@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: FullScreenPassRendererFeature
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 5
@@ -32,7 +32,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b3d386ba5cd94485973aee1479b272e, type: 3}
   m_Name: RenderObjects
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.RenderObjects
-  m_Active: 0
+  m_Active: 1
   settings:
     passTag: RenderObjects
     Event: 550
@@ -138,20 +138,24 @@ MonoBehaviour:
     _passName: Stencil Mask Pass
     _outputGlobalPropertyName: _MagFieldMask
     _shaderTagID: SRPDefaultUnlit
-    _useStencil: 1
-    _stencilRef: 1
-    _stencilCompare: 3
-    _stencilPassOp: 2
-    _stencilFailOp: 0
-    _stencilZFailOp: 0
+    _filterSettings:
+      renderQueueType: 1
+      layerMask:
+        serializedVersion: 2
+        m_Bits: 512
+      passNames: []
+    _stencilSettings:
+      overrideStencilState: 1
+      stencilReference: 1
+      stencilCompareFunction: 3
+      passOperation: 2
+      failOperation: 0
+      zFailOperation: 0
     _stencilWriteMaterial: {fileID: 2100000, guid: 9dbd95c28d5241f4aa381224c1d28102, type: 2}
     _useDepth: 1
     _writeDepth: 0
     _depthCompare: 4
     _overrideMaterial: {fileID: 2100000, guid: 3aa6a88f62195164fa4d7e0603e7308f, type: 2}
-    _layerMask:
-      serializedVersion: 2
-      m_Bits: 512
 --- !u!114 &3245385436492029003
 MonoBehaviour:
   m_ObjectHideFlags: 0

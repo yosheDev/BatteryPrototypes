@@ -14,6 +14,24 @@ using System.Linq.Expressions;
 
 // Use this class to pass around settings from the feature to the pass
 [System.Serializable]
+public class FilterSettings
+{
+    // TODO: expose opaque, transparent, all ranges as drop down
+
+    public RenderQueueType renderQueueType;
+
+    public LayerMask layerMask;
+
+    public string[] passNames;
+
+    public FilterSettings()
+    {
+        renderQueueType = RenderQueueType.Opaque;
+        layerMask = 0;
+    }
+}
+
+[System.Serializable]
 public class StencilRTRendererFeatureSettings
 {
     [Header("Properties")]
@@ -24,13 +42,19 @@ public class StencilRTRendererFeatureSettings
 
     public string _shaderTagID = "SRPDefaultUnlit";             // This is used for the shaderTag used in drawing settings. Should(?) match the shader pass LightMode tag being evaluated.(?)
 
+    public FilterSettings _filterSettings = new FilterSettings();
+    //public LayerMask _layerMask = ~0;                       // Might become deprecated eventually? Right now it is using layer mask in the drawSettings.
+
+    //public RenderQueueRange _renderQueueRange = RenderQueueRange.all; // Might become deprecated? Being used in filtering settings.
+
     [Header("Stencil")]
-    public bool _useStencil = true;                          // Toggles StencilStateBlock
-    public int _stencilRef = 0;                             // This is the stencil ref value that will result in the render texture mask.
-    public CompareFunction _stencilCompare = CompareFunction.Equal; // This the compare function for stencil ref.
-    public StencilOp _stencilPassOp = StencilOp.Replace;    // What should happen to stencil buffer when passing the _stencilCompare?
-    public StencilOp _stencilFailOp = StencilOp.Keep;    // What should happen to stencil buffer when failing the _stencilCompare?
-    public StencilOp _stencilZFailOp = StencilOp.Keep;    // What should happen to stencil buffer when failing the ZBuffer test?
+    //public bool _useStencil = true;                          // Toggles StencilStateBlock
+    //public int _stencilRef = 0;                             // This is the stencil ref value that will result in the render texture mask.
+    //public CompareFunction _stencilCompare = CompareFunction.Equal; // This the compare function for stencil ref.
+    //public StencilOp _stencilPassOp = StencilOp.Replace;    // What should happen to stencil buffer when passing the _stencilCompare?
+    //public StencilOp _stencilFailOp = StencilOp.Keep;    // What should happen to stencil buffer when failing the _stencilCompare?
+    //public StencilOp _stencilZFailOp = StencilOp.Keep;    // What should happen to stencil buffer when failing the ZBuffer test?
+    public StencilStateData _stencilSettings = new StencilStateData(); // Has all of the above settings in it already.
 
     public Material _stencilWriteMaterial;                  // This one writes _stencilRef to the stencil buffer over magnetic fields.
 
@@ -40,17 +64,14 @@ public class StencilRTRendererFeatureSettings
     public CompareFunction _depthCompare = CompareFunction.LessEqual;
 
     public Material _overrideMaterial;                   // This one is pure white where stencil value passes ZBuffer pass and is equal to _stencilRef.
-
-    public LayerMask _layerMask = ~0;                       // Might become deprecated eventually? Right now it is using layer mask in the drawSettings.
-
-    public RenderQueueRange _renderQueueRange = RenderQueueRange.all; // Might become deprecated? Being used in filtering settings.
 }
 
 public class StencilRTRendererFeature : ScriptableRendererFeature
-{
+{ 
+    public StencilRTRendererFeatureSettings settings = new StencilRTRendererFeatureSettings();
+
     StencilRTRendererFeatureWritePass m_writePass;
     StencilRTRendererFeatureDrawPass m_drawPass;
-    [SerializeField] private StencilRTRendererFeatureSettings settings = new StencilRTRendererFeatureSettings();
 
     /// <inheritdoc/>
     public override void Create()
@@ -64,9 +85,9 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
         m_drawPass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
 
         // Setup the Stencil State
-        if (settings._useStencil)
+        if (settings._stencilSettings.overrideStencilState)
         {
-            m_drawPass.SetStencilState(settings._stencilRef, settings._stencilCompare, settings._stencilPassOp, settings._stencilFailOp, settings._stencilZFailOp);
+            m_drawPass.SetStencilState(settings._stencilSettings.stencilReference, settings._stencilSettings.stencilCompareFunction, settings._stencilSettings.passOperation, settings._stencilSettings.failOperation, settings._stencilSettings.zFailOperation);
         }
 
         // Setup the Depth State
@@ -90,10 +111,7 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
 
     protected override void Dispose(bool disposing)
     {
-        //m_writePass.rendererStateBlocks.Dispose();
-        //m_writePass.rendererStateBlockIDs.Dispose();
-        m_drawPass.rendererStateBlocks.Dispose();
-        m_drawPass.rendererStateBlockIDs.Dispose();
+
     }
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -330,16 +348,33 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
     class StencilRTRendererFeatureDrawPass : ScriptableRenderPass
     {
         readonly StencilRTRendererFeatureSettings settings;
+        List<ShaderTagId> shaderTagIdList = new List<ShaderTagId>();
+        static ShaderTagId[] shaderTagValues = new ShaderTagId[1];
+        static RenderStateBlock[] renderStateBlocks = new RenderStateBlock[1];
+
         RenderStateBlock renderStateBlock;
 
         private int globalTextureID;
-        public NativeArray<RenderStateBlock> rendererStateBlocks = new NativeArray<RenderStateBlock>(1, Allocator.Persistent);
-        public NativeArray<ShaderTagId> rendererStateBlockIDs = new NativeArray<ShaderTagId>(1, Allocator.Persistent);
 
         #region Construction
         public StencilRTRendererFeatureDrawPass(StencilRTRendererFeatureSettings settings)
         {
             this.settings = settings;
+
+            // Setup ShaderTagIDs to either be the input from settings, or defaults for Forward Universal.
+            if (settings._filterSettings.passNames != null && settings._filterSettings.passNames.Length > 0)
+            {
+                foreach (var tag in settings._filterSettings.passNames)
+                    shaderTagIdList.Add(new ShaderTagId(tag));
+            }
+            else
+            {
+                shaderTagIdList.Add(new ShaderTagId("SRPDefaultUnlit"));
+                shaderTagIdList.Add(new ShaderTagId("UniversalForward"));
+                shaderTagIdList.Add(new ShaderTagId("UniversalForwardOnly"));
+            }
+
+
             // Create blank Render State Block. 
             renderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
         }
@@ -441,67 +476,43 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
                 #region Drawing Settings (Material, Target Shaders, Sorting Criteria)
                 DrawingSettings drawingSettings = RenderingUtils.CreateDrawingSettings(
                     // Shadergraph doesn't specify a LightMode tag, meaning the default is used. Default is "SRPDefaultUnlit". This should be the default shaderTagID used in settings._shaderTagID.
-                    new ShaderTagId(settings._shaderTagID),
+                    shaderTagIdList[0],
                     renderingData,
                     cameraData,
                     lightData,
                     SortingCriteria.CommonTransparent
                 );
+                // RenderObjectsPass had this, so I am imitating that.
+                for (int i = 1; i < shaderTagIdList.Count; ++i)
+                    drawingSettings.SetShaderPassName(i, shaderTagIdList[i]);
+
                 drawingSettings.overrideMaterial = settings._overrideMaterial;
                 #endregion
 
                 #region Create Renderer List Params
+
                 RendererListParams rendererListParams = new RendererListParams(
                     renderingData.cullResults,
                     drawingSettings,
-                    new FilteringSettings(settings._renderQueueRange, settings._layerMask)
+                    new FilteringSettings(((settings._filterSettings.renderQueueType == RenderQueueType.Transparent) ? RenderQueueRange.transparent : RenderQueueRange.opaque), settings._filterSettings.layerMask)
+                    //new FilteringSettings(RenderQueueRange.all, settings._filterSettings.layerMask)
                 );
                 #endregion
 
-                #region Render State Blocks + Assign to RendererListParams (Stencil Mask, ZBuffer/Depth Testing)
-
-                // TO DO: Make booleans to control whether or not to include stencil state or depth state (just like how Render Objects does it.)
-
-                if (settings._useStencil)
-                {
-                    #region Stencil State
-                    // Setup Stencil State
-                    StencilState stencilState = StencilState.defaultValue;
-                    stencilState.enabled = true;
-                    stencilState.SetCompareFunction(settings._stencilCompare);
-                    stencilState.SetPassOperation(settings._stencilPassOp);
-                    stencilState.SetFailOperation(settings._stencilFailOp);
-                    stencilState.SetZFailOperation(settings._stencilZFailOp);
-
-                    // Setup Stencil Block
-                    renderStateBlock.mask |= RenderStateMask.Stencil; /// Includes Stencil settings to the renderStateBlock include flags.
-                    renderStateBlock.stencilState = stencilState;
-                    renderStateBlock.stencilReference = settings._stencilRef;
-                    #endregion
-                }
-
-
-                #region Depth State
-                // Setup Depth State
-                DepthState depthState = DepthState.defaultValue;
-                depthState.writeEnabled = false;
-                depthState.compareFunction = CompareFunction.LessEqual;
-
-                // Setup Depth Block
-                renderStateBlock.mask |= RenderStateMask.Depth; /// Includes Depth settings to the renderStateBlock include flags.
-                renderStateBlock.depthState = depthState;
-                #endregion
+                // Stencil State and Depth State are set in Create()
 
                 #region Assign State Blocks to Renderer List Params
-                /// rendererStateBlocks is declared in Scriptable Render Pass class. Temp Allocation.
-                rendererStateBlocks[0] = renderStateBlock;
-                rendererStateBlockIDs[0] = ShaderTagId.none; // RenderObjectsPass uses ShaderTagId.none
 
-                rendererListParams.stateBlocks = rendererStateBlocks;
-                rendererListParams.tagValues = rendererStateBlockIDs;
-                rendererListParams.isPassTagName = false; // RenderObjectsPass uses this set to false as well.
-                #endregion
+                // This is all taken exactly like it is from RenderObjectsPass
+                shaderTagValues[0] = ShaderTagId.none;
+                renderStateBlocks[0] = renderStateBlock;
 
+                NativeArray<ShaderTagId> tagValues = new NativeArray<ShaderTagId>(shaderTagValues, Allocator.Temp);
+                NativeArray<RenderStateBlock> stateBlocks = new NativeArray<RenderStateBlock>(renderStateBlocks, Allocator.Temp);
+
+                rendererListParams.stateBlocks = stateBlocks;
+                rendererListParams.tagValues = tagValues;
+                rendererListParams.isPassTagName = false; 
                 #endregion
                 
                 passData.rendererListHandle = renderGraph.CreateRendererList(rendererListParams);
