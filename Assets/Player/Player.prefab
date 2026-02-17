@@ -55,6 +55,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 0}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 0
 --- !u!114 &1905707077189402023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,6 +363,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 0}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 0
 --- !u!114 &7749330453487282767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2058,6 +2060,7 @@ MonoBehaviour:
   launchMaxExponent: 1.13
   launchBaseConstant: 500
   battery: {fileID: 381572488973111425}
+  playerGravity: 0
   cursorPosWS: {x: 0, y: 0}
   mouseDelta: {x: 0, y: 0}
   weldSurfaceNormal: {x: 0, y: 0}

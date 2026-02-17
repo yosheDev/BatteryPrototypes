@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_WhiteUnlit_Stencil
-  m_Shader: {fileID: 4800000, guid: 68a45624fd26c36429489a0c1d4b591d, type: 3}
+  m_Shader: {fileID: 4800000, guid: d1cc0e886d6b47b4d81f7c2f478fe6de, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -47,6 +47,7 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     - _Opacity: 0.2
+    - _StencilRef: 1
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}

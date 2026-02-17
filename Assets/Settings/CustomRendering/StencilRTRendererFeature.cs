@@ -12,13 +12,21 @@ using static UnityEngine.Rendering.Universal.ShaderInput;
 using UnityEngine.Scripting.APIUpdating;
 using System.Linq.Expressions;
 
+public enum RenderRangeCustom
+{
+    All,
+    Opaque,
+    Transparent
+}
+
 // Use this class to pass around settings from the feature to the pass
 [System.Serializable]
 public class FilterSettings
 {
     // TODO: expose opaque, transparent, all ranges as drop down
 
-    public RenderQueueType renderQueueType;
+    public RenderRangeCustom renderQueue; // Have to use this because RenderQueueRange is not serializable.
+    public RenderQueueRange renderQueueRange;
 
     public LayerMask layerMask;
 
@@ -26,7 +34,8 @@ public class FilterSettings
 
     public FilterSettings()
     {
-        renderQueueType = RenderQueueType.Opaque;
+        renderQueue = RenderRangeCustom.All;
+        renderQueueRange = RenderQueueRange.all;
         layerMask = 0;
     }
 }
@@ -67,15 +76,30 @@ public class StencilRTRendererFeatureSettings
 }
 
 public class StencilRTRendererFeature : ScriptableRendererFeature
-{ 
+{
     public StencilRTRendererFeatureSettings settings = new StencilRTRendererFeatureSettings();
-
     StencilRTRendererFeatureWritePass m_writePass;
     StencilRTRendererFeatureDrawPass m_drawPass;
 
     /// <inheritdoc/>
     public override void Create()
     {
+        switch (settings._filterSettings.renderQueue)
+        {
+            case RenderRangeCustom.All:
+                settings._filterSettings.renderQueueRange = RenderQueueRange.all;
+                break;
+            case RenderRangeCustom.Opaque:
+                settings._filterSettings.renderQueueRange = RenderQueueRange.opaque;
+                break;
+            case RenderRangeCustom.Transparent:
+                settings._filterSettings.renderQueueRange = RenderQueueRange.transparent;
+                break;
+            default:
+                settings._filterSettings.renderQueueRange = RenderQueueRange.all;
+                break;
+        }
+
         // Construct the pass classes with proper settings.
         //m_writePass = new StencilRTRendererFeatureWritePass(settings);
         m_drawPass = new StencilRTRendererFeatureDrawPass(settings);
@@ -471,6 +495,27 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
 
                 #endregion
 
+                #region TEST Create Depth Buffer as RT
+
+                // Create descriptor for occluders texture with scaled resolution
+                RenderTextureDescriptor depthDesc = cameraData.cameraTargetDescriptor;  /// Get descriptor data from the main camera.
+
+                depthDesc.depthStencilFormat = GraphicsFormat.D24_UNorm_S8_UInt;      /// The recommended format. 24 bit depth and 8 bit stencil. Comment this if RT should not have depth or stencil.
+
+                depthDesc.width = Mathf.RoundToInt(depthDesc.width * 1f);                /// Float values affect resolution of texture. (i.e: 1f = 100% of screen res)
+                depthDesc.height = Mathf.RoundToInt(depthDesc.height * 1f);              /// ^
+
+                // Create Render Graph Texture. This texture is a resource managed by Render Graph and will be destroyed after the current frames rendering is complete. Takes RenderTextureDescriptor as input.
+                TextureHandle stencilDepthBuffer = UniversalRenderer.CreateRenderGraphTexture(
+                    renderGraph,
+                    depthDesc,
+                    "_StencilDepth",
+                    false,
+                    FilterMode.Bilinear,
+                    TextureWrapMode.Clamp
+                );
+
+                #endregion
                 #region Create Renderer List Handle
 
                 #region Drawing Settings (Material, Target Shaders, Sorting Criteria)
@@ -494,7 +539,7 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
                 RendererListParams rendererListParams = new RendererListParams(
                     renderingData.cullResults,
                     drawingSettings,
-                    new FilteringSettings(((settings._filterSettings.renderQueueType == RenderQueueType.Transparent) ? RenderQueueRange.transparent : RenderQueueRange.opaque), settings._filterSettings.layerMask)
+                    new FilteringSettings(settings._filterSettings.renderQueueRange, settings._filterSettings.layerMask)
                     //new FilteringSettings(RenderQueueRange.all, settings._filterSettings.layerMask)
                 );
                 #endregion
@@ -533,30 +578,14 @@ public class StencilRTRendererFeature : ScriptableRendererFeature
                 //builder.UseTexture(resourceData.cameraDepth, AccessFlags.Read); /// Do I need this? Main offscreen camera depth target.
                 //builder.UseTexture(resourceData.cameraDepthTexture, AccessFlags.Read); /// Do I need this? Contains scene depth is CopyDepth or DepthPrepass have been executed already.
 
-                // Set Render Attachments
-                //builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
-                //builder.SetRenderAttachment(maskTexture, 0);
-
-                // Which should I use? Does the render attachment need depth for rendererListParams to accurately draw the mask?
-                //builder.SetRenderAttachment(maskTexture, 0); /// Specifies that we are going to write this texture in our ExecutePass. This results in an error because the render texture has depth format. Does it need that for stencils to work in the rendererParams?
-                //builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write); /// Specifies that we are going to write this texture in our ExecutePass.
-
                 // Stuff from my LayerMask feature.
                 builder.UseTexture(resourceData.activeColorTexture, AccessFlags.Read);
                 builder.UseRendererList(passData.rendererListHandle);
                 builder.SetRenderAttachment(maskTexture, 0);
+                //builder.SetRenderAttachmentDepth(maskTexture, 0); /// A render texture shouldn't need this?
+                //builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write);
+                //builder.SetRenderAttachmentDepth(stencilDepthBuffer, AccessFlags.Write);
 
-                // Stuff taken from RenderObjectsPass to use as example
-                //builder.SetRenderAttachment(resourceData.activeColorTexture, 0, AccessFlags.Write);
-                //if (cameraData.imageScalingMode != ImageScalingMode.Upscaling || passData.renderPassEvent != RenderPassEvent.AfterRenderingPostProcessing)
-                //    builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture, AccessFlags.Write);
-
-
-                // Declare RendererList
-                //builder.UseRendererList(passData.rendererListHandle);
-
-                
-                //builder.SetRenderAttachmentDepth(maskTexture, 0); /// Not sure if this is what I want or need?
 
                 // Set a texture to the global texture
                 builder.SetGlobalTextureAfterPass(maskTexture, globalTextureID); /// Allows to sample this shader later in the rendering process.

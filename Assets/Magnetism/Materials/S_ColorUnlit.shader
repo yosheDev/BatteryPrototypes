@@ -1,4 +1,4 @@
-Shader "Custom/S_MagFieldBasic"
+Shader "Custom/S_ColorUnlit"
 {
     Properties
     {
@@ -67,8 +67,8 @@ Shader "Custom/S_MagFieldBasic"
 
             half4 frag(Varyings IN) : SV_Target
             {
-                half4 color = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor;
-                return float4(color.r, color.g, color.b, 1);//_Opacity);
+                //half4 color = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv) * _BaseColor;
+                return float4(_BaseColor.r, _BaseColor.g, _BaseColor.b, 1);//_Opacity);
             }
             ENDHLSL
         }

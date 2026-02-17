@@ -19,7 +19,11 @@ public class MagneticSurface : MagnetComponentBase
     public float _fieldAttractDistance = 2f;
     [Tooltip("Multiplies with the attenuation in magData. Used for customizing feel of individual magnets. This applies only to the force given to those interacting with this magnet.")]
     public float _attenuationModifier = 1f;
-    
+
+    // VFX
+    public bool bakeToMagFieldSDF = true;
+    private MagneticDistanceFieldsManager sdfManager;
+
     private void OnValidate()
     {
         #region Coordinate Field Collider, Surface Collider, and Surface Data Properties.
@@ -57,6 +61,18 @@ public class MagneticSurface : MagnetComponentBase
         #endregion
     }
 
+    private void Awake()
+    {
+        // Pass surface collider onto the SDF Manager.
+        sdfManager = FindFirstObjectByType<MagneticDistanceFieldsManager>(); /// Only ever one of these at a time.
+        if (sdfManager != null)
+        {
+            if (surfaceCol != null && bakeToMagFieldSDF == true)
+            {
+                sdfManager.AddFieldCollider(surfaceCol);
+            }
+        }
+    }
     // ===[ IMagnetic Functions ]===========================
     public override MagnetData GetMagDataOverride() /// Parent interface function for IMagnetic calls this abstract function.
     {

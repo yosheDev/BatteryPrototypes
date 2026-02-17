@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6787391437380022258}
   - component: {fileID: 6239690848335973314}
+  - component: {fileID: 4548066643633600967}
   m_Layer: 0
   m_Name: RoomManager
   m_TagString: Untagged
@@ -45,3 +46,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
   isCheckpointRoom: 0
+  Notes: Respawn Pos will be set to location of this object!
+  respawnPos: {x: 0, y: 0}
+--- !u!114 &4548066643633600967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3805349085114641592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1093a8ec12921dd41b21c6d82fd1519d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagneticDistanceFieldsManager

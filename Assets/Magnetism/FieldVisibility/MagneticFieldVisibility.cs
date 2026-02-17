@@ -27,21 +27,21 @@ public class MagneticFieldVisibility : MonoBehaviour
         Destroy(shapeMesh);
     }
     
-    void Start()
+    void Awake()
     {
         CreateShapeMesh();
     }
 
     private void CreateShapeMesh()
     {
-        shapeMesh = fieldCol.CreateMesh(true, true);  
-        
+        shapeMesh = fieldCol.CreateMesh(true, true);
+
         // Update mesh vertices to account for localScale.
-        SetMeshLocalScale(new Vector3(transform.localScale.x / magTransform.lossyScale.x, transform.localScale.y / magTransform.lossyScale.y, 1f));
+        Vector3 offset = new Vector3(-1f * (magTransform.position.x / magTransform.lossyScale.x), -1f * (magTransform.position.y / magTransform.lossyScale.y), 0f);
+        SetMeshLocalScale(new Vector3(transform.localScale.x / magTransform.lossyScale.x, transform.localScale.y / magTransform.lossyScale.y, 1f), offset);
 
         // Update mesh vertices to account for localPosition.
-        Vector3 offset = new Vector3(-1f * (magTransform.position.x / magTransform.lossyScale.x), -1f * (magTransform.position.y / magTransform.lossyScale.y), 0f);
-        SetMeshPivot(offset);
+        //SetMeshPivot(offset); /// Commented as functionality was merged with the above function.
 
         // Orientation here.
         transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, Mathf.Abs(180f - Mathf.Abs(magTransform.rotation.z)));
@@ -49,7 +49,7 @@ public class MagneticFieldVisibility : MonoBehaviour
         meshFilter.mesh = shapeMesh;
     }
 
-    // IF THESE WORK, COMBINE INTO FUNCTION SO ONLY 1 FOR LOOP RUNS INSTEAD OF 2 SEPERATE ONES?
+    // These two functions were combined into one (SetMeshLocalScale) for better performance. Seems to work fine and all. Leaving here in case i do actually need it.
     private void SetMeshPivot(Vector3 pivotPosLS)
     {
         // Retrieve generated vertices
@@ -72,7 +72,7 @@ public class MagneticFieldVisibility : MonoBehaviour
         shapeMesh.RecalculateBounds();
     }
 
-    private void SetMeshLocalScale(Vector3 localScale)
+    private void SetMeshLocalScale(Vector3 localScale, Vector3 pivotPosLS)
     {
         // Retrieve generated vertices
         Vector3[] newTris = shapeMesh.vertices;
@@ -84,6 +84,10 @@ public class MagneticFieldVisibility : MonoBehaviour
             newTris[i].x *= localScale.x;
             newTris[i].y *= localScale.y;
             newTris[i].z *= localScale.z;
+
+            newTris[i].x += pivotPosLS.x;
+            newTris[i].y += pivotPosLS.y;
+            newTris[i].z += pivotPosLS.z;
         }
 
         // Assign the modified vertices back to the mesh
