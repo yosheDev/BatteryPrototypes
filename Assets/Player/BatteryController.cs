@@ -399,7 +399,7 @@ public class BatteryController : MonoBehaviour
                 if (neutralDetector.neutralDetected)
                 {
                     //Debug.Log("Neutral is detected!");
-                    intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
+                    intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * 30f);//rotationFactor);
                     rb.MoveRotation(intermediateRot);
 
                     if (velocity > 10f)
