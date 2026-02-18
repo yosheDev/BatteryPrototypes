@@ -1,0 +1,146 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+// ===== [Geometry Structures] =====
+struct CircleData
+{
+    float2 center;
+    float radius;
+};
+
+struct BoxData
+{
+    float2 center;
+    float2 halfExtents;
+    float rotation; // In radians
+};
+
+struct CapsuleData
+{
+    float2 pointA;
+    float2 pointB;
+    float radius;
+};
+// =================================
+
+RWTexture2D<float4> texResult;
+
+// [ DATA BUFFERS ]
+StructuredBuffer<CircleData> circlesBuf;    /// For CircleCollider2D.
+StructuredBuffer<BoxData> boxesBuf;         /// For BoxCollider2D.
+StructuredBuffer<CapsuleData> capsulesBuf;  /// For CapsuleCollider2D.
+StructuredBuffer<float2> polySegmentsBuf;   /// For PolygonCollider2D. Stored as pairs of two points.
+
+int circlesCount;                           /// For CircleCollider2D.
+int boxesCount;                             /// For BoxCollider2D.
+int capsulesCount;                          /// For CapsuleCollider2D.
+int polyCount;                              /// For PolygonCollider2D. Equal to total segment pairs, not total segment points.
+
+// [ OTHER ]
+int resolution;
+float2 minBounds;
+float2 maxBounds;
+
+// ===== [Distance Functions] ===========
+
+float DistanceToSegment(float2 p, float2 a, float2 b)
+{
+    float2 pa = p - a;
+    float2 ba = b - a;
+
+    float h = saturate(dot(pa, ba) / dot(ba, ba)); 
+    return length(pa - ba * h);
+}
+
+float DistanceToCapsule(float2 p, float2 a, float2 b, float radius)
+{
+    return DistanceToSegment(p, a, b) - radius;
+}
+
+float DistanceToCircle(float2 p, float2 center, float radius)
+{
+    return length(p - center) - radius;
+}
+
+float2 Rotate(float2 p, float angle)
+{
+    float s = sin(angle);
+    float c = cos(angle);
+    return float2(
+        c * p.x - s * p.y,
+        s * p.x + c * p.y
+    );
+}
+
+float DistanceToBox(float2 p, float2 center, float2 halfExtents, float angle)
+{
+    float2 local = Rotate(p - center, -angle);
+
+    float2 d = abs(local) - halfExtents;
+
+    float outside = length(max(d, 0));
+    float inside = min(max(d.x, d.y), 0);
+
+    return outside + inside;
+}
+
+// --------------------------------------
+float MapRangeClamped(float input_min, float input_max, float output_min, float output_max, float value)
+{
+    if (value < input_min)
+    {
+        return output_min;
+    }
+    else if (value > input_max)
+    {
+        return output_max;
+    }
+    else
+    {
+        return (value - input_min) / (input_max - input_min) * (output_max - output_min) + output_min;
+    }
+}
+
+// ======================================
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= resolution || id.y >= resolution)
+        return;
+
+    float2 uv = float2(id.x, id.y) / (resolution - 1); // Convert to UV coordinate.
+
+    float2 worldPos = lerp(minBounds, maxBounds, uv); // Alternative way to get the world position.
+
+    float minDistance = 1e20;
+
+    // Circle Collider 2D
+    for (int i = 0; i < circlesCount; i++)
+    {
+        minDistance = min(minDistance, DistanceToCircle(worldPos, circlesBuf[i].center, circlesBuf[i].radius));
+    }
+
+    // Box Collider 2D
+    for (int i = 0; i < boxesCount; i++)
+    {
+        minDistance = min(minDistance, DistanceToBox(worldPos, boxesBuf[i].center, boxesBuf[i].halfExtents, boxesBuf[i].rotation));
+    }
+
+    // Capsule Collider 2D
+    for (int i = 0; i < capsulesCount; i++)
+    {
+        minDistance = min(minDistance, DistanceToCapsule(worldPos, capsulesBuf[i].pointA, capsulesBuf[i].pointB, capsulesBuf[i].radius));
+    }
+    
+    // Polygon Collider 2D (also composite and edge, but not sure if I set up composite in c# or anything...)
+    for (int i = 0; i < polyCount; i++)
+    {
+        minDistance = min(minDistance, DistanceToSegment(worldPos, polySegmentsBuf[i * 2], polySegmentsBuf[i * 2 + 1]));
+
+    }
+    
+    float normalized = saturate(minDistance / 5.0); // Will this work for reclamping into the range correctly?? Use function below if not.
+    //float normalized = MapRangeClamped(0, 5, 0, 1, minDistance);
+
+    texResult[int2(id.xy)] = float4(normalized, 0, 0, 1);
+}
