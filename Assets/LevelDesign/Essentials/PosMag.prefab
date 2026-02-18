@@ -55,6 +55,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 302819834278993567}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 1
 --- !u!61 &302819834278993567
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -404,3 +405,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bc1292b596fed746987fdc817b67dc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnsureNormalizedScale
+  surface: {fileID: 5284117453497075360}

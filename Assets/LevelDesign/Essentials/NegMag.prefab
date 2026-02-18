@@ -208,6 +208,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 191675872032133748}
+  - component: {fileID: 377379528389592153}
   m_Layer: 0
   m_Name: NegMag
   m_TagString: Untagged
@@ -232,6 +233,19 @@ Transform:
   - {fileID: 5388369989673612076}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &377379528389592153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5959409161971075182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bc1292b596fed746987fdc817b67dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnsureNormalizedScale
+  surface: {fileID: 2914599360453511391}
 --- !u!1 &7309022289344997753
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,3 +405,4 @@ MonoBehaviour:
   surfaceCol: {fileID: 4416657922908590013}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 1
