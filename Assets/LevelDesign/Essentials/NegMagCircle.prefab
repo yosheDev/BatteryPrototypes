@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 142929577104150920}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -328,8 +328,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MagneticFieldVisibility
   magTransform: {fileID: 1515213846094552245}
   fieldCol: {fileID: 6731885336624087628}
+  surfaceCol: {fileID: 381894118803918520}
   shapeMesh: {fileID: 0}
   meshFilter: {fileID: 6474628576739048512}
+  occluderMask:
+    serializedVersion: 2
+    m_Bits: 1
+  doOcclusionCheck: 1
+  debugOcclusionTrace: 0
 --- !u!33 &6474628576739048512
 MeshFilter:
   m_ObjectHideFlags: 0

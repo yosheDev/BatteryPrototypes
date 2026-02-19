@@ -4,27 +4,32 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class MagneticFieldVisibility : MonoBehaviour
 {
+    // This script is responsible for generating the mesh of the Magnetic Fields at the start of play. These have to be generated dynamically as magnetic fields
+    // need to match magnet shape, and this allows for quick iteration of design without losing time on assets for each specific instance.
+
     #region References
     // Transforms
     [SerializeField] private Transform magTransform;
 
-    // Magnetic Field
+    // Magnet
     [SerializeField] private Collider2D fieldCol;
+    [SerializeField] private Collider2D surfaceCol;
 
     // VFX
     [SerializeField] private Mesh shapeMesh;
     [SerializeField] private MeshFilter meshFilter;
+    [SerializeField] private LayerMask occluderMask;
+
+    [SerializeField] private bool doOcclusionCheck = true;
     //========================================================
     #endregion
-     
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
     private void OnDestroy()
     {
-        Destroy(shapeMesh);
+        Destroy(shapeMesh); /// Since meshes are manually created, they must be manually destroyed.
     }
     
     void Awake()
@@ -40,16 +45,56 @@ public class MagneticFieldVisibility : MonoBehaviour
         Vector3 offset = new Vector3(-1f * (magTransform.position.x / magTransform.lossyScale.x), -1f * (magTransform.position.y / magTransform.lossyScale.y), 0f);
         SetMeshLocalScale(new Vector3(transform.localScale.x / magTransform.lossyScale.x, transform.localScale.y / magTransform.lossyScale.y, 1f), offset);
 
-        // Update mesh vertices to account for localPosition.
-        //SetMeshPivot(offset); /// Commented as functionality was merged with the above function.
-
         // Orientation here.
         transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, Mathf.Abs(180f - Mathf.Abs(magTransform.rotation.z)));
+
+        // Alter vertice locations to hit field occluders.
+        if (surfaceCol != null)
+        {
+            if (doOcclusionCheck)
+            {
+                OcclusionCheck(ref shapeMesh);
+            }
+        }
+        else
+        {
+            Debug.LogError("surfaceCol is null on " + this.gameObject + ". surfaceCol is needed for field mesh occlusion check.");
+        }
+
         // Apply shape mesh to the meshFilter mesh.
         meshFilter.mesh = shapeMesh;
     }
 
-    // These two functions were combined into one (SetMeshLocalScale) for better performance. Seems to work fine and all. Leaving here in case i do actually need it.
+    #region Mesh Utility
+
+    private void OcclusionCheck(ref Mesh mesh)
+    {
+        /// Will need to optimize this after confirming if it works.
+        
+        List<Vector3> verts = new List<Vector3>();
+        mesh.GetVertices(verts);    /// In object space.
+
+        for( int v = 0; v < verts.Count; v++)
+        {
+            RaycastHit2D[] occlusionCheck = Physics2D.LinecastAll(transform.TransformPoint(verts[v]), surfaceCol.ClosestPoint(verts[v]), occluderMask);
+
+            for(int h = 0; h < occlusionCheck.Length; h++)
+            {
+                // If there is a hit, set vert position and exit the loop.
+                if (occlusionCheck[h].collider.TryGetComponent<FieldOccluder>(out FieldOccluder hitOccluder))
+                {
+                    Debug.DrawLine(Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion), Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion) + new Vector2(0f, .5f), Color.red, 10f);
+                    // Set vertice to be where the occlusion was. Use occlusion veriable to Lerp position(some occluders may want to affect still but only slightly through walls. This can visually indicate that.)
+                    verts[v] = Vector2.Lerp(verts[v], transform.InverseTransformPoint(occlusionCheck[h].point), hitOccluder.occlusion);
+                    break;
+                }
+            }
+        }
+
+        mesh.vertices = verts.ToArray();
+    }
+
+    // These two functions were combined into one (SetMeshLocalScale) for better performance. Seems to work fine and all. Leaving here in case i do actually need it to be separated.
     private void SetMeshPivot(Vector3 pivotPosLS)
     {
         // Retrieve generated vertices
@@ -97,6 +142,8 @@ public class MagneticFieldVisibility : MonoBehaviour
         shapeMesh.RecalculateNormals();
         shapeMesh.RecalculateBounds();
     }
+
+    #endregion
 
     #region Inspector Buttons
     [CustomEditor(typeof(MagneticFieldVisibility))]

@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 112731415}
   - component: {fileID: 112731417}
   - component: {fileID: 112731416}
+  - component: {fileID: 112731418}
   m_Layer: 0
   m_Name: Square (50)
   m_TagString: Untagged
@@ -407,6 +408,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &112731418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112731414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8584bdc70f3680d42baadc5e8b298853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FieldOccluder
+  occlusion: 1
 --- !u!1 &208795478
 GameObject:
   m_ObjectHideFlags: 0
@@ -827,6 +841,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PosMag
       objectReference: {fileID: 0}
+    - target: {fileID: 8382187692721093916, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: debugOcclusionTrace
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1180,6 +1198,10 @@ PrefabInstance:
     - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_Name
       value: PosMag (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8382187692721093916, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: debugOcclusionTrace
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2288,6 +2310,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6489455479990142751, guid: d5c7aaa0d7104d341a6dbd6b891ceade, type: 3}
+      propertyPath: debugOcclusionTrace
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2351,11 +2377,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2914599360453511391, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2914599360453511391, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.08
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2914599360453511391, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2470,6 +2496,10 @@ PrefabInstance:
     - target: {fileID: 5959409161971075182, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
       propertyPath: m_Name
       value: NegMag
+      objectReference: {fileID: 0}
+    - target: {fileID: 8141611213317947944, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: debugOcclusionTrace
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
