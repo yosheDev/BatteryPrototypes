@@ -2,6 +2,7 @@ using FunctionLibrary;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.PackageManager;
@@ -87,6 +88,7 @@ public class MagneticFieldVisibility : MonoBehaviour
 
     private void OcclusionCheck(ref Mesh mesh)
     {
+        // NOTE: May need to redo this so it goes from surfaceCol outwards instead of the other way around. Right now it doesn't quite make sense to do it outside-in.
         /// Will need to optimize this after confirming if it works.
         
         List<Vector3> verts = new List<Vector3>();
@@ -94,15 +96,35 @@ public class MagneticFieldVisibility : MonoBehaviour
 
         for( int v = 0; v < verts.Count; v++)
         {
-            RaycastHit2D[] occlusionCheck = Physics2D.LinecastAll(transform.TransformPoint(verts[v]), surfaceCol.ClosestPoint(verts[v]), occluderMask);
+            // If point is already inside of an occluder, keep vertex in that same location.
+            Collider2D[] overlapCols = Physics2D.OverlapPointAll(transform.TransformPoint(verts[v]), occluderMask);
+            bool inOccluder = false;
+            for (int i = 0; i < overlapCols.Length; i++)
+            {
+                if (overlapCols[i].TryGetComponent<FieldOccluder>(out FieldOccluder hitOccluder))
+                {
+                    //Debug.DrawLine(transform.TransformPoint(verts[v]), (transform.TransformPoint(verts[v]) + new Vector3(0f, .2f, 0f)), Color.blue, 30f);
+                    //Debug.DrawLine(transform.TransformPoint(verts[v]), (transform.TransformPoint(verts[v]) + new Vector3(.2f, 0f, 0f)), Color.blue, 30f);
+                    inOccluder = true;
+                    break;
+                }
+            }
+            if (inOccluder)
+            {
+                continue;
+            }
 
-            for(int h = 0; h < occlusionCheck.Length; h++)
+            // If point is not inside an occluder, trace back to the surfaceCol. If trace hits occluder, set vertex to be the hit location.
+            RaycastHit2D[] occlusionCheck = Physics2D.LinecastAll(surfaceCol.ClosestPoint(transform.TransformPoint(verts[v])), transform.TransformPoint(verts[v]), occluderMask);
+            //Debug.DrawLine(surfaceCol.ClosestPoint(transform.TransformPoint(verts[v])), transform.TransformPoint(verts[v]), Color.green, 30f);
+            for (int h = 0; h < occlusionCheck.Length; h++)
             {
                 // If there is a hit, set vert position and exit the loop.
                 if (occlusionCheck[h].collider.TryGetComponent<FieldOccluder>(out FieldOccluder hitOccluder))
                 {
-                    //Debug.DrawLine(Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion), Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion) + new Vector2(0f, .5f), Color.red, 10f);
-                    // Set vertice to be where the occlusion was. Use occlusion veriable to Lerp position(some occluders may want to affect still but only slightly through walls. This can visually indicate that.)
+                    //Debug.DrawLine(occlusionCheck[h].point, (occlusionCheck[h].point + new Vector2(0f, .2f)), Color.red, 30f);
+                    //Debug.DrawLine(occlusionCheck[h].point, (occlusionCheck[h].point + new Vector2(.2f, 0f)), Color.red, 30f);
+                    //Use occlusion veriable to Lerp position(some occluders may want to affect still but only slightly through walls. This can visually indicate that.) Might change later.
                     verts[v] = Vector2.Lerp(verts[v], transform.InverseTransformPoint(occlusionCheck[h].point), hitOccluder.occlusion);
                     break;
                 }

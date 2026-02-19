@@ -1202,6 +1202,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: 392270585721842237, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.70273006
+      objectReference: {fileID: 0}
+    - target: {fileID: 392270585721842237, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7114566
+      objectReference: {fileID: 0}
     - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_LocalScale.x
       value: 13.724913
@@ -1241,6 +1249,18 @@ PrefabInstance:
     - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: m_Name
       value: PosMag (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7139631911868960946, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8382187692721093916, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: shapeMesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8382187692721093916, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: doOcclusionCheck
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8382187692721093916, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
       propertyPath: debugOcclusionTrace
@@ -1768,111 +1788,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FieldOccluder
   occlusion: 1
---- !u!1001 &1072329790
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -17.95
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.02
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9842612
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.17671974
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 191675872032133748, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -20.357
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 13.724913
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -5.39
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 7.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5284117453497075360, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -69.847
-      objectReference: {fileID: 0}
-    - target: {fileID: 5959409161971075182, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: m_Name
-      value: PosMag (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6013147037883761802, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: _magData.strength
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8382187692721093916, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
-      propertyPath: debugOcclusionTrace
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
 --- !u!1 &1146501979
 GameObject:
   m_ObjectHideFlags: 0
@@ -3408,7 +3323,6 @@ SceneRoots:
   - {fileID: 1863405720}
   - {fileID: 372119519}
   - {fileID: 664787527}
-  - {fileID: 1072329790}
   - {fileID: 1555166060}
   - {fileID: 1525033583}
   - {fileID: 8086840144314092365}
