@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MagneticFieldVisibility : MonoBehaviour
 {
@@ -61,6 +63,9 @@ public class MagneticFieldVisibility : MonoBehaviour
             Debug.LogError("surfaceCol is null on " + this.gameObject + ". surfaceCol is needed for field mesh occlusion check.");
         }
 
+        // Generate UVs from planar projection.
+        //GeneratePlanarUVs();
+
         // Apply shape mesh to the meshFilter mesh.
         meshFilter.mesh = shapeMesh;
     }
@@ -83,7 +88,7 @@ public class MagneticFieldVisibility : MonoBehaviour
                 // If there is a hit, set vert position and exit the loop.
                 if (occlusionCheck[h].collider.TryGetComponent<FieldOccluder>(out FieldOccluder hitOccluder))
                 {
-                    Debug.DrawLine(Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion), Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion) + new Vector2(0f, .5f), Color.red, 10f);
+                    //Debug.DrawLine(Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion), Vector2.Lerp(transform.TransformPoint(verts[v]), occlusionCheck[h].point, hitOccluder.occlusion) + new Vector2(0f, .5f), Color.red, 10f);
                     // Set vertice to be where the occlusion was. Use occlusion veriable to Lerp position(some occluders may want to affect still but only slightly through walls. This can visually indicate that.)
                     verts[v] = Vector2.Lerp(verts[v], transform.InverseTransformPoint(occlusionCheck[h].point), hitOccluder.occlusion);
                     break;
@@ -143,6 +148,18 @@ public class MagneticFieldVisibility : MonoBehaviour
         shapeMesh.RecalculateBounds();
     }
 
+    private void GeneratePlanarUVs()
+    {
+        Vector2[] endingUVs = new Vector2[shapeMesh.vertices.Length];
+        Bounds bounds = shapeMesh.bounds;
+
+        for (int k = 0; k < endingUVs.Length; k++)
+        {
+            Vector2 aUV = new Vector2((shapeMesh.vertices[k].x / bounds.size.y) * -1, (shapeMesh.vertices[k].y / bounds.size.y));
+            endingUVs[k] = aUV;
+        }
+        shapeMesh.uv = endingUVs;
+    }
     #endregion
 
     #region Inspector Buttons
