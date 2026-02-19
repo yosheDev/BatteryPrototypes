@@ -1,3 +1,4 @@
+using FunctionLibrary;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,6 +38,18 @@ public class MagneticFieldVisibility : MonoBehaviour
     void Awake()
     {
         CreateShapeMesh();
+
+        // Set mesh shader distance value to be the distance 
+        if (surfaceCol != null)
+        {
+            gameObject.GetComponent<MeshRenderer>().material.SetFloat("_EmitDistance", surfaceCol.gameObject.GetComponent<MagneticSurface>()._fieldAttractDistance);
+            gameObject.GetComponent<MeshRenderer>().material.SetFloat("_EmitSpeed", FunctionLibraryF.MapRangeClamped(1, 6, -13, -40, surfaceCol.gameObject.GetComponent<MagneticSurface>()._magData.strength));
+            gameObject.GetComponent<MeshRenderer>().material.SetFloat("_OpacityAttenuation", Mathf.Clamp(surfaceCol.gameObject.GetComponent<MagneticSurface>()._magData.attenuation - 0.25f, 0f, 99f) * surfaceCol.gameObject.GetComponent<MagneticSurface>()._attenuationModifier);
+        }
+        else
+        {
+            Debug.LogError("surfaceCol is null on " + this.gameObject + ". surfaceCol is needed for setting variables in the mag field shader.");
+        }
     }
 
     private void CreateShapeMesh()

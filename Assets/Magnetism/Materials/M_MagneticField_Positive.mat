@@ -33,7 +33,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _EmitBanding: 2500
+    - _EmitSpeed: -10
+    - _Opacity: 0.2
     m_Colors:
     - _FieldBaseColor: {r: 1, g: 0.025123347, b: 0, a: 1}
   m_BuildTextureStacks: []
