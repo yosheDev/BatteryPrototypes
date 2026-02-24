@@ -25,7 +25,9 @@ public class BatteryController : MonoBehaviour
     private GameObject cursorObj;
     private SoftwareCursor softwareCursor;
     public MagneticSurface positiveMag;
+    public TractorBeamVFX posTractorBeamVFX;
     public MagneticSurface negativeMag;
+    public TractorBeamVFX negTractorBeamVFX;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
@@ -428,6 +430,12 @@ public class BatteryController : MonoBehaviour
 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                // Tractor Beam VFX
+                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                posTractorBeamVFX.SetForceMagnitude(0f);
+                negTractorBeamVFX.SetForceMagnitude(0f);
             }
             else if (weldState == WeldState.LaunchAim)
             {
@@ -448,6 +456,12 @@ public class BatteryController : MonoBehaviour
 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                // Tractor Beam VFX
+                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                posTractorBeamVFX.SetForceMagnitude(0f);
+                negTractorBeamVFX.SetForceMagnitude(0f);
             }
             #endregion
 
@@ -490,7 +504,6 @@ public class BatteryController : MonoBehaviour
                 List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
                 for (int i = 0; i < negativeFields.Count; i++)
                 {
-                    Debug.Log("1" + negativeFields[i]); // new null ref after gravity and field visibiltiy stuff.
                     Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, rb.linearVelocity);
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
@@ -514,11 +527,58 @@ public class BatteryController : MonoBehaviour
                 float velocityMultiplier = 1f;// FunctionLibraryF.MapRangeClamped(0f, 10f, .8f, 1.15f, velocity);
                 float angularMultiplier = 1f;//FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
 
+                // Positive
                 rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
-                Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
+                //Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
 
+                if (positiveFields.Count > 0)
+                {
+                    Vector2 posEndPos;
+                    RaycastHit2D posHit = Physics2D.Raycast(positiveMag.transform.position, (combinedPositiveForces.normalized * ((Vector2.Dot(positiveMag.transform.up, combinedPositiveForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
+                    if (posHit)
+                    {
+                        posEndPos = posHit.point;
+                    }
+                    else
+                    {
+                        posEndPos = (Vector2)positiveMag.transform.position + ((combinedPositiveForces.normalized * -5f));
+                    }
+                    posTractorBeamVFX.SetEndPos(posEndPos);
+                    posTractorBeamVFX.SetForceMagnitude(combinedPositiveForces.magnitude);
+                }
+                else
+                {
+                    posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                    posTractorBeamVFX.SetForceMagnitude(0f);
+                }
+
+                // Negative
                 rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
-                Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
+                //Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
+
+                if (negativeFields.Count > 0)
+                {
+                    Vector2 negEndPos;
+                    RaycastHit2D negHit = Physics2D.Raycast(negativeMag.transform.position, (combinedNegativeForces.normalized * ((Vector2.Dot(negativeMag.transform.up, combinedNegativeForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
+                    if (negHit)
+                    {
+                        Debug.Log(negHit.collider.name);
+                        negEndPos = negHit.point;
+                    }
+                    else
+                    {
+                        negEndPos = (Vector2)negativeMag.transform.position + ((combinedNegativeForces.normalized * -5f));
+                    }
+                    //Debug.DrawLine(negEndPos, negEndPos + new Vector2(0f, .5f), Color.darkSalmon, .1f);
+                    negTractorBeamVFX.SetEndPos(negEndPos);
+                    negTractorBeamVFX.SetForceMagnitude(combinedNegativeForces.magnitude);
+                }
+                else
+                {
+                    negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                    negTractorBeamVFX.SetForceMagnitude(0f);
+                }
+                
 
             }
             #endregion
@@ -872,20 +932,12 @@ public class BatteryController : MonoBehaviour
         rb.WakeUp();
     }
 
-    public void RestartInput()
+    public void RestartInput(InputAction.CallbackContext context)
     {
-        /// This event plays when player presses restart key.
-        
-        // If player is not in the air? Or maybe do velocity?
-
-        if (velocity <= .5f)
+        if (context.performed) /// If held for duration specified in the Input Settings.
         {
             Restart();
-        }
-        else
-        {
-            Debug.Log("Cannot Restart while moving!");
-        }
+        }       
     }
     public void Restart()
     {

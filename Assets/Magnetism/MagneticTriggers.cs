@@ -18,7 +18,7 @@ public class MagneticTriggers : MonoBehaviour
             return;
         }
         // Add magnet component of the other object to affect fields of this gameObjects affect component.
-        Debug.Log("Adding " + collision.gameObject);
+        //Debug.Log("Adding " + collision.gameObject);
         magnetComponent.affectFields.Add(collision.GetComponent<MagneticTriggers>().magnetComponent);
     }
 
