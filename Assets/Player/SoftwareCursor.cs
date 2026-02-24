@@ -195,6 +195,7 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
+                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(.5f, .5f));
                 worldPos = (Vector2)parentForPos.transform.position + localPos;
                 transform.position = worldPos;
             }
@@ -250,7 +251,11 @@ public class SoftwareCursor : MonoBehaviour
 
     public float GetDesiredCursorDistance(float posMagValue = 1f, float negMagValue = 1f)
     {
-        return parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak;
+        if (parentForPos != null)
+        {
+            return parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak;
+        }
+        return posMagValue;
     }
 
     public void SetNewPosParent(GameObject parent)

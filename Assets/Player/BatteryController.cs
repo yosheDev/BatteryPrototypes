@@ -25,7 +25,9 @@ public class BatteryController : MonoBehaviour
     private GameObject cursorObj;
     private SoftwareCursor softwareCursor;
     public MagneticSurface positiveMag;
+    public TractorBeamVFX posTractorBeamVFX;
     public MagneticSurface negativeMag;
+    public TractorBeamVFX negTractorBeamVFX;
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
@@ -40,6 +42,8 @@ public class BatteryController : MonoBehaviour
 
     // Battery
     [HideInInspector] public Battery battery;
+
+    [HideInInspector] public float playerGravity;
     //==============================================================================================================================
     #region Private
     // Surface Parent
@@ -112,6 +116,7 @@ public class BatteryController : MonoBehaviour
         surfaceCol = GetComponent<CapsuleCollider2D>();
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody2D>();
+        playerGravity = rb.gravityScale;
         battery = GetComponent<Battery>();
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
 
@@ -301,6 +306,92 @@ public class BatteryController : MonoBehaviour
                 }
                 #endregion
             }
+            else if (!weldInput && weldState == WeldState.None && !lockWeldState)
+            {
+                #region Reduce Gravity When Touching Surface (Game Feel for Climbing / Sticking)
+                Collider2D evalAttractSurface = null;
+
+                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
+                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+
+                // Positive
+                if (evalAttractSurface == null)
+                {
+                    foreach (Collider2D col in positiveOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == -1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Negative
+                if (evalAttractSurface == null)
+                {
+                    foreach (Collider2D col in negativeOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == 1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Reduce gravity
+                if (evalAttractSurface != null)
+                {
+                    rb.gravityScale = playerGravity * 0f;
+                    rb.linearDamping = 20f;
+                }
+                else
+                {
+                    rb.gravityScale = playerGravity;
+                    rb.linearDamping = .01f;
+                }
+                #endregion
+                //Debug.Log(rb.gravityScale);
+            }
+            else
+            {
+                // This is so can still launch off without damping and gravity being different.
+                rb.gravityScale = playerGravity;
+                rb.linearDamping = .01f;
+            }
             #endregion
 
             #region Weld State Update Functionality
@@ -330,7 +421,7 @@ public class BatteryController : MonoBehaviour
             {
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-                
+
                 intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                 rb.MoveRotation(intermediateRot);
 
@@ -339,6 +430,12 @@ public class BatteryController : MonoBehaviour
 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                // Tractor Beam VFX
+                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                posTractorBeamVFX.SetForceMagnitude(0f);
+                negTractorBeamVFX.SetForceMagnitude(0f);
             }
             else if (weldState == WeldState.LaunchAim)
             {
@@ -359,6 +456,12 @@ public class BatteryController : MonoBehaviour
 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                // Tractor Beam VFX
+                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                posTractorBeamVFX.SetForceMagnitude(0f);
+                negTractorBeamVFX.SetForceMagnitude(0f);
             }
             #endregion
 
@@ -424,15 +527,63 @@ public class BatteryController : MonoBehaviour
                 float velocityMultiplier = 1f;// FunctionLibraryF.MapRangeClamped(0f, 10f, .8f, 1.15f, velocity);
                 float angularMultiplier = 1f;//FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
 
+                // Positive
                 rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
-                Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
+                //Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
 
+                if (positiveFields.Count > 0)
+                {
+                    Vector2 posEndPos;
+                    RaycastHit2D posHit = Physics2D.Raycast(positiveMag.transform.position, (combinedPositiveForces.normalized * ((Vector2.Dot(positiveMag.transform.up, combinedPositiveForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
+                    if (posHit)
+                    {
+                        posEndPos = posHit.point;
+                    }
+                    else
+                    {
+                        posEndPos = (Vector2)positiveMag.transform.position + ((combinedPositiveForces.normalized * -5f));
+                    }
+                    posTractorBeamVFX.SetEndPos(posEndPos);
+                    posTractorBeamVFX.SetForceMagnitude(combinedPositiveForces.magnitude);
+                }
+                else
+                {
+                    posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                    posTractorBeamVFX.SetForceMagnitude(0f);
+                }
+
+                // Negative
                 rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
-                Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
+                //Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
+
+                if (negativeFields.Count > 0)
+                {
+                    Vector2 negEndPos;
+                    RaycastHit2D negHit = Physics2D.Raycast(negativeMag.transform.position, (combinedNegativeForces.normalized * ((Vector2.Dot(negativeMag.transform.up, combinedNegativeForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
+                    if (negHit)
+                    {
+                        Debug.Log(negHit.collider.name);
+                        negEndPos = negHit.point;
+                    }
+                    else
+                    {
+                        negEndPos = (Vector2)negativeMag.transform.position + ((combinedNegativeForces.normalized * -5f));
+                    }
+                    //Debug.DrawLine(negEndPos, negEndPos + new Vector2(0f, .5f), Color.darkSalmon, .1f);
+                    negTractorBeamVFX.SetEndPos(negEndPos);
+                    negTractorBeamVFX.SetForceMagnitude(combinedNegativeForces.magnitude);
+                }
+                else
+                {
+                    negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                    negTractorBeamVFX.SetForceMagnitude(0f);
+                }
+                
 
             }
             #endregion
 
+            #region Scouting
             if (scoutState == ScoutState.Scouting)
             {
                 scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.ClampMagnitude(scoutPosOffset + (scoutInput * 9999999f * Time.fixedDeltaTime), scoutDistance), ref scoutVelocity, .3f);
@@ -449,7 +600,9 @@ public class BatteryController : MonoBehaviour
                     scoutPosOffset = Vector2.zero;
                 }
             }
-                scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
+            
+            scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
+            #endregion
         }
         else
         {
@@ -457,6 +610,14 @@ public class BatteryController : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
             intermediateRot = transform.rotation;
         }
+
+        #region Update Global Shader Values
+        // TO DO: Look into using VectorArrays so that other objects can also affect the magnetic field (not just the two player magnets)
+        Shader.SetGlobalVector("_PlayerPosMag", positiveMag.transform.position);
+        Shader.SetGlobalVector("_PlayerNegMag", negativeMag.transform.position);
+        Shader.SetGlobalVector("_PlayerNegMagScreen", Camera.main.WorldToScreenPoint(negativeMag.transform.position));
+
+        #endregion
     }
 
     #region Input Actions
@@ -702,6 +863,9 @@ public class BatteryController : MonoBehaviour
                 UpdateScalePivotTransforms();
                 gameObject.transform.parent = scalePivot.transform;
 
+                rb.gravityScale = playerGravity;
+                rb.linearDamping = .01f;
+
                 break;
             default:
                 rotationFactor = 30f;
@@ -768,20 +932,12 @@ public class BatteryController : MonoBehaviour
         rb.WakeUp();
     }
 
-    public void RestartInput()
+    public void RestartInput(InputAction.CallbackContext context)
     {
-        /// This event plays when player presses restart key.
-        
-        // If player is not in the air? Or maybe do velocity?
-
-        if (velocity <= .5f)
+        if (context.performed) /// If held for duration specified in the Input Settings.
         {
             Restart();
-        }
-        else
-        {
-            Debug.Log("Cannot Restart while moving!");
-        }
+        }       
     }
     public void Restart()
     {

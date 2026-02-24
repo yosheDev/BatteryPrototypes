@@ -469,6 +469,14 @@ PrefabInstance:
       propertyPath: m_Parameters.m_EndRange
       value: 1.4585261
       objectReference: {fileID: 0}
+    - target: {fileID: 5083440629349424134, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 5476575833896538831, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 7290076578860676013, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_Enabled
       value: 0

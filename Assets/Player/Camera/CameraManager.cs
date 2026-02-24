@@ -11,7 +11,7 @@ public class CameraManager : MonoBehaviour
     public static CameraManager instance;
 
     private CinemachineCamera[] _cameras;
-    private CinemachineCamera _currentCamera;
+    public CinemachineCamera _currentCamera;
 
     private CinemachinePositionComposer _positionComposer;
     private CinemachineTargetGroup _targetGroup;
