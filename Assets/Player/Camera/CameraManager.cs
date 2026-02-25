@@ -21,6 +21,8 @@ public class CameraManager : MonoBehaviour
     private Dictionary<Transform, Coroutine> removeTargetCoroutines = new Dictionary<Transform, Coroutine>();
     private Dictionary<Transform, Coroutine> addTargetCoroutines = new Dictionary<Transform, Coroutine>();
 
+    public Camera perspectiveCam;   /// This is used for the backgrounds.
+
     void Awake()
     {
         if (instance != null && instance != this)

@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object mapped
     within the range 0-100.
   useNormalizedZAsFactor: 1
@@ -393,6 +394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object mapped
     within the range 0-100.
   useNormalizedZAsFactor: 1
@@ -744,6 +746,114 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &378337551
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 378337552}
+  - component: {fileID: 378337555}
+  - component: {fileID: 378337554}
+  - component: {fileID: 378337553}
+  m_Layer: 10
+  m_Name: FarAway (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &378337552
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378337551}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.14390787, y: -0.24340692, z: -0.036545068, w: 0.9584926}
+  m_LocalPosition: {x: -34.65, y: -7.55, z: 100}
+  m_LocalScale: {x: 8, y: 8, z: 8}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1834744532}
+  m_LocalEulerAnglesHint: {x: -17.077, y: -28.498, z: 0}
+--- !u!33 &378337553
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378337551}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &378337554
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378337551}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: -876546973899608171, guid: a72aabec028023448bdeaedc3084dd52, type: 3}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &378337555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378337551}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
+  Notes: If useNormalizedZAsFactor is true, using Z position of the object instead
+    of parallaxFactor. Z position is mapped within the range 0-100, so only place
+    objects in that range.
+  useNormalizedZAsFactor: 1
+  parallaxFactor: 0.1
 --- !u!1001 &379420564
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -812,7 +922,7 @@ GameObject:
   - component: {fileID: 506788219}
   - component: {fileID: 506788221}
   - component: {fileID: 506788220}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FarAway (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -828,7 +938,7 @@ Transform:
   m_GameObject: {fileID: 506788218}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -25.5, y: -11.3, z: 10}
+  m_LocalPosition: {x: -25.5, y: -11.3, z: 0.2}
   m_LocalScale: {x: 8.263957, y: 8.263957, z: 8.263957}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -841,11 +951,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 506788218}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object instead
     of parallaxFactor. Z position is mapped within the range 0-100, so only place
     objects in that range.
@@ -919,7 +1030,7 @@ GameObject:
   m_Component:
   - component: {fileID: 619394802}
   - component: {fileID: 619394801}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Global Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -947,7 +1058,7 @@ MonoBehaviour:
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000
-  m_LightCookieSprite: {fileID: 0}
+  m_LightCookieSprite: {fileID: -2413806693520163455, guid: bbd8d491a9aa1ae44a98431ecd62f350, type: 3}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
   m_AlphaBlendOnOverlap: 0
@@ -962,8 +1073,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: 0, y: -0.00000011920929, z: 0}
-    m_Extent: {x: 0.9985302, y: 0.99853027, z: 0}
+    m_Center: {x: -0.00024998188, y: -0.000100016594, z: 0}
+    m_Extent: {x: 1.00045, y: 1.0009, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -1459,7 +1570,7 @@ GameObject:
   - component: {fileID: 1210410091}
   - component: {fileID: 1210410093}
   - component: {fileID: 1210410092}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FarAway (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1475,8 +1586,8 @@ Transform:
   m_GameObject: {fileID: 1210410090}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -33.4, y: -15.1, z: 50}
-  m_LocalScale: {x: 15.917939, y: 15.917939, z: 15.917939}
+  m_LocalPosition: {x: -30.36, y: -9.02, z: 50}
+  m_LocalScale: {x: 10.965391, y: 10.965391, z: 10.965391}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1834744532}
@@ -1488,11 +1599,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1210410090}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object instead
     of parallaxFactor. Z position is mapped within the range 0-100, so only place
     objects in that range.
@@ -1663,6 +1775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object mapped
     within the range 0-100.
   useNormalizedZAsFactor: 1
@@ -1888,7 +2001,7 @@ GameObject:
   - component: {fileID: 1427453146}
   - component: {fileID: 1427453148}
   - component: {fileID: 1427453147}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FarAway (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1904,8 +2017,8 @@ Transform:
   m_GameObject: {fileID: 1427453145}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -17, y: -15.1, z: 50}
-  m_LocalScale: {x: 15.917939, y: 15.917939, z: 15.917939}
+  m_LocalPosition: {x: -17, y: -8.01, z: 50}
+  m_LocalScale: {x: 11.978409, y: 11.978409, z: 11.978409}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1834744532}
@@ -1917,11 +2030,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1427453145}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object instead
     of parallaxFactor. Z position is mapped within the range 0-100, so only place
     objects in that range.
@@ -2122,6 +2236,114 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1791190130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1791190133}
+  - component: {fileID: 1791190132}
+  - component: {fileID: 1791190131}
+  m_Layer: 0
+  m_Name: Square (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1791190131
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791190130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 2
+  Notes: If useNormalizedZAsFactor is true, using Z position of the object mapped
+    within the range 0-100.
+  useNormalizedZAsFactor: 1
+  parallaxFactor: 0
+--- !u!212 &1791190132
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791190130}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 0.23532212, g: 0.2379127, b: 0.2603773, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &1791190133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791190130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.69574, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 26.510517, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1834744531
 GameObject:
   m_ObjectHideFlags: 0
@@ -2152,6 +2374,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2029673199}
+  - {fileID: 378337552}
   - {fileID: 1210410091}
   - {fileID: 1427453146}
   - {fileID: 506788219}
@@ -2857,7 +3080,7 @@ GameObject:
   - component: {fileID: 2029673199}
   - component: {fileID: 2029673200}
   - component: {fileID: 2029673201}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FarAway
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2873,8 +3096,8 @@ Transform:
   m_GameObject: {fileID: 2029673198}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -24, y: -9.4, z: 100}
-  m_LocalScale: {x: 8.879491, y: 8.879491, z: 8.879491}
+  m_LocalPosition: {x: -24, y: -15.45, z: 100}
+  m_LocalScale: {x: 8, y: 8, z: 8}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1834744532}
@@ -2944,11 +3167,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2029673198}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef41ba0bceaa74fb5a0a2ecfc1606a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Parallax
+  parallaxMultiplierTweak: 1
   Notes: If useNormalizedZAsFactor is true, using Z position of the object instead
     of parallaxFactor. Z position is mapped within the range 0-100, so only place
     objects in that range.
@@ -3362,3 +3586,4 @@ SceneRoots:
   - {fileID: 36034691}
   - {fileID: 1360738848}
   - {fileID: 318051363}
+  - {fileID: 1791190133}
