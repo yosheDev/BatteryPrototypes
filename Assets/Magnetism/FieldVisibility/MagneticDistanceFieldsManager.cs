@@ -88,6 +88,13 @@ public class MagneticDistanceFieldsManager : MonoBehaviour
         sdfTex.Create();
     }
 
+    private void OnDestroy()
+    {
+        circleBuffer?.Dispose();
+        boxBuffer?.Dispose();
+        capsuleBuffer?.Dispose();
+        polyBuffer?.Dispose();
+    }
     // === NOTE ===
     /// Fields add themselves to magFieldCols on Awake(). So by the time for Start(), the HashSet should be instantiated. This also applies to sdfTextureBounds.
     void Start()
