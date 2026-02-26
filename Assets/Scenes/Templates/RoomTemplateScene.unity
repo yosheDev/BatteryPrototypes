@@ -598,6 +598,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RoomManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6239690848335973314, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
+      propertyPath: spawnMechanism
+      value: 
+      objectReference: {fileID: 1498318209}
     - target: {fileID: 6787391437380022258, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
       propertyPath: m_LocalPosition.x
       value: -23.76841
@@ -648,6 +652,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6787391437380022258, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
   m_PrefabInstance: {fileID: 891435073}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1299648610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1299648611}
+  m_Layer: 0
+  m_Name: == Background ==
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1299648611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299648610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.29611, y: -61.24481, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1441783353
 GameObject:
   m_ObjectHideFlags: 0
@@ -741,6 +776,79 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
   magnetComponent: {fileID: 2097455707}
   isOnPlayer: 0
+--- !u!1001 &1498318207
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2009896039}
+    m_Modifications:
+    - target: {fileID: 3896297229666810574, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_Name
+      value: SpawnMechanismBackground
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -27.7723
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -31.074898
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+--- !u!4 &1498318208 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+  m_PrefabInstance: {fileID: 1498318207}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1498318209 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8047732664335575945, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+  m_PrefabInstance: {fileID: 1498318207}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a768a0d2283192849ad0846a10f57b0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawningMechanism
 --- !u!1 &1720678254
 GameObject:
   m_ObjectHideFlags: 0
@@ -780,6 +888,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 1720678256}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 1
 --- !u!58 &1720678256
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1049,6 +1158,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 1820805402}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 1
 --- !u!1 &1966693654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1198,6 +1308,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 1966693658}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 1
 --- !u!1 &1993116044
 GameObject:
   m_ObjectHideFlags: 0
@@ -1208,7 +1319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1993116045}
   m_Layer: 0
-  m_Name: Level
+  m_Name: == Level ==
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1269,6 +1380,7 @@ Transform:
   - {fileID: 718733206}
   - {fileID: 457234436660168391}
   - {fileID: 619394802}
+  - {fileID: 1498318208}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2025512776
@@ -1567,6 +1679,7 @@ MonoBehaviour:
   surfaceCol: {fileID: 2097455704}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  bakeToMagFieldSDF: 1
 --- !u!1001 &457234436660168390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1697,3 +1810,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 2009896039}
   - {fileID: 1993116045}
+  - {fileID: 1299648611}

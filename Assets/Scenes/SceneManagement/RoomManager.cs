@@ -12,6 +12,7 @@ public class RoomManager : MonoBehaviour
     public string Notes = "Respawn Pos will be set to location of this object!";
 
     [SerializeField] private Vector2 respawnPos; // This should be different than PlayerStart position is most cases. Think "metroid save room" where checkpoint device is not where player enters the room.
+    public SpawningMechanism spawnMechanism;
 
     private void Start()
     {

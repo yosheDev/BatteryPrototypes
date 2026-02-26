@@ -27,11 +27,12 @@ public class AreaManager : MonoBehaviour
     private AreaTransitionState transitionState = AreaTransitionState.Loading;
 
     [Header("References")]
-    private BatteryController playerController;
+    public BatteryController playerController;
     private Rigidbody2D playerRB;
-    private float playerBaseGravity = 1f;
+    [HideInInspector] public float playerBaseGravity = 1f;
     private Vector3 endPlayerPosTarget;
     private Vector3 endPlayerVel = new Vector3(0f, 0f, 0f);
+    private RoomManager roomManager;
 
     [Header("Checkpoint Data")]
     [HideInInspector] public Level checkpointLevel;
@@ -337,6 +338,9 @@ public class AreaManager : MonoBehaviour
                 else
                 {
                     GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+                    roomManager = GameObject.FindFirstObjectByType<RoomManager>();
+
+                    #region New Spawn Method
                     if (playerStart == null)
                     {
                         Debug.LogError("ERROR: No playerStart is placed in the scene " + area + "_" + roomNum + "! Defaulting to origin.");
@@ -346,12 +350,23 @@ public class AreaManager : MonoBehaviour
                     {
                         playerController.ResetUponNewRoom(playerStart.transform.position);
                     }
-                } 
-                    
+                    try
+                    {
+                        roomManager.spawnMechanism.AwaitingInput();
+                    }
+                    catch
+                    {
+                        Debug.LogError("Room Manager does not have a spawn mechanism set! Force skipping spawn sequence.");
+                        state = AreaTransitionState.None;
+                    }
+                    #endregion
+                }
                 break;
+
             case AreaTransitionState.None:
-                playerRB.gravityScale = playerBaseGravity;
+                  
                 break;
+
             case AreaTransitionState.ObjectiveReached:
                 playerRB.linearVelocity = new Vector2(0f, 0f);
                 playerRB.gravityScale = 0f;
@@ -361,10 +376,11 @@ public class AreaManager : MonoBehaviour
                 endPlayerPosTarget.z = playerController.gameObject.transform.position.z;
 
                 StartCoroutine(EndRoomTransition());
-
                 break;
+
             case AreaTransitionState.Loading:
                 break;
+
             default:
                 break;
         }
@@ -387,6 +403,18 @@ public class AreaManager : MonoBehaviour
                 break;
         }
         #endregion
+    }
+
+    public void ReleasePlayer()
+    {
+        try
+        {
+            roomManager.spawnMechanism.Release();
+        }
+        catch
+        {
+            playerRB.gravityScale = playerBaseGravity;
+        }
     }
 
     public Level GetCurrentRoom()

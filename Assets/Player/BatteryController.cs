@@ -606,8 +606,8 @@ public class BatteryController : MonoBehaviour
         else
         {
             // Manually Update Transforms to face software cursor.
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-            intermediateRot = transform.rotation;
+            //transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+            //intermediateRot = transform.rotation;
         }
 
         #region Update Global Shader Values
@@ -657,11 +657,11 @@ public class BatteryController : MonoBehaviour
 
     public void Weld(InputAction.CallbackContext context)
     {
-        // Break out of spawn cage.
+        // Break out of spawn mechanism.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.Spawn))
         {
-            spawnCage.SetActive(false);
-            AreaManager.instance.SetTransitionState(AreaManager.AreaTransitionState.None);
+            //spawnCage.SetActive(false);
+            AreaManager.instance.ReleasePlayer();
         }
 
         else
@@ -924,8 +924,8 @@ public class BatteryController : MonoBehaviour
     {
         startPos = newStartPos;
         gameObject.transform.position = startPos;
-        spawnCage.SetActive(true);
-        spawnCage.transform.position = gameObject.transform.position;
+        //spawnCage.SetActive(true);
+        //spawnCage.transform.position = gameObject.transform.position;
         rb.linearVelocity = new Vector2(0f, 0f);
         rb.gravityScale = 0f;
         rb.WakeUp();
