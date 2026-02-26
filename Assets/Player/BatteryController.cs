@@ -562,7 +562,6 @@ public class BatteryController : MonoBehaviour
                     RaycastHit2D negHit = Physics2D.Raycast(negativeMag.transform.position, (combinedNegativeForces.normalized * ((Vector2.Dot(negativeMag.transform.up, combinedNegativeForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
                     if (negHit)
                     {
-                        Debug.Log(negHit.collider.name);
                         negEndPos = negHit.point;
                     }
                     else

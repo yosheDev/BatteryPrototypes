@@ -66,6 +66,7 @@ public class MagneticDistanceFieldsManager : MonoBehaviour
     public void AddTexBounds(SDFTexBounds texBounds)
     {
         sdfTexBounds.Add(texBounds);
+        Debug.Log(texBounds);
         float aabbWidth = texBounds.boundsWS.size.x;    /// Gets width. Assuming these are all square at the moment, so do not even worry about height.
         float pixelWSWidth = aabbWidth / resolution;
 
