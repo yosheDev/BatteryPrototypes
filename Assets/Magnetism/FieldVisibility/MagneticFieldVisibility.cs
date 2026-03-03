@@ -57,12 +57,22 @@ public class MagneticFieldVisibility : MonoBehaviour
     {
         shapeMesh = fieldCol.CreateMesh(true, true);
 
-        // Update mesh vertices to account for localScale.
-        Vector3 offset = new Vector3(-1f * (magTransform.position.x / magTransform.lossyScale.x), -1f * (magTransform.position.y / magTransform.lossyScale.y), 0f);
-        SetMeshLocalScale(new Vector3(transform.localScale.x / magTransform.lossyScale.x, transform.localScale.y / magTransform.lossyScale.y, 1f), offset);
+        if (!(fieldCol is EdgeCollider2D))
+        {
+            // Update mesh vertices to account for localScale.
+            Vector3 offset = new Vector3(-1f * (magTransform.position.x / magTransform.lossyScale.x), -1f * (magTransform.position.y / magTransform.lossyScale.y), 0f);
+            SetMeshLocalScale(new Vector3(transform.localScale.x / magTransform.lossyScale.x, transform.localScale.y / magTransform.lossyScale.y, 1f), offset);
 
-        // Orientation here.
-        transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, Mathf.Abs(180f - Mathf.Abs(magTransform.rotation.z)));
+            // Orientation here.
+            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, Mathf.Abs(180f - Mathf.Abs(magTransform.rotation.z)));
+        }
+        else
+        {
+            Vector3 offset = new Vector3(-1f * magTransform.position.x, -1f * magTransform.position.y, 0f);
+            SetMeshLocalScale(Vector3.one, offset);
+            transform.localPosition = Vector3.zero;
+            transform.rotation = Quaternion.identity;
+        }
 
         // Alter vertice locations to hit field occluders.
         if (surfaceCol != null)

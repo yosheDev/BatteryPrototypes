@@ -52,6 +52,14 @@ public class MagneticSurface : MagnetComponentBase
                     throw new System.Exception("Field Collider is not a BoxCollider2D, but SurfaceCollider is.");
                 }
             }
+            else if (surfaceCol is EdgeCollider2D)
+            {
+                if (fieldCol is EdgeCollider2D)
+                {
+                    ((EdgeCollider2D)fieldCol).points = ((EdgeCollider2D)surfaceCol).points;
+                    ((EdgeCollider2D)fieldCol).edgeRadius = _fieldAttractDistance;
+                }
+            }
             else if (surfaceCol is PolygonCollider2D)
             {
                 // PolygonCollider2Ds will not be able to have the collider automatically adjust as easily as it is for box and circle. This should

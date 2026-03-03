@@ -126,6 +126,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!212 &93452006
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -171,6 +172,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: e1f1ffee0002a6e4c84481664355e5f4, type: 3}
   m_Color: {r: 0.8404288, g: 0.8867924, b: 0.038483348, a: 1}
   m_FlipX: 0
@@ -180,7 +182,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1001 &194574934
 PrefabInstance:
@@ -309,31 +310,35 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1279020731569833818, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.05746
+      value: 11.085871
       objectReference: {fileID: 0}
     - target: {fileID: 1279020731569833818, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.98187
+      value: 1.9772339
       objectReference: {fileID: 0}
     - target: {fileID: 1806027618725748036, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: orthographic size
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6578456198219527783, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.05746
+      value: 11.085871
       objectReference: {fileID: 0}
     - target: {fileID: 6578456198219527783, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.98187
+      value: 1.9772339
       objectReference: {fileID: 0}
+    - target: {fileID: 6627629801027345211, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: Targets.Array.data[0].Object
+      value: 
+      objectReference: {fileID: 1515492334}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.05746
+      value: 11.085871
       objectReference: {fileID: 0}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.98187
+      value: 1.9772339
       objectReference: {fileID: 0}
     - target: {fileID: 6646184805457534860, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_Name
@@ -620,6 +625,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a7199ab5bc9e9e4fadfd5daad5fb69c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Battery
+--- !u!4 &1515492334 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+  m_PrefabInstance: {fileID: 1515492325}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1656108768 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4629887031375558571, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}

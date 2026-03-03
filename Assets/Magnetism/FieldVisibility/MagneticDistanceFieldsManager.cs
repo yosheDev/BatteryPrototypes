@@ -225,6 +225,34 @@ public class MagneticDistanceFieldsManager : MonoBehaviour
                     }
                 }
             }
+            else if (col is EdgeCollider2D edge)
+            {
+                //Debug.LogError("Currently no SDF functionality for edge colliders");
+                Transform t = edge.transform;
+                Vector2[] points = edge.points;
+
+                float scaledRadius = edge.edgeRadius * Mathf.Max(
+                    Mathf.Abs(t.lossyScale.x),
+                    Mathf.Abs(t.lossyScale.y)
+                );
+
+                for (int i = 0; i < points.Length - 1; i++)
+                {
+                    CapsuleData data = new CapsuleData();
+
+                    Vector2 localA = points[i] + edge.offset;
+                    Vector2 localB = points[i + 1] + edge.offset;
+
+                    Vector2 worldA = t.TransformPoint(localA);
+                    Vector2 worldB = t.TransformPoint(localB);
+
+                    data.pointA = worldA;
+                    data.pointB = worldB;
+                    data.radius = scaledRadius;
+
+                    capsules.Add(data);
+                }
+            }
             else
             {
                 Debug.LogWarning("There is no functionality added for this Collider2D type in MagneticDistanceFieldManager. Compatable types currently are: Circle, Box, Capsule, and Poly.");

@@ -590,7 +590,7 @@ public class BatteryController : MonoBehaviour
             else if (scoutState == ScoutState.Returning)
             {
                 scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.zero, ref scoutVelocity, .2f);
-                Debug.Log(scoutPosOffset);
+                //Debug.Log(scoutPosOffset);
                 if (FunctionLibraryF.VectorsApproximatelyEqual(scoutPosOffset, Vector2.zero))
                 {
                     scoutState = ScoutState.None;
