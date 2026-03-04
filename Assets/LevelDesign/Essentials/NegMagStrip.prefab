@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticSurface
   _magData:
-    charge: 1
+    charge: -1
     strength: 1
     attenuation: 2
   fieldCol: {fileID: 5651868128016588535}
@@ -455,7 +455,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c6433b9fc821ef0408235669b4bd05a3, type: 2}
+  - {fileID: 2100000, guid: e2aa17749bdb8ab44b9aad692489ad72, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

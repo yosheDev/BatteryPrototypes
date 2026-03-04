@@ -41,9 +41,9 @@ public class ChargeParticleManager : MonoBehaviour
         }
     }
 
-    public void EmitChargeParticle(ParticleSystem.EmitParams emitParams)
+    public void EmitChargeParticle(ParticleSystem.EmitParams emitParams, int count)
     {
-        _particleSystem.Emit(emitParams, 1);
+        _particleSystem.Emit(emitParams, count);
     }
 
     #region Editor Button List Management
