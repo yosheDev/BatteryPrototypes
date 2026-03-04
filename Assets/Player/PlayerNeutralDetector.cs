@@ -1,7 +1,8 @@
-using UnityEngine;
-using System.Collections.Generic;
 using FunctionLibrary;
+using Magnet;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public class PlayerNeutralDetector : MonoBehaviour
 {
@@ -12,6 +13,21 @@ public class PlayerNeutralDetector : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject.CompareTag("Interactable"))
+        {
+            // Note: Interaction currently not compatable with player overlapping several interactables. I doubt we will every have interactables that close to eachother, so shouldn't be an issue.
+            try
+            {
+                IInteractable interactObj = collision.gameObject.GetComponent<IInteractable>();
+                batteryController.interactObj = interactObj;
+                interactObj.TrySetInteractDisplay(true);
+            }
+            catch { }
+
+            return;
+        }
+
+
         if (collision.gameObject.CompareTag("Player"))
         {
             return;
@@ -73,6 +89,19 @@ public class PlayerNeutralDetector : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (collision.gameObject.CompareTag("Interactable"))
+        {
+            // Note: Interaction currently not compatable with player overlapping several interactables. I doubt we will every have interactables that close to eachother, so shouldn't be an issue.
+            try
+            {
+                IInteractable interactObj = collision.gameObject.GetComponent<IInteractable>();
+                interactObj.TrySetInteractDisplay(false);
+            }
+            catch { }
+
+            return;
+        }
+
         neutralOverlaps.Remove(collision.gameObject);
         if (neutralOverlaps.Count <= 0)
         {

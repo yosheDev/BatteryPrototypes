@@ -15,7 +15,6 @@ public class BatteryController : MonoBehaviour
     [Header("References")]
     [SerializeField] private GameObject scalePivot;
     [SerializeField] private GameObject weldBlob;
-    [SerializeField] private GameObject spawnCage;
     [SerializeField] private GameObject scoutTarget;
     private Camera mainCam;
     private Rigidbody2D rb;
@@ -85,6 +84,10 @@ public class BatteryController : MonoBehaviour
     private Vector2 scoutPosOffset = Vector2.zero;
     Vector2 scoutVelocity = Vector2.zero;
     float scoutDistance = 10f;
+
+    // Interaction
+    [HideInInspector] public IInteractable interactObj;
+
     private enum ScoutState
     {
         None,
@@ -660,7 +663,6 @@ public class BatteryController : MonoBehaviour
         // Break out of spawn mechanism.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.Spawn))
         {
-            //spawnCage.SetActive(false);
             AreaManager.instance.ReleasePlayer();
         }
 
@@ -753,6 +755,13 @@ public class BatteryController : MonoBehaviour
         }
     }
 
+    public void Interact(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            interactObj.Interact(this);
+        }
+    }
     #endregion
     public void ChangeWeldState(WeldState newState)
     {
@@ -924,8 +933,6 @@ public class BatteryController : MonoBehaviour
     {
         startPos = newStartPos;
         gameObject.transform.position = startPos;
-        //spawnCage.SetActive(true);
-        //spawnCage.transform.position = gameObject.transform.position;
         rb.linearVelocity = new Vector2(0f, 0f);
         rb.gravityScale = 0f;
         rb.WakeUp();

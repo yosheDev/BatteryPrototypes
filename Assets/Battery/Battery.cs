@@ -1,5 +1,5 @@
-using UnityEngine;
 using Unity.Mathematics;
+using UnityEngine;
 /// This class is for anything with a battery.
 
 public class Battery : MonoBehaviour
@@ -22,20 +22,21 @@ public class Battery : MonoBehaviour
     #region Arithmetic
     public void AddPercent(byte amount)
     {
-        if (percent + amount > 255)
+        if ((int)percent + amount < 0)
         {
-            percent = 100;
+            percent = (byte)0;
+            onPercentChanged?.Invoke();
             return;
         }
-        else if (percent + amount < 0)
+        else if ((int)percent + amount > 100)
         {
-            percent = 0;
+            percent = (byte)100;
+            onPercentChanged?.Invoke();
             return;
         }
 
         percent += amount;
-        Mathf.Clamp(percent, 0, 100);
-
+        percent = (byte)Mathf.Clamp((int)percent, 0, 100);
         onPercentChanged?.Invoke();
     }
     public void AddPercent(int amount)
@@ -50,20 +51,21 @@ public class Battery : MonoBehaviour
 
     public void SubtractPercent(byte amount)
     {
-        if (percent - amount > 255)
+        if ((int)percent - amount < 0)
         {
-            percent = 100;
+            percent = (byte)0;
+            onPercentChanged?.Invoke();
             return;
         }
-        else if (percent - amount < 0)
+        else if ((int)percent - amount > 100)
         {
-            percent = 0;
+            percent = (byte)100;
+            onPercentChanged?.Invoke();
             return;
         }
-
+        
         percent -= amount;
-        Mathf.Clamp(percent, 0, 100);
-
+        percent = (byte)Mathf.Clamp((int)percent, 0, 100);
         onPercentChanged?.Invoke();
     }
 
@@ -86,14 +88,17 @@ public class Battery : MonoBehaviour
     public void SetPercent(byte newPercent)
     {
         percent = newPercent;
+        onPercentChanged?.Invoke();
     }
     public void SetPercent(int newPercent)
     {
         percent = (byte)Mathf.Clamp(newPercent, 0, 100);
+        onPercentChanged?.Invoke();
     }
     public void SetPercent(float newPercent)
     {
         percent = (byte)Mathf.RoundToInt(Mathf.Clamp(newPercent, 0f, 100f));
+        onPercentChanged?.Invoke();
     }
     public byte GetPercent()
     {
