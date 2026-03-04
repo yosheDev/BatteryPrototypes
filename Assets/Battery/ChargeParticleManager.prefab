@@ -977,7 +977,7 @@ ParticleSystem:
     m_BurstCount: 0
     m_Bursts: []
   SizeModule:
-    enabled: 0
+    enabled: 1
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -988,21 +988,30 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0
+          value: 1
           inSlope: 0
-          outSlope: 1
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 1
+          time: 0.8
           value: 1
-          inSlope: 1
-          outSlope: 0
+          inSlope: -0.06730244
+          outSlope: -0.06730244
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.19869399
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 0
+          inSlope: -13.627365
+          outSlope: -13.627365
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.26191625
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -2414,7 +2423,7 @@ ParticleSystem:
       m_Bits: 8
     influenceList: []
   ClampVelocityModule:
-    enabled: 0
+    enabled: 1
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -2577,7 +2586,7 @@ ParticleSystem:
     magnitude:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 1e+10
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2635,7 +2644,7 @@ ParticleSystem:
     drag:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 2
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -4770,10 +4779,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChargeParticleCollision
   _particleSystem: {fileID: 9121976118771316360}
-  chargeAmount: 2
+  particleSizeRange: {x: 0.1, y: 0.5}
+  chargeAmountRange: {x: 1, y: 5}
 --- !u!199 &1831122041745934296
 ParticleSystemRenderer:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -4819,6 +4829,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -4850,7 +4861,6 @@ ParticleSystemRenderer:
   m_MeshWeighting1: 1
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
-  m_MaskInteraction: 0
 --- !u!1 &9001006237767831004
 GameObject:
   m_ObjectHideFlags: 0
@@ -4909,4 +4919,4 @@ MonoBehaviour:
   - {x: 1.07, y: 9.06, z: 0}
   - {x: -0.17, y: 8.04, z: 0}
   locationsCount: 8
-  chargeParGlobalSize: 0.3
+  chargeParGlobalSizeRange: {x: 0.2, y: 0.3}
