@@ -1,14 +1,15 @@
+using FunctionLibrary;
+using Magnet;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.Hierarchy;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 using static UnityEngine.Splines.SplineAnimate;
 using static UnityEngine.Splines.SplineComponent;
-using Unity.Mathematics;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Hierarchy;
-using FunctionLibrary;
 
-public class SplineTraversal : MonoBehaviour
+public class SplineTraversal : MonoBehaviour, IInterfaceEvent
 {
     [Header("Base Settings")]
     [SerializeField] private SplineContainer splineContainer;
@@ -48,6 +49,10 @@ public class SplineTraversal : MonoBehaviour
         if (playOnAwake)
         {
             Play();
+        }
+        else
+        {
+            UpdateTransform();
         }
     }
 
@@ -157,5 +162,18 @@ public class SplineTraversal : MonoBehaviour
         yield return new WaitForSeconds(endDelay);
         Play();
         yield break;
+    }
+
+    public void InterfaceEvent(string eventName)
+    {
+        switch(eventName)
+        {
+            case "Start":
+                Play();
+                break;
+            case "Stop":
+                Pause();
+                break;
+        }
     }
 }

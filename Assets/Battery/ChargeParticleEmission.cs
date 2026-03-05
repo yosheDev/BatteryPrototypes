@@ -19,7 +19,7 @@ public class ChargeParticleEmission : MonoBehaviour
     [Header("Parameters")]
     [SerializeField] private float emissionRate = .5f;
     [SerializeField] private float emissionRateVariance = .2f;
-    [SerializeField] private float lifetime = 10f;
+    [SerializeField] private float lifetime = 5f;
     [SerializeField] private EmitDirection emitDirection = EmitDirection.X;
     [SerializeField] private Vector2 velocityRange = new Vector2(2f, 4f);
     [SerializeField] private float velocityAngleVariance = 20f;

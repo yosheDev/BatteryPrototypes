@@ -43,7 +43,7 @@ public class InteractableSlot : MonoBehaviour, IInteractable
             else
             {
                 // Reset can interact after shortest possible duration.
-                StartCoroutine(ResetInteractable(Mathf.Min(0.2f, GetTotalInterfaceEventDelay())));
+                StartCoroutine(ResetInteractable(Mathf.Max(0.2f, GetTotalInterfaceEventDelay())));
             }
 
             // For each event object, call the associated interface event as specified in eventNames.
