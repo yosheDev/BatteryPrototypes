@@ -15,27 +15,23 @@ public class ElectricNode : MonoBehaviour
     [HideInInspector] public HashSet<ElectricNode> withinRangeNodes = new HashSet<ElectricNode>();      /// Nodes that are within the connection range of this node.
     [HideInInspector] public HashSet<ElectricNode> connectedNodes = new HashSet<ElectricNode>();        /// Hashset is populated with nodes that a chain already exists between. Used in preventing duplicate chains.
     private Dictionary<ElectricNode, LineRenderer> elecLines = new Dictionary<ElectricNode, LineRenderer>();
-    // NOTE: Right now just making these exist and function. May change how these are setup later. For instance: querying nearby nodes in a threshold and shocking with them.
-    
+    private ShockState shockState = ShockState.None;
+
+    public bool extendShock = true;                 /// When true, extends the shock. Typically, this is false on dummy ElectricNodes that only exist to zap certain points.
     [HideInInspector] public bool updateConnectedAlreadyCalled = false;
-    public bool isLeader = false;           /// When true, this node runs its coroutine and activates shock stuff on connected nodes.
-    public bool extendShock = true;         /// When true, extends the shock. Typically, this is false on dummy ElectricNodes that only exist to zap certain points.
+
+    [Header("Shock Leader")]
+    public bool isLeader = false;                   /// When true, this node runs its coroutine and activates shock stuff on connected nodes.
     public float shockDuration = 1f;
     public float shockInterval = 2f;
     public float shockTelegraphDur = 1f;
-    private ShockState shockState = ShockState.None;
     private Coroutine shockRoutine;
 
-    #region Electric VFX
     [Header("VFX")]
-    private Vector2 endPos;                             /// Pos to use for end of effect.
-
+    public GameObject lineRendererPrefab;           /// Prefab for line renderer.
     public Collider2D nodeCol;                      /// Sprite of the beam. May not use this.
-    public Material shockMat;                      /// Material to use for the beam.
-    private float widthMultiplier = 1f;                          /// Width of the beam. Might be dynamic at runtime, plan as such.
-    private Vector2 dir = Vector2.zero;                 /// Direction of the beam.
-
-    #endregion
+    public Material shockMat;                       /// Material to use for the beam.
+    private float widthMultiplier = 1f;             /// Width of the beam. Might be dynamic at runtime, plan as such.
 
     private void Start()
     {
@@ -105,17 +101,19 @@ public class ElectricNode : MonoBehaviour
         /// Need a way to set this to false once all of the nodes have been gone through. Maybe just wait one frame?
         foreach (ElectricNode rangeNode in withinRangeNodes)
         {
-            if (connectedNodes.Contains(rangeNode) || rangeNode.updateConnectedAlreadyCalled || rangeNode == this) // Infinite loop with rangeNode == this causing stack overflow. Make it so UpdateConnectedNodes can only call once per node y'know.
+            if (connectedNodes.Contains(rangeNode) || rangeNode == this) // Infinite loop with rangeNode == this causing stack overflow. Make it so UpdateConnectedNodes can only call once per node y'know.
             {
                 continue;
             }
             else
             {
                 rangeNode.AddConnectNode(this);
-                rangeNode.shockState = shockState;
-                rangeNode.UpdateConnectedNodes();
+                if (!rangeNode.updateConnectedAlreadyCalled)
+                {
+                    rangeNode.shockState = shockState;
+                    rangeNode.UpdateConnectedNodes();
+                }
                 
-
                 // If there is no line renderer connecting the two nodes already, then do that now.
                 if (!(elecLines.ContainsKey(rangeNode)))
                 {
@@ -132,28 +130,26 @@ public class ElectricNode : MonoBehaviour
     }
     private void CreateNewElecLine(ElectricNode node)
     {
-        //try
-        //{
-            LineRenderer lineRenderer = this.gameObject.AddComponent<LineRenderer>();
-            lineRenderer.material = shockMat;
-            lineRenderer.startWidth = widthMultiplier * 0.5f;
-            lineRenderer.endWidth = widthMultiplier * 0.5f;
-            lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, nodeCol.ClosestPoint(node.transform.position));
-            lineRenderer.SetPosition(1, node.nodeCol.ClosestPoint(transform.position));
-            elecLines.Add(node, lineRenderer);
+        GameObject lineObj = GameObject.Instantiate(lineRendererPrefab);
+        lineObj.transform.parent = node.transform;
+        LineRenderer lineRenderer = lineObj.GetComponent<LineRenderer>();
+        lineRenderer.material = shockMat;
+        lineRenderer.startWidth = widthMultiplier * 0.5f;
+        lineRenderer.endWidth = widthMultiplier * 0.5f;
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, nodeCol.ClosestPoint(node.transform.position));
+        lineRenderer.SetPosition(1, node.nodeCol.ClosestPoint(transform.position));
+        elecLines.Add(node, lineRenderer);
 
-            Debug.Log("Creating elec line " + lineRenderer + " between " + this.gameObject + " and " + node.gameObject);
-        //}
-        //catch
-        //{
-        //    Debug.LogWarning("Not sure why, but lineRenderer was null immediately after creating it in ElectricNode.cs");
-        //}
+        Debug.Log("Creating elec line " + lineRenderer + " between " + this.gameObject + " and " + node.gameObject);
     }
 
     public void RemoveRangeNode(ElectricNode rangeNode)
     {
         withinRangeNodes.Remove(rangeNode);
+        LineRenderer lineToDestroy;
+        elecLines.TryGetValue(rangeNode, out lineToDestroy);
         elecLines.Remove(rangeNode);
+        Destroy(lineToDestroy.gameObject);
     }
 }
