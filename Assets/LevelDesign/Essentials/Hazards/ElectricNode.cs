@@ -137,8 +137,12 @@ public class ElectricNode : MonoBehaviour
         lineRenderer.startWidth = widthMultiplier * 0.5f;
         lineRenderer.endWidth = widthMultiplier * 0.5f;
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, nodeCol.ClosestPoint(node.transform.position));
-        lineRenderer.SetPosition(1, node.nodeCol.ClosestPoint(transform.position));
+        //lineRenderer.SetPosition(0, nodeCol.ClosestPoint(node.transform.position));
+        lineRenderer.SetPosition(0, transform.position);
+        //lineRenderer.SetPosition(1, node.nodeCol.ClosestPoint(transform.position));
+        lineRenderer.SetPosition(1, node.transform.position);
+        lineObj.GetComponent<ElectricLineRendererUpdate>().SetStartPointParent(transform);
+        lineObj.GetComponent<ElectricLineRendererUpdate>().SetEndPointParent(node.transform);
         elecLines.Add(node, lineRenderer);
 
         Debug.Log("Creating elec line " + lineRenderer + " between " + this.gameObject + " and " + node.gameObject);
