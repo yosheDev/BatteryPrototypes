@@ -113,7 +113,14 @@ public class SplineTraversal : MonoBehaviour, IInterfaceEvent
 
         pathSpline.Evaluate(currentAlpha, out pos, out tangent, out upVector);
 
-        position = gameObject.transform.parent.transform.TransformPoint((Vector3)pos); /// Place along spline length regardless of hierarchy structure.
+        //if (gameObject.transform.parent != null)
+        //{
+        //    position = gameObject.transform.parent.transform.TransformPoint((Vector3)pos); /// Place along spline length regardless of hierarchy structure.
+        //}
+        //else
+        //{
+        position = splineContainer.gameObject.transform.TransformPoint((Vector3)pos);
+        //}
         position.z = transform.position.z; /// Ensure Z never changes despite spline point Z locations.
         transform.position = position;
 

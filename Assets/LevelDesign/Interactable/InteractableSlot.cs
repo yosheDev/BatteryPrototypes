@@ -35,7 +35,7 @@ public class InteractableSlot : MonoBehaviour, IInteractable
         if (playerController.battery.percent >= batteryCost)
         {
             playerController.battery.SetPercent(playerController.battery.percent - batteryCost);
-            Debug.Log("Interacted with!");
+            SetDisplayState(false);
             if (canOnlyUseOnce)
             {
                 canInteract = false;
@@ -43,7 +43,7 @@ public class InteractableSlot : MonoBehaviour, IInteractable
             else
             {
                 // Reset can interact after shortest possible duration.
-                StartCoroutine(ResetInteractable(Mathf.Max(0.2f, GetTotalInterfaceEventDelay())));
+                StartCoroutine(ResetInteractable(Mathf.Max(0.2f, GetTotalInterfaceEventDelay()), playerController));
             }
 
             // For each event object, call the associated interface event as specified in eventNames.
@@ -78,14 +78,20 @@ public class InteractableSlot : MonoBehaviour, IInteractable
 
             i++;
         }
-        Debug.Log("did them all");
         yield break;
     }
 
-    private IEnumerator ResetInteractable(float duration)
+    private IEnumerator ResetInteractable(float duration, BatteryController playerController)
     {
         yield return new WaitForSeconds(duration);
         canInteract = true;
+
+        // Reset display if playerController still nearby this.
+        if (playerController.interactObj == this)
+        {
+            SetDisplayState(true);
+        }
+
         yield break;
     }
 
