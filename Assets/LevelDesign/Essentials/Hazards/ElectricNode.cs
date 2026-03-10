@@ -1,6 +1,7 @@
 using FunctionLibrary;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,6 +29,10 @@ public class ElectricNode : MonoBehaviour
     public float shockTelegraphDur = 1f;
     private Coroutine shockRoutine;
 
+    [Header("Zap Point")]                           /// If this a zap point, it can only connect with certain specified nodes. Think node zapping a spot on a wall or something.
+    public bool isZapPoint = false;
+    public List<ElectricNode> zapPointAcceptableNodes = new List<ElectricNode>();
+
     [Header("VFX")]
     public GameObject lineRendererPrefab;           /// Prefab for line renderer.
     public Collider2D nodeCol;                      /// Sprite of the beam. May not use this.
@@ -36,7 +41,7 @@ public class ElectricNode : MonoBehaviour
 
     private void Start()
     {
-        if (isLeader)
+        if (isLeader && !isZapPoint)
         {
             shockRoutine = StartCoroutine(ShockLoop());
         }
@@ -88,6 +93,11 @@ public class ElectricNode : MonoBehaviour
 
     public void AddConnectNode(ElectricNode node)
     {
+        if (isZapPoint)
+        {
+            return;
+        }
+
         connectedNodes.Add(node);
     }
 
@@ -98,26 +108,45 @@ public class ElectricNode : MonoBehaviour
     {
         updateConnectedAlreadyCalled = true;
         StartCoroutine(ResetUpdateConnectedAlreadyCalled());
-        /// Need a way to set this to false once all of the nodes have been gone through. Maybe just wait one frame?
-        foreach (ElectricNode rangeNode in withinRangeNodes)
+
+        if (!isZapPoint)
         {
-            if (connectedNodes.Contains(rangeNode) || rangeNode == this) // Infinite loop with rangeNode == this causing stack overflow. Make it so UpdateConnectedNodes can only call once per node y'know.
+            foreach (ElectricNode rangeNode in withinRangeNodes)
             {
-                continue;
-            }
-            else
-            {
-                rangeNode.AddConnectNode(this);
-                if (!rangeNode.updateConnectedAlreadyCalled)
+                if (connectedNodes.Contains(rangeNode) || rangeNode == this) // Infinite loop with rangeNode == this causing stack overflow. Make it so UpdateConnectedNodes can only call once per node y'know.
                 {
-                    rangeNode.shockState = shockState;
-                    rangeNode.UpdateConnectedNodes();
+                    continue;
                 }
-                
-                // If there is no line renderer connecting the two nodes already, then do that now.
-                if (!(elecLines.ContainsKey(rangeNode)))
+                else
                 {
-                    CreateNewElecLine(rangeNode);
+                    rangeNode.AddConnectNode(this);
+                    if (!rangeNode.updateConnectedAlreadyCalled)
+                    {
+                        rangeNode.shockState = shockState;
+                        rangeNode.UpdateConnectedNodes();
+                    }
+
+                    // If there is no line renderer connecting the two nodes already, then do that now.
+                    if (!(elecLines.ContainsKey(rangeNode)))
+                    {
+                        CreateNewElecLine(rangeNode);
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach(ElectricNode node in zapPointAcceptableNodes)
+            {
+                if (!node.updateConnectedAlreadyCalled)
+                {
+                    node.UpdateConnectedNodes();
+                }
+
+                // If there is no line renderer connecting the two nodes already, then do that now.
+                if (!(elecLines.ContainsKey(node)))
+                {
+                    CreateNewElecLine(node);
                 }
             }
         }
