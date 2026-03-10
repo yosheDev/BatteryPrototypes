@@ -12,8 +12,15 @@ public class ElectricLineRendererUpdate : MonoBehaviour
     }
     void FixedUpdate()
     {
-        lineRenderer.SetPosition(0, startTrans.position);
-        lineRenderer.SetPosition(1, endTrans.position);
+        try
+        {
+            lineRenderer.SetPosition(0, startTrans.position);
+            lineRenderer.SetPosition(1, endTrans.position);
+        }
+        catch
+        {
+            // StartTrans / EndTrans are null somehow? Not sure how though, since they are never destroyed.
+        }
     }
 
     public void SetStartPointParent(Transform newTrans)

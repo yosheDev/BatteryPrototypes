@@ -1,6 +1,7 @@
 using FunctionLibrary;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class ElectricNode : MonoBehaviour
@@ -78,7 +79,6 @@ public class ElectricNode : MonoBehaviour
             yield return new WaitForSeconds(shockTelegraphDur);
 
             // Shock
-            Debug.Log("Shock");
             shockState = ShockState.Shock;
             UpdateConnectedNodes();
 
@@ -145,15 +145,19 @@ public class ElectricNode : MonoBehaviour
         lineObj.GetComponent<ElectricLineRendererUpdate>().SetEndPointParent(node.transform);
         elecLines.Add(node, lineRenderer);
 
-        Debug.Log("Creating elec line " + lineRenderer + " between " + this.gameObject + " and " + node.gameObject);
+        //Debug.Log("Creating elec line " + lineRenderer + " between " + this.gameObject + " and " + node.gameObject);
     }
 
     public void RemoveRangeNode(ElectricNode rangeNode)
     {
         withinRangeNodes.Remove(rangeNode);
+        connectedNodes.Remove(rangeNode);
         LineRenderer lineToDestroy;
         elecLines.TryGetValue(rangeNode, out lineToDestroy);
         elecLines.Remove(rangeNode);
-        Destroy(lineToDestroy.gameObject);
+        if (lineToDestroy != null)
+        {
+            Destroy(lineToDestroy.gameObject);
+        }
     }
 }

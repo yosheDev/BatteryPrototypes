@@ -28,7 +28,7 @@ public class PlayerNeutralDetector : MonoBehaviour
         }
 
 
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("ElectricNode"))
         {
             return;
         }

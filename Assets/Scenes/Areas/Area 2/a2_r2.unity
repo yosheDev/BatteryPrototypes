@@ -269,6 +269,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ElectricNode (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 4517547701486409769, guid: 696694a2e52bdd046be25a7b2f9cf492, type: 3}
+      propertyPath: debug
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6348764595721398681, guid: 696694a2e52bdd046be25a7b2f9cf492, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.9
@@ -1363,6 +1367,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PosMag (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6013147037883761802, guid: 592de6bf82349634b96ea22cc1f8aaec, type: 3}
+      propertyPath: _magData.strength
+      value: 0.3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2305,6 +2313,10 @@ PrefabInstance:
     - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5595074404440443525, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: _magData.strength
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5959409161971075182, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
       propertyPath: m_Name

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class ElectricNodeDetector : MonoBehaviour
 {
     [SerializeField] private ElectricNode nodeScript;
-
     private void Awake()
     {
         List<Collider2D> results = new List<Collider2D>();
