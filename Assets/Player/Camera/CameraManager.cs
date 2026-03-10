@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
+
 public class CameraManager : MonoBehaviour
 {
     public static CameraManager instance;
@@ -21,7 +23,10 @@ public class CameraManager : MonoBehaviour
     private Dictionary<Transform, Coroutine> removeTargetCoroutines = new Dictionary<Transform, Coroutine>();
     private Dictionary<Transform, Coroutine> addTargetCoroutines = new Dictionary<Transform, Coroutine>();
 
-    public Camera perspectiveCam;   /// This is used for the backgrounds.
+    public Camera perspectiveCam;   /// This is used for the backgrounds to acheive nice parallax with zoom.
+
+    private HashSet<CameraZoomVolume> overlappedZoomVolumes = new HashSet<CameraZoomVolume>();
+    private Coroutine camZoomRoutine;
 
     void Awake()
     {
@@ -190,6 +195,63 @@ public class CameraManager : MonoBehaviour
         yield break;
     }
 
+    #endregion
+
+    #region Zoom Volumes Utility
+    public void AddZoomVolume(CameraZoomVolume newVolume)
+    {
+        overlappedZoomVolumes.Add(newVolume);
+    }
+    public void RemoveZoomVolume(CameraZoomVolume newVolume)
+    {
+        overlappedZoomVolumes.Remove(newVolume);
+    }
+
+    public void BlendCameraZoomVolume(bool blendIn, float desiredZoom, float duration)
+    {
+        if (camZoomRoutine != null)
+        {
+            StopCoroutine(camZoomRoutine);
+        }
+
+        if (blendIn)
+        {
+            camZoomRoutine = CameraManager.instance.StartCoroutine(InterpolateCamZoomVolumes(desiredZoom, duration));
+            Debug.Log("Start interp to " + desiredZoom + " additional zoom");
+        }
+        else
+        {
+            // Look for another volume or default to zero.
+            if (overlappedZoomVolumes.Count <= 0)
+            {
+                camZoomRoutine = CameraManager.instance.StartCoroutine(InterpolateCamZoomVolumes(0f, duration));
+                return;
+            }
+            else
+            {
+                float newZoom = overlappedZoomVolumes.ElementAt(0).additionalZoom;
+
+                camZoomRoutine = CameraManager.instance.StartCoroutine(InterpolateCamZoomVolumes(newZoom, duration));
+                return;
+            }
+        }
+    }
+
+    private IEnumerator InterpolateCamZoomVolumes(float desiredZoom, float duration = 2f)
+    {
+        float curBlendVelocity = 0f;
+        float newZoom = GetCurrentCamera().GetComponent<DollyVelocity>().GetAdditionalZoom();
+
+        // While interpolating within a threshold of accuracy.
+        while (Mathf.Abs(GetCurrentCamera().GetComponent<DollyVelocity>().GetAdditionalZoom() - desiredZoom) >= .1f)
+        {
+            newZoom = Mathf.SmoothDamp(GetCurrentCamera().GetComponent<DollyVelocity>().GetAdditionalZoom(), desiredZoom, ref curBlendVelocity, duration, Mathf.Infinity, Time.fixedDeltaTime);
+            GetCurrentCamera().GetComponent<DollyVelocity>().SetAdditionalZoom(newZoom);
+            yield return null;
+        }
+
+        yield break;
+    }
     #endregion
 
     #region Other Camera Utility

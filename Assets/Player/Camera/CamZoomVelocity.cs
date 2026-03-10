@@ -9,8 +9,9 @@ public class DollyVelocity : MonoBehaviour
     [SerializeField] private float zoomInterpSpeed = .05f;
 
     private BatteryController batteryController;
-    private CinemachineCamera cam; /// This is the cam that this script is attached to.
+    private CinemachineCamera cam;          /// This is the cam that this script is attached to.
     private float zoom = 10f;
+    private float additionalZoom = 0f;      /// Other scripts can modify this value for custom zoom behavior.
 
     private void Start()
     {
@@ -26,8 +27,18 @@ public class DollyVelocity : MonoBehaviour
             float zoomVelocityAlpha = FunctionLibraryF.MapRangeClamped(zoomVelocityRange.x, zoomVelocityRange.y, 0f, 1f, batteryController.velocity);
             zoom = Mathf.MoveTowards(zoom, Mathf.Lerp(zoomRange.x, zoomRange.y, zoomVelocityAlpha), zoomInterpSpeed);
             //Debug.Log(zoom);
-            CameraManager.instance.SetCameraDistance(zoom);
+            CameraManager.instance.SetCameraDistance(zoom + additionalZoom);
             //CameraManager.instance._currentCamera.Lens.OrthographicSize = zoom;
         }
+    }
+
+    public void SetAdditionalZoom(float extraZoom)
+    {
+        additionalZoom = extraZoom;
+    }
+
+    public float GetAdditionalZoom()
+    {
+        return additionalZoom;
     }
 }
