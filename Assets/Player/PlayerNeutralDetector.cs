@@ -118,7 +118,7 @@ public class PlayerNeutralDetector : MonoBehaviour
                 float nearestDistanceToOccluder = 99999f;
                 // Trace for magents to update nearestDistanceToOccluder.
                 RaycastHit2D[] hits = Physics2D.LinecastAll(playerMagNearestNeutral.position, neutralCol.ClosestPoint(playerMagNearestNeutral.position));
-                Debug.DrawLine(playerMagNearestNeutral.position, neutralCol.ClosestPoint(playerMagNearestNeutral.position), Color.red, .05f);
+                //Debug.DrawLine(playerMagNearestNeutral.position, neutralCol.ClosestPoint(playerMagNearestNeutral.position), Color.red, .05f);
                 for (int i = 0; i < hits.Length; i++)
                 {
                     /// If should be ignored. Such as on the player or on the wrong layer.
