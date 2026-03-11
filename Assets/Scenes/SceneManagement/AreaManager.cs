@@ -317,7 +317,7 @@ public class AreaManager : MonoBehaviour
         {
             case AreaTransitionState.Spawn:
 
-                playerController.GetComponent<CapsuleCollider2D>().enabled = true;
+                playerController.GetComponent<BoxCollider2D>().enabled = true;
                 playerController.GetComponent<Battery>().enabled = true;
 
                 if (isRespawning)
@@ -370,7 +370,7 @@ public class AreaManager : MonoBehaviour
             case AreaTransitionState.ObjectiveReached:
                 playerRB.linearVelocity = new Vector2(0f, 0f);
                 playerRB.gravityScale = 0f;
-                playerController.GetComponent<CapsuleCollider2D>().enabled = false;
+                playerController.GetComponent<Collider2D>().enabled = false;
                 playerController.GetComponent<Battery>().enabled = false;
                 endPlayerPosTarget = reachedObjective.transform.position;
                 endPlayerPosTarget.z = playerController.gameObject.transform.position.z;

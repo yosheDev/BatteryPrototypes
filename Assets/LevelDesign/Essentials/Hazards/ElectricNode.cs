@@ -113,7 +113,7 @@ public class ElectricNode : MonoBehaviour
         {
             foreach (ElectricNode rangeNode in withinRangeNodes)
             {
-                if (connectedNodes.Contains(rangeNode) || rangeNode == this || rangeNode.isZapPoint) // Infinite loop with rangeNode == this causing stack overflow. Make it so UpdateConnectedNodes can only call once per node y'know.
+                if (connectedNodes.Contains(rangeNode) || rangeNode == this || (rangeNode.isZapPoint && !rangeNode.zapPointAcceptableNodes.Contains(this))) // Infinite loop with rangeNode == this causing stack overflow. Make it so UpdateConnectedNodes can only call once per node y'know.
                 {
                     continue;
                 }

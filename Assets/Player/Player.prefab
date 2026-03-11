@@ -339,7 +339,7 @@ Transform:
   m_GameObject: {fileID: 2616864900753496149}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.09, z: 0}
+  m_LocalPosition: {x: 0, y: 1.051, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1751,7 +1751,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3630706780392114562}
   - component: {fileID: 743935625478155525}
-  - component: {fileID: 2324076628335233330}
+  - component: {fileID: 6015378341251496490}
   - component: {fileID: 6563665004846503657}
   - component: {fileID: 7553798359228777383}
   - component: {fileID: 8047242034082428540}
@@ -1847,8 +1847,8 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!70 &2324076628335233330
-CapsuleCollider2D:
+--- !u!61 &6015378341251496490
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1881,9 +1881,18 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.07}
-  m_Size: {x: 0.7285714, y: 2.4}
-  m_Direction: 0
+  m_Offset: {x: -0.010290027, y: -0.10290325}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.7285714, y: 2.5685713}
+    newSize: {x: 5.1, y: 17.98}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.2963783, y: 1.9717329}
+  m_EdgeRadius: 0.22
 --- !u!50 &6563665004846503657
 Rigidbody2D:
   serializedVersion: 5
@@ -2131,7 +2140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
   batterySlider: {fileID: 0}
-  playerBattery: {fileID: 0}
+  playerBattery: {fileID: 381572488973111425}
   playerLivesText: {fileID: 0}
 --- !u!233 &833065636794077562
 HingeJoint2D:

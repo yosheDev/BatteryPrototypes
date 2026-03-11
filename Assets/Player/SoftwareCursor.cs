@@ -253,9 +253,15 @@ public class SoftwareCursor : MonoBehaviour
     {
         if (parentForPos != null)
         {
-            return parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak;
+            return GetCameraZoomCursorDistanceMultiplier() * (parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak);
         }
-        return posMagValue;
+
+        return GetCameraZoomCursorDistanceMultiplier() * posMagValue;
+    }
+
+    public float GetCameraZoomCursorDistanceMultiplier()
+    {
+        return FunctionLibraryF.MapRangeClamped(CameraManager.instance._currentCamera.GetComponent<DollyVelocity>().GetZoomRange().x, CameraManager.instance._currentCamera.GetComponent<DollyVelocity>().GetZoomRange().y, 1f, 1.75f, CameraManager.instance.GetPositionComposer().CameraDistance);
     }
 
     public void SetNewPosParent(GameObject parent)

@@ -120,9 +120,9 @@ public class MagneticSurface : MagnetComponentBase
 
         #region Occlusion Test
         float occlusion = 1f;
-        //// TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting values is possible at the moment.
-        RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
-
+        //// TO DO: At the moment, values under 1f do nothing. It is either occludes or does not. No transmission affecting force values is possible at the moment.
+        //RaycastHit2D[] hits = Physics2D.LinecastAll(posWS, nearestPoint, Physics2D.DefaultRaycastLayers);
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(posWS, .3f, (nearestPoint - posWS).normalized, Vector2.Distance(posWS, nearestPoint), Physics2D.DefaultRaycastLayers);
         foreach (RaycastHit2D hit in hits)
         {
             if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
@@ -134,27 +134,13 @@ public class MagneticSurface : MagnetComponentBase
         }
         #endregion
 
-        #region Old Magnetism 
-        //// Multiply strength by charge for each.
-        //float mag1Amp = magData.strength * magData.charge;
-        //float mag2Amp = _magData.strength * _magData.charge;
-
-        //// Multiply that result together, then multiply by proportionConst
-        //float force = mag1Amp * mag2Amp;
-
-        //// Divide by (distance ^ (attentuation * velocityRemap))
-        //force /= Mathf.Pow(Mathf.Clamp(Vector2.Distance(posWS, nearestPoint), 0.01f, float.MaxValue), _magData.attenuation * (velocity.magnitude == 0f ? 1f : FunctionLibraryF.MapRangeClamped(0f, 10f, 1f, 2f, velocity.magnitude)));
-
-        //// Get force direction(normalized) and multiply with force.
-        //Vector2 result = ((force * (posWS - nearestPoint).normalized) * _magFactor) * occlusion;
-        #endregion
-
-        #region Revised Magnetism
+        #region Magnetism Force
         // 1 - Get correct charge.
         float combinedAmp = magData.charge * _magData.charge;
 
-        // 2 - Inverse Exponent Formula. Ensure distance to always be above zero. Gets maximum attenuation of both magDatas to act with. Ensure attenuation is not under 1.
-        float force = combinedAmp * (1 / (Mathf.Pow(Mathf.Max(Vector2.Distance(posWS, nearestPoint), 0.01f), (Mathf.Max(1f, Mathf.Max(_magData.attenuation, magData.attenuation)) * _attenuationModifier))));
+        // 2 - Inverse Exponent Formula. Ensure distance to always be above zero(also padding for game feel). Gets maximum attenuation of both magDatas to act with. Ensure attenuation is not under 1.
+        float proximityPadding = Mathf.Clamp(.1f, .01f, float.MaxValue); /// Adjust to affect too large of forces when magnet is nearly touching the other magnet.
+        float force = combinedAmp * (1 / (Mathf.Pow(Mathf.Max(Vector2.Distance(posWS, nearestPoint), proximityPadding), (Mathf.Max(1f, Mathf.Max(_magData.attenuation, magData.attenuation)) * _attenuationModifier))));
 
         // 3 - Modify force magnitude. Account for magnets' strength. Account for target magnet's velocity.
         /// Get direction of the magnetic field.

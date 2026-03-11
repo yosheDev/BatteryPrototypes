@@ -392,7 +392,7 @@ PrefabInstance:
     - target: {fileID: 6627629801027345211, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: Targets.Array.data[0].Object
       value: 
-      objectReference: {fileID: 1515492334}
+      objectReference: {fileID: 1201116645}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.085871
@@ -507,6 +507,22 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
+--- !u!4 &1201116645 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+  m_PrefabInstance: {fileID: 1515492325}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1201116646 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+  m_PrefabInstance: {fileID: 1515492325}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd2ce268e6f98264bb1a10f60fc76490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BatteryController
 --- !u!1001 &1212553033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -519,6 +535,10 @@ PrefabInstance:
       propertyPath: area
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1201116646}
     - target: {fileID: 964199039054461169, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -576,6 +596,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.028410792
+      objectReference: {fileID: 0}
+    - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: -0.0046361685
+      objectReference: {fileID: 0}
     - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: visObjTest
       value: 
@@ -592,10 +620,6 @@ PrefabInstance:
       propertyPath: batterySlider
       value: 
       objectReference: {fileID: 1656108768}
-    - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-      propertyPath: playerBattery
-      value: 
-      objectReference: {fileID: 1515492333}
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: playerLivesText
       value: 
@@ -655,7 +679,7 @@ PrefabInstance:
     - target: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: surfaceCol
       value: 
-      objectReference: {fileID: 1515492327}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7953829186339131311, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
@@ -665,27 +689,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 93452006}
   m_SourcePrefab: {fileID: 100100000, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
---- !u!70 &1515492327 stripped
-CapsuleCollider2D:
-  m_CorrespondingSourceObject: {fileID: 2324076628335233330, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1515492333 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 381572488973111425, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a7199ab5bc9e9e4fadfd5daad5fb69c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Battery
---- !u!4 &1515492334 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1656108768 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4629887031375558571, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}

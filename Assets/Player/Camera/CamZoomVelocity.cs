@@ -41,4 +41,9 @@ public class DollyVelocity : MonoBehaviour
     {
         return additionalZoom;
     }
+
+    public Vector2 GetZoomRange()
+    {
+        return zoomRange;
+    }
 }
