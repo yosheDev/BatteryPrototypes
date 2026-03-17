@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7075104304031873723}
   - component: {fileID: 5932552633230210159}
+  - component: {fileID: 5395748181315296326}
   m_Layer: 0
   m_Name: GameInstance
   m_TagString: Untagged
@@ -45,3 +46,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameInstance
   playerLives: 5
+--- !u!114 &5395748181315296326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490753695866811872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e51fad84f91002b4086bf289932edb10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  targetFPS: 120

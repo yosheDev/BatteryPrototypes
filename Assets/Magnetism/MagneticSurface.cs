@@ -52,6 +52,17 @@ public class MagneticSurface : MagnetComponentBase
                     throw new System.Exception("Field Collider is not a BoxCollider2D, but SurfaceCollider is.");
                 }
             }
+            else if(surfaceCol is CapsuleCollider2D)
+            {
+                if (fieldCol is CapsuleCollider2D)
+                {
+                    ((CapsuleCollider2D)fieldCol).size = new Vector2(((CapsuleCollider2D)surfaceCol).size.x + _fieldAttractDistance, ((CapsuleCollider2D)surfaceCol).size.y + _fieldAttractDistance);
+                }
+                else
+                {
+                    throw new System.Exception("Field Collider is not a CapsuleCollider2D, but SurfaceCollider is.");
+                }
+            }
             else if (surfaceCol is EdgeCollider2D)
             {
                 if (fieldCol is EdgeCollider2D)

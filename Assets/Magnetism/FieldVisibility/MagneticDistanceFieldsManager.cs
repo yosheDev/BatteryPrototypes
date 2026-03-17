@@ -123,6 +123,10 @@ public class MagneticDistanceFieldsManager : MonoBehaviour
 
         foreach (Collider2D col in magFieldCols)
         {
+            if (col == null)
+            {
+                continue;
+            }
             // TO DO: Double check these and ensure they work with hierarchies.
             if (col is CircleCollider2D circle)
             {
