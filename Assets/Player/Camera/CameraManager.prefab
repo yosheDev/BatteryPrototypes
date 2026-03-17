@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 762a4a1e7c633684f90deab7d7bcbfbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DollyVelocity
-  zoomRange: {x: 8, y: 14}
+  zoomRange: {x: 10, y: 15}
   zoomVelocityRange: {x: 4, y: 10}
   zoomInterpSpeed: 0.01
 --- !u!1001 &5859717848432252805
@@ -385,11 +385,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.028410912
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0046361685
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.z

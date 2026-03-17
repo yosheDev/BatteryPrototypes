@@ -143,6 +143,7 @@ public static class SceneManagement
     public static bool IsSceneARoom(Scene scene)
     {
         // May need to adjust this later, but for now since only the rooms have "_r" in the name(i.e a0_r1) use this confirm if this is a room.
+        Debug.Log(scene.name + " is a room? -> " + scene.name.Contains("_r"));
         return scene.name.Contains("_r");
     }
 

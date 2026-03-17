@@ -23,13 +23,14 @@ public class RuntimeAnimator : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         animator.SetFloat("playRate", playRate);
-
+        //animator.SetFloat("normalizedOffset", startOffset);
         // Start Offset
         AnimatorClipInfo[] currentClipInfo = animator.GetCurrentAnimatorClipInfo(0);
         if (currentClipInfo.Length > 0)
         {
             animator.Play(currentClipInfo[0].clip.name, 0, startOffset);
         }
-        
+        //animator.Play(currentClipInfo[0].clip.name);
+
     }
 }

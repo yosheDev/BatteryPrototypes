@@ -269,6 +269,8 @@ public class CameraManager : MonoBehaviour
         {
             UpdateConfinedBounds();
         }
+        
+        /// NOTE: If cam boundaries seem to be failing, it is probably because .IsSceneARoom() is returning that it is not a room.
     }
 
     /// <summary>
@@ -296,6 +298,7 @@ public class CameraManager : MonoBehaviour
         #endregion
 
         _camBoundary = GameObject.FindWithTag("CameraBoundary").GetComponent<Collider2D>();
+        Debug.Log("Cam Boundary Set: " + _camBoundary);
         _confiner.BoundingShape2D = _camBoundary;
     }
 

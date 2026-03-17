@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DollyVelocity : MonoBehaviour
 {
-    [SerializeField] private Vector2 zoomRange = new Vector2(8f, 14f);
+    [SerializeField] private Vector2 zoomRange = new Vector2(10f, 15f);
     [SerializeField] private Vector2 zoomVelocityRange = new Vector2(2f, 10f);
     [SerializeField] private float zoomInterpSpeed = .05f;
 

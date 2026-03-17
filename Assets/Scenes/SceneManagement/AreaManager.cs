@@ -105,7 +105,8 @@ public class AreaManager : MonoBehaviour
                     Debug.LogError("The room NEEDS to be the active scene when loading into a specific room in the editor, or else AreaManager.roomNum will not parse correctly. Right click and select Set Active Scene.");
                 }
 
-                Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager. AreaManager.roomNum is parsed to be " + roomNum);
+                Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager. AreaManager.roomNum is parsed to be " + roomNum + ". Manually setting Confiner2D bounds.");
+                CameraManager.instance.UpdateConfinedBounds();
 
                 SetTransitionState(AreaTransitionState.Spawn);
                 return;
