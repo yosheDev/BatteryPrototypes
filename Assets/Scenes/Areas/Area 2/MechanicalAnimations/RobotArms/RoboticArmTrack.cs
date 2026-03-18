@@ -4,7 +4,6 @@ public class RoboticArmTrack : RuntimeAnimator
 {
     [SerializeField] private GameObject scrapPrefab;
     [SerializeField] private Transform scrapSpawnTransform;
-
     GameObject scrapObj;
 
     protected override void Start()
@@ -23,8 +22,13 @@ public class RoboticArmTrack : RuntimeAnimator
 
     public void DropScrap()
     {
-        scrapObj.transform.SetParent(null);
-        scrapObj.GetComponent<Rigidbody2D>().gravityScale = 1f;
-        scrapObj.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        if (scrapObj != null)
+        {
+            scrapObj.transform.SetParent(null);
+            scrapObj.GetComponent<Rigidbody2D>().gravityScale = 1f;
+            scrapObj.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+
+            scrapObj = null;
+        }
     }
 }
