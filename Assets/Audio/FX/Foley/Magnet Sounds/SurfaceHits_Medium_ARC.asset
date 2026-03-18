@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1233149941 &-3185731927537883097
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SFX_SurfaceHit_3_{-3185731927537883097}
+  m_AudioClip: {fileID: 8300000, guid: 6da954f101f9c9946a9eff18c1750256, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &170643747615770480
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SFX_SurfaceHit_4_{170643747615770480}
+  m_AudioClip: {fileID: 8300000, guid: 776493e6873166d45b0d8c086902b85a, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &3774866266721768553
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SFX_SurfaceHit5_{3774866266721768553}
+  m_AudioClip: {fileID: 8300000, guid: 3eb065d593fd5db4c88149340e2c9f43, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1233149941 &3955901077980127845
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SFX_SurfaceHit_1_{3955901077980127845}
+  m_AudioClip: {fileID: 8300000, guid: 01c968952024fd248a5cdf184a95d799, type: 3}
+  m_Volume: 0
+  m_Enabled: 1
+--- !u!1307931743 &6418180475301049370
+AudioRandomContainer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SurfaceHits_Medium_ARC
+  m_Volume: 0
+  m_Pitch: 0
+  m_AutomaticTriggerTime: 0
+  m_LoopCount: 1
+  m_VolumeRandomizationRange: {x: -2, y: 2}
+  m_PitchRandomizationRange: {x: -50, y: 10}
+  m_AutomaticTriggerTimeRandomizationRange: {x: 0, y: 0}
+  m_LoopCountRandomizationRange: {x: 0, y: 0}
+  m_Elements:
+  - {fileID: 3774866266721768553}
+  - {fileID: 3955901077980127845}
+  - {fileID: 8795140447032082810}
+  - {fileID: -3185731927537883097}
+  - {fileID: 170643747615770480}
+  m_AvoidRepeatingLast: 1
+  m_PlaybackMode: 2
+  m_TriggerMode: 1
+  m_AutomaticTriggerMode: 1
+  m_LoopMode: 1
+  m_VolumeRandomizationEnabled: 1
+  m_PitchRandomizationEnabled: 1
+  m_AutomaticTriggerTimeRandomizationEnabled: 0
+  m_LoopCountRandomizationEnabled: 0
+--- !u!1233149941 &8795140447032082810
+AudioContainerElement:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SFX_SurfaceHit_2_{8795140447032082810}
+  m_AudioClip: {fileID: 8300000, guid: ab2c13bfd25579449bccdd8cfc61efbe, type: 3}
+  m_Volume: 0
+  m_Enabled: 1

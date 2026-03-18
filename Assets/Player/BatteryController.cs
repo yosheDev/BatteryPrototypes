@@ -43,6 +43,13 @@ public class BatteryController : MonoBehaviour
     [HideInInspector] public Battery battery;
 
     [HideInInspector] public float playerGravity;
+
+    [Header("Audio")]
+
+    [SerializeField] private AudioSource sfxSurfaceGeneric;
+    [SerializeField] private AudioSource sfxSurfaceMagnet;
+    [SerializeField] private AudioSource sfxMagneticBeam;
+
     //==============================================================================================================================
     #region Private
     // Surface Parent
@@ -581,7 +588,20 @@ public class BatteryController : MonoBehaviour
                     negTractorBeamVFX.SetForceMagnitude(0f);
                 }
                 
+                // SFX
+                if (negativeFields.Count + positiveFields.Count > 0)
+                {
+                    if (!sfxMagneticBeam.isPlaying)
+                    {
+                        sfxMagneticBeam.Play();
+                    }
 
+                    sfxMagneticBeam.volume = FunctionLibraryF.MapRangeClamped(0f, 30f, 0f, 1f, (combinedNegativeForces + combinedPositiveForces).magnitude) * FunctionLibraryF.MapRangeClamped(0f, 2f, .2f, 1f, velocity);
+                }
+                else
+                {
+                    sfxMagneticBeam.Stop();
+                }
             }
             #endregion
 
@@ -978,6 +998,21 @@ public class BatteryController : MonoBehaviour
             collectScript.Collect(surfaceCol);
         }
     }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("MagnetSurface"))
+        {
+            sfxSurfaceMagnet.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
+            sfxSurfaceMagnet.Play();
+        }
+        else
+        {
+            sfxSurfaceGeneric.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
+            sfxSurfaceGeneric.Play();
+        } 
+    }
+
     #region Parent Source
     public void AddParentSource(GameObject parentObj)
     {

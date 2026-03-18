@@ -56,7 +56,7 @@ public class MagneticSurface : MagnetComponentBase
             {
                 if (fieldCol is CapsuleCollider2D)
                 {
-                    ((CapsuleCollider2D)fieldCol).size = new Vector2(((CapsuleCollider2D)surfaceCol).size.x + _fieldAttractDistance, ((CapsuleCollider2D)surfaceCol).size.y + _fieldAttractDistance);
+                    ((CapsuleCollider2D)fieldCol).size = new Vector2((((CapsuleCollider2D)surfaceCol).size.x + _fieldAttractDistance) * .66f, ((CapsuleCollider2D)surfaceCol).size.y + _fieldAttractDistance);
                 }
                 else
                 {
