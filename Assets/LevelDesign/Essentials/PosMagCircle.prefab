@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.103538, y: 1.103538, z: 1.103538}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2306346498492795817}
@@ -73,6 +73,7 @@ CircleCollider2D:
   m_Radius: 0.5
 --- !u!212 &4933185638187507967
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -118,6 +119,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: bbd8d491a9aa1ae44a98431ecd62f350, type: 3}
   m_Color: {r: 0.7137255, g: 0.2636737, b: 0.2627451, a: 1}
   m_FlipX: 0
@@ -127,7 +129,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &6728573169404028219
 MonoBehaviour:
@@ -143,11 +144,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MagneticPoint
   _magData:
     charge: 1
-    strength: 1
+    strength: 0.5
     attenuation: 2
   fieldCol: {fileID: 6731885336624087628}
   surfaceCol: {fileID: 381894118803918520}
-  _fieldAttractDistance: 0.5
+  _fieldAttractDistance: 0.2
   _attenuationModifier: 1
   bakeToMagFieldSDF: 1
 --- !u!1 &2272906680127013443
@@ -175,7 +176,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2272906680127013443}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -279,7 +280,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1
+  m_Radius: 0.7
 --- !u!1 &6128159552202265460
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +336,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   doOcclusionCheck: 1
-  debugOcclusionTrace: 0
 --- !u!33 &6474628576739048512
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -391,4 +391,5 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}

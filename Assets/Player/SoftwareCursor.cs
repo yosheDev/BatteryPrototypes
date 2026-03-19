@@ -195,7 +195,7 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
-                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(.5f, .5f));
+                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos == batteryController.positiveMag.gameObject ? .5f + playerSpriteLength + cursorDistanceTweak : .5f + cursorDistanceTweak));
                 worldPos = (Vector2)parentForPos.transform.position + localPos;
                 transform.position = worldPos;
             }

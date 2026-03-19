@@ -6,8 +6,13 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
 {
     private GameObject playerObj;
     [SerializeField] private GameObject clawObj;
+    [SerializeField] private GameObject barrierObj;
     [SerializeField] private Animator clawAnimator;
     [SerializeField] private List<float> dropPoints;
+    [SerializeField] private List<GameObject> scrapPrefabs;
+    [SerializeField] private Transform scrapTransform;
+    GameObject scrapObj;
+
     private int dropIndex = 0;
 
     public delegate void OnDescentFinished();
@@ -27,7 +32,7 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
     private void Start()
     {
         playerObj = GameObject.FindFirstObjectByType<BatteryController>().gameObject;
-
+        barrierObj.SetActive(false);
         onDrop += OnDropEvent;
 
         StartCoroutine(BeginSequence());
@@ -36,12 +41,27 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
     public IEnumerator BeginSequence()
     {
         // Wait until player is within world bounds for triggering.
-        yield return new WaitForSeconds(2f);
+        while (true)
+        {
+            if (Mathf.Abs(playerObj.transform.position.x - 16) < .1f)
+            {
+                break;
+            }
+
+            yield return null;
+        }
 
         // Close door to block player in. Only do this once, make this not a part of the sequence looping.
+        barrierObj.SetActive(true);
 
         // Show claw and junk arrive.
         onDescentFinished += DescentFinished;
+
+        // Create scrap
+        scrapObj = GameObject.Instantiate(scrapPrefabs[dropIndex], scrapTransform);
+        scrapObj.GetComponent<Rigidbody2D>().gravityScale = 0f;
+        scrapObj.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+
         ascendDescendRoutine = StartCoroutine(Descend(false, 1f));
         yield break;
     }
@@ -50,6 +70,12 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
     {
         // Show claw and junk arrive.
         onDescentFinished += DescentFinished;
+
+        // Create scrap
+        scrapObj = GameObject.Instantiate(scrapPrefabs[dropIndex], scrapTransform);
+        scrapObj.GetComponent<Rigidbody2D>().gravityScale = 0f;
+        scrapObj.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+
         ascendDescendRoutine = StartCoroutine(Descend(false, 1f));
         yield break;
     }
@@ -101,10 +127,11 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
         dropIndex++;
         if (dropIndex >= dropPoints.Count)
         {
-            Debug.Log("Sequence is over.");
+            //Debug.Log("Sequence is over.");
         }
         else
         {
+            clawAnimator.SetTrigger("Reset");
             StartCoroutine(RestartSequence());
         }
 
@@ -122,40 +149,57 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
 
     private IEnumerator Descend(bool ascend = false, float duration = 1f)
     {
-        float descendDistance = 2f * (ascend ? -1f : 1f);
+        float descendDistance = 12f * (ascend ? -1f : 1f);
         Vector2 target = (Vector2)clawObj.transform.position - new Vector2(0f, descendDistance);
         Vector2 curVelocity = Vector2.zero;
 
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
-            Debug.Log("Descending/Ascending");
+            //Debug.Log("Descending/Ascending");
             clawObj.transform.position = Vector2.SmoothDamp((Vector2)clawObj.transform.position, target, ref curVelocity, .5f);
 
             elapsedTime += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
         }
 
-        Debug.Log("Descend/Ascend finished");
+        //Debug.Log("Descend/Ascend finished");
         onDescentFinished?.Invoke();
     }
 
     private IEnumerator MoveToDropPoint(float dropPoint)
     {
-        Vector2 target = new Vector2(dropPoint, clawObj.transform.position.y);
+        //Vector2 target = new Vector2(dropPoint, clawObj.transform.position.y);
+        Vector2 target = new Vector2(playerObj.transform.position.x, clawObj.transform.position.y);
         Vector2 curVelocity = Vector2.zero;
 
-        while (Mathf.Abs(clawObj.transform.position.x - dropPoint) > .1f)
+        while (Mathf.Abs(clawObj.transform.position.x - target.x) > .1f)
         {
-            Debug.Log("Moving to drop point");
+            //Debug.Log("Moving to drop point");
             clawObj.transform.position = Vector2.SmoothDamp((Vector2)clawObj.transform.position, target, ref curVelocity, 1f);
             yield return new WaitForFixedUpdate();
         }
 
-        Debug.Log("At drop point.");
+        //Debug.Log("At drop point.");
         yield return new WaitForSeconds(.5f);
-        Debug.Log("Dropping Junk");
+        //Debug.Log("Dropping Junk");
+        DropScrap();
 
         onDrop?.Invoke();
+    }
+
+    public void DropScrap()
+    {
+        if (scrapObj != null)
+        {
+            scrapObj.transform.SetParent(null);
+            scrapObj.GetComponent<Rigidbody2D>().gravityScale = 1f;
+            //scrapObj.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            scrapObj.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+
+            scrapObj = null;
+
+            clawAnimator.SetTrigger("Drop");
+        }
     }
 }
