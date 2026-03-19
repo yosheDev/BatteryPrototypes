@@ -22,7 +22,7 @@ public class ScrapGrinder : MonoBehaviour
         Vector2 targetPos = scrapRB.position - new Vector2(0f, 2.5f);
         Vector2 curVelocity = Vector2.zero;
 
-        yield return new WaitForSeconds(.75f);
+        yield return new WaitForSeconds(1f);
 
         while (true)
         {
@@ -31,7 +31,7 @@ public class ScrapGrinder : MonoBehaviour
                 DestroyScrap();
                 yield break;
             }
-            Vector2 newPos = Vector2.SmoothDamp(scrapRB.position, targetPos, ref curVelocity, .05f, 1f, Time.fixedDeltaTime);
+            Vector2 newPos = Vector2.SmoothDamp(scrapRB.position, targetPos, ref curVelocity, .04f, 1f, Time.fixedDeltaTime);
             scrapRB.MovePosition(newPos);
             yield return new WaitForFixedUpdate();
             //yield return null;

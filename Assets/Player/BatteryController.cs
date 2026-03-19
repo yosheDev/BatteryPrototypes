@@ -415,7 +415,7 @@ public class BatteryController : MonoBehaviour
                     rb.MoveRotation(intermediateRot);
                     if (velocity > 10f)
                     {
-                        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
+                        //rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
                         //Debug.Log("Neutral Detected  - Clamping velocity to 10.");
                     }
                 }
@@ -921,12 +921,10 @@ public class BatteryController : MonoBehaviour
         //weldInput = false; /// Flush input (uncommenting means players will need to repress space to weld to another surface after launch.)
         StartCoroutine(LockWeldState(.2f));
 
-        battery.SubtractPercent(FunctionLibraryF.MapRangeClamped(.25f, 1f, 5f, 25f, softwareCursor.GetLaunchAlpha()));
+        battery.SubtractPercent(FunctionLibraryF.MapRangeClamped(.25f, 1f, 4f, 20f, softwareCursor.GetLaunchAlpha()));
 
-        float launchForce = Mathf.Pow(launchBaseConstant, FunctionLibraryF.MapRangeClamped(0f, 1f, 1f, launchMaxExponent, softwareCursor.GetLaunchAlpha()));
+        float launchForce = Mathf.Pow(launchBaseConstant, FunctionLibraryF.MapRangeClamped(0f, 1f, 1.1f, launchMaxExponent, softwareCursor.GetLaunchAlpha()));
         rb.AddForceAtPosition(-playerWeldMag.transform.up * launchForce, playerWeldMag.transform.position);
-
-        
     }
 
     public void UpdateScalePivotTransforms()
