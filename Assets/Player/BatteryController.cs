@@ -415,7 +415,7 @@ public class BatteryController : MonoBehaviour
                     rb.MoveRotation(intermediateRot);
                     if (velocity > 10f)
                     {
-                        //rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
+                        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
                         //Debug.Log("Neutral Detected  - Clamping velocity to 10.");
                     }
                 }
