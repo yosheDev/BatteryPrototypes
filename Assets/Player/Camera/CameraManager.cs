@@ -298,8 +298,13 @@ public class CameraManager : MonoBehaviour
         #endregion
 
         _camBoundary = GameObject.FindWithTag("CameraBoundary").GetComponent<Collider2D>();
+        if (_camBoundary.GetComponent<Collider2D>() as CompositeCollider2D)
+        {
+            _camBoundary.GetComponent<CompositeCollider2D>().GenerateGeometry();
+        }
         Debug.Log("Cam Boundary Set: " + _camBoundary);
         _confiner.BoundingShape2D = _camBoundary;
+        _confiner.InvalidateBoundingShapeCache();
     }
 
     /// <summary>

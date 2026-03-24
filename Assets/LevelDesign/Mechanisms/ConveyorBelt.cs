@@ -27,7 +27,7 @@ public class ConveyorBelt : MonoBehaviour
             Vector2 tangent = Vector3.Cross(Vector3.forward, normal);
 
             Vector2 conveyorForce = tangent * rotationSpeed * Time.fixedDeltaTime;
-            // These all have the same issue of adding onto itself every frame.
+            // These all have the same issue of adding onto itself every frame. Ended up finding and using surface effector 2D instead of this script.
             //collision.gameObject.GetComponent<Rigidbody2D>().AddForce(conveyorForce);
             //collision.gameObject.GetComponent<Rigidbody2D>().linearVelocity += conveyorForce;
             //collision.gameObject.GetComponent<ConstantForce2D>().force = conveyorForce;

@@ -14,7 +14,7 @@ public class SDFTexBounds : MonoBehaviour
         boundsWS = GetComponent<SpriteRenderer>().bounds;
         this.gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
-        sdfManager = FindFirstObjectByType<MagneticDistanceFieldsManager>(); /// Only ever one of these at a time.
+        sdfManager = FindAnyObjectByType<MagneticDistanceFieldsManager>(); /// Only ever one of these at a time.
         if (sdfManager != null)
         {
             sdfManager.AddTexBounds(this);

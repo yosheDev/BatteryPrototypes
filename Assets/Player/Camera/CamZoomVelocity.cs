@@ -15,7 +15,7 @@ public class DollyVelocity : MonoBehaviour
 
     private void Start()
     {
-        batteryController = GameObject.FindFirstObjectByType<BatteryController>();
+        batteryController = GameObject.FindAnyObjectByType<BatteryController>();
         cam = gameObject.GetComponent<CinemachineCamera>();
         zoom = CameraManager.instance.GetPositionComposer().CameraDistance;
         //zoom = CameraManager.instance._currentCamera.Lens.OrthographicSize;

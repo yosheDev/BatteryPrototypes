@@ -647,7 +647,7 @@ public class BatteryController : MonoBehaviour
     {
         if (Application.isEditor)
         {
-            AreaManager.instance.ReachedObjective(GameObject.FindFirstObjectByType<roomObjective>().gameObject);
+            AreaManager.instance.ReachedObjective(GameObject.FindAnyObjectByType<roomObjective>().gameObject);
         }
     }
 

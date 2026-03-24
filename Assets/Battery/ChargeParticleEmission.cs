@@ -32,7 +32,7 @@ public class ChargeParticleEmission : MonoBehaviour
 
     private void Start()
     {
-        _particleManager = GameObject.FindFirstObjectByType<ChargeParticleManager>();
+        _particleManager = GameObject.FindAnyObjectByType<ChargeParticleManager>();
 
         swayMotor = new JointMotor2D();
         UpdateMotor(1f * swayIntensity, 10000f);

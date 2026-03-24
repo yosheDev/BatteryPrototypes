@@ -8,7 +8,7 @@ public class ChargeParticleCollision : ParticleCollision
     public Vector2 chargeAmountRange = new Vector2(1f, 5f);
     protected override void AssignTriggerColliders() /// Override this event in children to assign different colliders.
     {
-        Collider2D playerCol = FindFirstObjectByType<BatteryController>().gameObject.GetComponent<Collider2D>();
+        Collider2D playerCol = FindAnyObjectByType<BatteryController>().gameObject.GetComponent<Collider2D>();
         _particleSystem.trigger.AddCollider(playerCol);
     }
 

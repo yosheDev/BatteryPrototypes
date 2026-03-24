@@ -83,7 +83,7 @@ public class MagneticSurface : MagnetComponentBase
     private void Awake()
     {
         // Pass surface collider onto the SDF Manager.
-        sdfManager = FindFirstObjectByType<MagneticDistanceFieldsManager>(); /// Only ever one of these at a time.
+        sdfManager = FindAnyObjectByType<MagneticDistanceFieldsManager>(); /// Only ever one of these at a time.
         if (sdfManager != null)
         {
             if (surfaceCol != null && bakeToMagFieldSDF == true)
