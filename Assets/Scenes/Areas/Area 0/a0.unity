@@ -126,6 +126,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!212 &93452006
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -171,6 +172,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: e1f1ffee0002a6e4c84481664355e5f4, type: 3}
   m_Color: {r: 0.8404288, g: 0.8867924, b: 0.038483348, a: 1}
   m_FlipX: 0
@@ -180,20 +182,8 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &190943688 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7819478811370910259, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
-  m_PrefabInstance: {fileID: 194574934}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
---- !u!1001 &194574934
+--- !u!1001 &159300435
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -399,7 +389,7 @@ PrefabInstance:
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: batterySlider
       value: 
-      objectReference: {fileID: 1656108768}
+      objectReference: {fileID: 0}
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: playerBattery
       value: 
@@ -407,7 +397,7 @@ PrefabInstance:
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: playerLivesText
       value: 
-      objectReference: {fileID: 190943688}
+      objectReference: {fileID: 0}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.028410792
@@ -483,11 +473,11 @@ PrefabInstance:
     - target: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: spawnCage
       value: 
-      objectReference: {fileID: 1515492326}
+      objectReference: {fileID: 0}
     - target: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: surfaceCol
       value: 
-      objectReference: {fileID: 1515492327}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 7953829186339131311, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
@@ -497,16 +487,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 93452006}
   m_SourcePrefab: {fileID: 100100000, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
---- !u!1 &1515492326 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5147541928358245823, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
---- !u!70 &1515492327 stripped
-CapsuleCollider2D:
-  m_CorrespondingSourceObject: {fileID: 2324076628335233330, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1515492333 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 381572488973111425, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
@@ -523,17 +503,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
   m_PrefabInstance: {fileID: 1515492325}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1656108768 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4629887031375558571, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
-  m_PrefabInstance: {fileID: 194574934}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &2476134751011327115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -699,5 +668,5 @@ SceneRoots:
   - {fileID: 2817027058095124148}
   - {fileID: 1212553033}
   - {fileID: 1515492325}
-  - {fileID: 194574934}
+  - {fileID: 159300435}
   - {fileID: 2476134751011327115}
