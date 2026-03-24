@@ -6,6 +6,7 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
 {
     private GameObject playerObj;
     [SerializeField] private GameObject clawObj;
+    [SerializeField] private Vector2 clawXRange;
     [SerializeField] private GameObject barrierObj;
     [SerializeField] private Animator clawAnimator;
     [SerializeField] private List<float> dropPoints;
@@ -31,7 +32,7 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
     }
     private void Start()
     {
-        playerObj = GameObject.FindFirstObjectByType<BatteryController>().gameObject;
+        playerObj = GameObject.FindAnyObjectByType<BatteryController>().gameObject;
         barrierObj.SetActive(false);
         onDrop += OnDropEvent;
 
@@ -143,6 +144,7 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
         while (true)
         {
             clawObj.transform.position = Vector2.SmoothDamp((Vector2)clawObj.transform.position, new Vector2(playerObj.transform.position.x, clawObj.transform.position.y), ref curVelocity, .5f);
+            clawObj.transform.position = new Vector2(Mathf.Clamp(clawObj.transform.position.x, clawXRange.x, clawXRange.y), clawObj.transform.position.y);
             yield return null;
         }
     }
@@ -173,10 +175,11 @@ public class a2_r2_JunkDropSequence : MonoBehaviour
         Vector2 target = new Vector2(playerObj.transform.position.x, clawObj.transform.position.y);
         Vector2 curVelocity = Vector2.zero;
 
-        while (Mathf.Abs(clawObj.transform.position.x - target.x) > .1f)
+        while (Mathf.Abs(clawObj.transform.position.x - Mathf.Clamp(target.x, clawXRange.x, clawXRange.y)) > .1f)
         {
             //Debug.Log("Moving to drop point");
             clawObj.transform.position = Vector2.SmoothDamp((Vector2)clawObj.transform.position, target, ref curVelocity, 1f);
+            clawObj.transform.position = new Vector2(Mathf.Clamp(clawObj.transform.position.x, clawXRange.x, clawXRange.y), clawObj.transform.position.y);
             yield return new WaitForFixedUpdate();
         }
 
