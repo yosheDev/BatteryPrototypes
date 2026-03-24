@@ -13,6 +13,10 @@ public class GameInstance : MonoBehaviour
     public delegate void OnPlayerLivesChanged();
     public event OnPlayerLivesChanged onPlayerLivesChanged;
 
+    #region Room Start Record
+    public byte roomStartBattery = 100;
+    #endregion
+
     #region Singleton
     public static GameInstance instance;
 

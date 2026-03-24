@@ -32,13 +32,15 @@ public class AreaManager : MonoBehaviour
     [HideInInspector] public float playerBaseGravity = 1f;
     private Vector3 endPlayerPosTarget;
     private Vector3 endPlayerVel = new Vector3(0f, 0f, 0f);
-    private RoomManager roomManager;
+    [HideInInspector]public RoomManager roomManager;
 
     [Header("Checkpoint Data")]
     [HideInInspector] public Level checkpointLevel;
     [HideInInspector] public Vector2 checkpointRespawnPos = new Vector2(0f, 0f);
     private uint checkpointRespawnCount = 0;
     private bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
+
+    private bool isResetting = false;  /// Is true when player is resetting to beginning of the current room.
 
     [Header("Player Data")] // Should I make this into its own script?
     public byte playerLives = 5; // Player lives.
@@ -72,7 +74,7 @@ public class AreaManager : MonoBehaviour
     void Start()
     {
         // Automatically assign references to player.
-        playerController = GameObject.FindFirstObjectByType<BatteryController>();
+        playerController = GameObject.FindAnyObjectByType<BatteryController>();
         playerRB = playerController.gameObject.GetComponent<Rigidbody2D>();
         playerBaseGravity = playerRB.gravityScale;
 
@@ -136,11 +138,22 @@ public class AreaManager : MonoBehaviour
 
         if (!isRespawning)
         {
-            LoadNextRoom(); /// If there is no next room, this function instead will unload area / return to area selection screen.
+            if (isResetting && roomManager.doesResetFullyReloadLevel)
+            {
+                // Reload current room upon reset.
+                Level curLevel = new Level(area, roomNum);
+                SceneManagement.LoadScene(curLevel);
+                isResetting = false;
+            }
+            else
+            {
+                LoadNextRoom(); /// If there is no next room, this function instead will unload area / return to area selection screen.
+            }
         }
         else
         {
-            RespawnAtCheckpoint();
+            
+           RespawnAtCheckpoint();  
         }
     }
     public void LoadNextRoom()
@@ -152,6 +165,7 @@ public class AreaManager : MonoBehaviour
             roomNum++;
             //Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
             transitionState = AreaTransitionState.Loading;
+            GameInstance.instance.roomStartBattery = playerController.battery.percent;
             SceneManagement.LoadScene(nextRoom);
         }
         else
@@ -163,11 +177,19 @@ public class AreaManager : MonoBehaviour
 
     void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("On Room Loaded.");
+        //Debug.Log("On Room Loaded.");
         SceneManager.SetActiveScene(scene);
         CameraManager.instance.UpdateConfinedBounds();
         CameraManager.instance.WarpCamera();
-        SetTransitionState(AreaTransitionState.Spawn);      
+        SetTransitionState(AreaTransitionState.Spawn);
+        playerController.battery.percent = GameInstance.instance.roomStartBattery;
+    }
+
+    public void ReloadCurrentRoom()
+    {
+        Debug.Log("Reloading current room!");
+        isResetting = true;
+        UnloadCurrentRoom();
     }
 
     #endregion
@@ -271,6 +293,7 @@ public class AreaManager : MonoBehaviour
 
     public void Respawn()
     {
+        // Respawn is for when player has died and is returning to load checkpoint.
         isRespawning = true;
         UnloadCurrentRoom();
         // RespawnAtCheckpoint is called via OnRoomUnloaded delegate, as it should not be loaded until previous room is unloaded.
@@ -339,7 +362,7 @@ public class AreaManager : MonoBehaviour
                 else
                 {
                     GameObject playerStart = GameObject.FindGameObjectWithTag("PlayerStart");
-                    roomManager = GameObject.FindFirstObjectByType<RoomManager>();
+                    roomManager = GameObject.FindAnyObjectByType<RoomManager>();
 
                     #region New Spawn Method
                     if (playerStart == null)

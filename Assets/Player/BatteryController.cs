@@ -967,9 +967,15 @@ public class BatteryController : MonoBehaviour
     {
         // TO DO: Should this reload room completely? Need to go about resetting the state of the room.
         // NOTE: Make sure restarting does NOT use up a player life.
-
-        transform.position = startPos;
-        rb.linearVelocity = Vector3.zero;
+        if (AreaManager.instance.roomManager.doesResetFullyReloadLevel)
+        {
+            AreaManager.instance.ReloadCurrentRoom();
+        }
+        else
+        {
+            transform.position = startPos;
+            rb.linearVelocity = Vector3.zero;
+        } 
     }
 
     public void Death()

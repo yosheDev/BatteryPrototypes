@@ -6,6 +6,7 @@ public class RoomManager : MonoBehaviour
 {
     [Header("Room Data")]
     public bool isCheckpointRoom = false;
+    public bool doesResetFullyReloadLevel = true;
 
     [TextArea]
     [Tooltip("Doesn't do anything. Just comments shown in inspector")]
