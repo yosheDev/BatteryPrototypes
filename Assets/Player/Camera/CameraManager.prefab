@@ -486,7 +486,7 @@ MonoBehaviour:
   Damping: 2
   SlowingDistance: 5
   OversizeWindow:
-    Enabled: 0
+    Enabled: 1
     MaxWindowSize: 14
     Padding: 2
   m_LegacyMaxWindowSize: -2
@@ -515,11 +515,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -35.9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.z
