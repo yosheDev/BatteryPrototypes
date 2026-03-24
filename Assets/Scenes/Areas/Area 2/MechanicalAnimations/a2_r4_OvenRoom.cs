@@ -8,11 +8,13 @@ public class a2_r4_OvenRoom : MonoBehaviour
     [SerializeField] private SurfaceEffector2D conveyorEffector;
     [SerializeField] private List<GameObject> barrierObjs = new List<GameObject>();
     [SerializeField] private List<Collider2D> hallwayCamBounds = new List<Collider2D>();
+    [SerializeField] private GameObject camZoomVolume;
     [SerializeField] private GameObject rotateScrap;
 
     private void Start()
     {
         playerObj = GameObject.FindAnyObjectByType<BatteryController>().gameObject;
+        camZoomVolume.SetActive(false);
         foreach (GameObject obj in barrierObjs)
         {
             obj.SetActive(false);
@@ -26,7 +28,7 @@ public class a2_r4_OvenRoom : MonoBehaviour
         // Wait until player is within trigger bounds.
         while (true)
         {
-            if (Mathf.Abs(playerObj.transform.position.x - -2.5f) < .1f)
+            if (Mathf.Abs(playerObj.transform.position.x - 1.15f) < .1f)
             {
                 break;
             }
@@ -40,6 +42,13 @@ public class a2_r4_OvenRoom : MonoBehaviour
             obj.SetActive(true);
         }
 
+        // Disable camera bounds in hallways.
+        foreach (Collider2D col in hallwayCamBounds)
+        {
+            col.gameObject.SetActive(false);
+            CameraManager.instance.UpdateConfinedBounds();
+        }
+
         // Shut off conveyor belt.
         float currentVelocity = 0f;
         while (conveyorEffector.speed > 0f)
@@ -47,12 +56,10 @@ public class a2_r4_OvenRoom : MonoBehaviour
             conveyorEffector.speed -= Mathf.SmoothDamp(conveyorEffector.speed, 0f, ref currentVelocity, 1f);
             yield return null;
         }
+
+        // Reenable Camera Zoom
+        camZoomVolume.SetActive(true);
+
         
-        // Disable camera bounds in hallways.
-        foreach(Collider2D col in hallwayCamBounds)
-        {
-            col.gameObject.SetActive(false);
-            CameraManager.instance.UpdateConfinedBounds();
-        }
     }
 }
