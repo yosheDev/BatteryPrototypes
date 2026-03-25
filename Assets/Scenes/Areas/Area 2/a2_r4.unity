@@ -164,8 +164,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 18084978}
   traceLayerMask:
     serializedVersion: 2
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 37245502}
   traceLayerMask:
     serializedVersion: 2
@@ -339,7 +339,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 37245499}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -486,8 +486,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 64267813}
   traceLayerMask:
     serializedVersion: 2
@@ -657,8 +657,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 182484276}
   traceLayerMask:
     serializedVersion: 2
@@ -959,7 +959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 228635445}
   traceLayerMask:
     serializedVersion: 2
@@ -972,7 +972,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 228635442}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1503,7 +1503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 359563913}
   traceLayerMask:
     serializedVersion: 2
@@ -1516,7 +1516,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 359563910}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1731,8 +1731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 391734966}
   traceLayerMask:
     serializedVersion: 2
@@ -2044,8 +2044,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 406013527}
   traceLayerMask:
     serializedVersion: 2
@@ -2205,8 +2205,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 408453564}
   traceLayerMask:
     serializedVersion: 2
@@ -2366,8 +2366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 424747910}
   traceLayerMask:
     serializedVersion: 2
@@ -2528,7 +2528,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 431039290}
   traceLayerMask:
     serializedVersion: 2
@@ -2541,7 +2541,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 431039287}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6187,8 +6187,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 506075481}
   traceLayerMask:
     serializedVersion: 2
@@ -6349,7 +6349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 509441072}
   traceLayerMask:
     serializedVersion: 2
@@ -6362,7 +6362,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 509441069}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -6509,8 +6509,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 526445417}
   traceLayerMask:
     serializedVersion: 2
@@ -6670,8 +6670,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 534015045}
   traceLayerMask:
     serializedVersion: 2
@@ -6901,7 +6901,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 536157257}
   traceLayerMask:
     serializedVersion: 2
@@ -6914,7 +6914,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536157254}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -7061,8 +7061,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 575247108}
   traceLayerMask:
     serializedVersion: 2
@@ -7222,8 +7222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 584202863}
   traceLayerMask:
     serializedVersion: 2
@@ -7383,8 +7383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 584860429}
   traceLayerMask:
     serializedVersion: 2
@@ -11343,7 +11343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 675756893}
   traceLayerMask:
     serializedVersion: 2
@@ -11356,7 +11356,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 675756890}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -11656,7 +11656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 720641205}
   traceLayerMask:
     serializedVersion: 2
@@ -11669,7 +11669,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720641202}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -11816,8 +11816,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 735881912}
   traceLayerMask:
     serializedVersion: 2
@@ -11978,7 +11978,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 740769551}
   traceLayerMask:
     serializedVersion: 2
@@ -11991,7 +11991,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 740769548}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -12229,8 +12229,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 764954582}
   traceLayerMask:
     serializedVersion: 2
@@ -12390,8 +12390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 769630792}
   traceLayerMask:
     serializedVersion: 2
@@ -12552,7 +12552,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 772873070}
   traceLayerMask:
     serializedVersion: 2
@@ -12565,7 +12565,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 772873067}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -12861,8 +12861,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 798729621}
   traceLayerMask:
     serializedVersion: 2
@@ -13023,7 +13023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 807780007}
   traceLayerMask:
     serializedVersion: 2
@@ -13036,7 +13036,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 807780004}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -13169,6 +13169,10 @@ PrefabInstance:
       propertyPath: spawnMechanism
       value: 
       objectReference: {fileID: 823014194}
+    - target: {fileID: 6239690848335973314, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
+      propertyPath: isCheckpointRoom
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6787391437380022258, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.52518
@@ -13467,8 +13471,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 880587475}
   traceLayerMask:
     serializedVersion: 2
@@ -13673,6 +13677,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 897902039}
+  - component: {fileID: 897902040}
   m_Layer: 0
   m_Name: RightWaves
   m_TagString: Untagged
@@ -13689,7 +13694,7 @@ Transform:
   m_GameObject: {fileID: 897902038}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.70710653, w: 0.7071071}
-  m_LocalPosition: {x: 22.29, y: 10.42, z: 0}
+  m_LocalPosition: {x: 22.26, y: 10.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13713,6 +13718,37 @@ Transform:
   - {fileID: 1129579924}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+--- !u!114 &897902040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897902038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ab524199b3eef4c94bf1adef6d7b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RayHazardEmitterGroup
+  rayHazards:
+  - {fileID: 1286781077}
+  - {fileID: 905729861}
+  - {fileID: 769630791}
+  - {fileID: 1841630407}
+  - {fileID: 1267090979}
+  - {fileID: 526445416}
+  - {fileID: 1129345347}
+  - {fileID: 64267812}
+  - {fileID: 1293100089}
+  - {fileID: 391734965}
+  - {fileID: 584860428}
+  - {fileID: 735881911}
+  - {fileID: 2002106545}
+  - {fileID: 1769707877}
+  - {fileID: 182484275}
+  - {fileID: 408453563}
+  - {fileID: 18084977}
+  - {fileID: 1129579925}
 --- !u!1 &905729859
 GameObject:
   m_ObjectHideFlags: 0
@@ -13758,8 +13794,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 905729862}
   traceLayerMask:
     serializedVersion: 2
@@ -13920,7 +13956,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 907693671}
   traceLayerMask:
     serializedVersion: 2
@@ -13933,7 +13969,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 907693668}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -14163,11 +14199,14 @@ MonoBehaviour:
   - {fileID: 1387318543}
   - {fileID: 1252187207}
   camZoomVolume: {fileID: 118696004}
-  rotateScrap: {fileID: 0}
-  scrapAnimator: {fileID: 0}
+  rotateScrap: {fileID: 655255324}
+  scrapAnimator: {fileID: 655255326}
   topIndicators: {fileID: 534951973}
   leftIndicators: {fileID: 1632021276}
   rightIndicators: {fileID: 1336392726}
+  topRayHazards: {fileID: 1491205336}
+  leftRayHazards: {fileID: 1896421455}
+  rightRayHazards: {fileID: 897902040}
 --- !u!4 &984940102
 Transform:
   m_ObjectHideFlags: 0
@@ -14309,8 +14348,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1061517029}
   traceLayerMask:
     serializedVersion: 2
@@ -14702,8 +14741,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1129345348}
   traceLayerMask:
     serializedVersion: 2
@@ -14863,8 +14902,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1129579926}
   traceLayerMask:
     serializedVersion: 2
@@ -15223,7 +15262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1185808479}
   traceLayerMask:
     serializedVersion: 2
@@ -15236,7 +15275,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1185808476}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -15383,8 +15422,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1213509300}
   traceLayerMask:
     serializedVersion: 2
@@ -16023,8 +16062,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1267090980}
   traceLayerMask:
     serializedVersion: 2
@@ -16184,8 +16223,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1286781078}
   traceLayerMask:
     serializedVersion: 2
@@ -16345,8 +16384,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1293100090}
   traceLayerMask:
     serializedVersion: 2
@@ -16645,7 +16684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1334494880}
   traceLayerMask:
     serializedVersion: 2
@@ -16658,7 +16697,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1334494877}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -16866,8 +16905,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1342969330}
   traceLayerMask:
     serializedVersion: 2
@@ -20896,7 +20935,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1452685605}
   traceLayerMask:
     serializedVersion: 2
@@ -20909,7 +20948,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1452685602}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -21057,7 +21096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1453699432}
   traceLayerMask:
     serializedVersion: 2
@@ -21070,7 +21109,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453699429}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -21380,7 +21419,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1474522585}
   traceLayerMask:
     serializedVersion: 2
@@ -21393,7 +21432,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1474522582}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -21504,6 +21543,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1491205335}
+  - component: {fileID: 1491205336}
   m_Layer: 0
   m_Name: TopWaves
   m_TagString: Untagged
@@ -21520,7 +21560,7 @@ Transform:
   m_GameObject: {fileID: 1491205334}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 24.7, z: 0}
+  m_LocalPosition: {x: 0.6, y: 24.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -21553,6 +21593,46 @@ Transform:
   - {fileID: 1474522583}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1491205336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1491205334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ab524199b3eef4c94bf1adef6d7b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RayHazardEmitterGroup
+  rayHazards:
+  - {fileID: 2103469169}
+  - {fileID: 740769550}
+  - {fileID: 1822096433}
+  - {fileID: 1578410402}
+  - {fileID: 1453699431}
+  - {fileID: 1772436245}
+  - {fileID: 2024358585}
+  - {fileID: 228635444}
+  - {fileID: 1551661164}
+  - {fileID: 675756892}
+  - {fileID: 509441071}
+  - {fileID: 2045058332}
+  - {fileID: 1614975395}
+  - {fileID: 1185808478}
+  - {fileID: 1452685604}
+  - {fileID: 1334494879}
+  - {fileID: 772873069}
+  - {fileID: 431039289}
+  - {fileID: 1507335103}
+  - {fileID: 359563912}
+  - {fileID: 536157256}
+  - {fileID: 37245501}
+  - {fileID: 1723156969}
+  - {fileID: 720641204}
+  - {fileID: 807780006}
+  - {fileID: 907693670}
+  - {fileID: 1474522584}
 --- !u!1001 &1492946568
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21679,8 +21759,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1496363979}
   traceLayerMask:
     serializedVersion: 2
@@ -21841,7 +21921,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1507335104}
   traceLayerMask:
     serializedVersion: 2
@@ -21854,7 +21934,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1507335101}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -22002,7 +22082,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1551661165}
   traceLayerMask:
     serializedVersion: 2
@@ -22015,7 +22095,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1551661162}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -22163,7 +22243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1578410403}
   traceLayerMask:
     serializedVersion: 2
@@ -22176,7 +22256,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1578410400}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -22323,8 +22403,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1582391424}
   traceLayerMask:
     serializedVersion: 2
@@ -22485,7 +22565,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1614975396}
   traceLayerMask:
     serializedVersion: 2
@@ -22498,7 +22578,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1614975393}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -22787,8 +22867,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1635476493}
   traceLayerMask:
     serializedVersion: 2
@@ -23148,7 +23228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1723156970}
   traceLayerMask:
     serializedVersion: 2
@@ -23161,7 +23241,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1723156967}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -23548,8 +23628,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1769707878}
   traceLayerMask:
     serializedVersion: 2
@@ -23710,7 +23790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1772436246}
   traceLayerMask:
     serializedVersion: 2
@@ -23723,7 +23803,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1772436243}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -24574,7 +24654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 1822096434}
   traceLayerMask:
     serializedVersion: 2
@@ -24587,7 +24667,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1822096431}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -24794,8 +24874,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1841630408}
   traceLayerMask:
     serializedVersion: 2
@@ -25081,6 +25161,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1896421454}
+  - component: {fileID: 1896421455}
   m_Layer: 0
   m_Name: LeftWaves
   m_TagString: Untagged
@@ -25097,7 +25178,7 @@ Transform:
   m_GameObject: {fileID: 1896421453}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071072, w: 0.7071064}
-  m_LocalPosition: {x: -20.72, y: 10.42, z: 0}
+  m_LocalPosition: {x: -20.16, y: 10.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -25121,6 +25202,37 @@ Transform:
   - {fileID: 424747908}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!114 &1896421455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896421453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ab524199b3eef4c94bf1adef6d7b3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RayHazardEmitterGroup
+  rayHazards:
+  - {fileID: 534015044}
+  - {fileID: 1902852343}
+  - {fileID: 1061517028}
+  - {fileID: 1342969329}
+  - {fileID: 575247107}
+  - {fileID: 506075480}
+  - {fileID: 764954581}
+  - {fileID: 798729620}
+  - {fileID: 1944708822}
+  - {fileID: 584202862}
+  - {fileID: 406013526}
+  - {fileID: 1496363978}
+  - {fileID: 880587474}
+  - {fileID: 1635476492}
+  - {fileID: 1906707592}
+  - {fileID: 1213509299}
+  - {fileID: 1582391423}
+  - {fileID: 424747909}
 --- !u!1 &1902852341
 GameObject:
   m_ObjectHideFlags: 0
@@ -25166,8 +25278,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1902852344}
   traceLayerMask:
     serializedVersion: 2
@@ -25337,8 +25449,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1906707593}
   traceLayerMask:
     serializedVersion: 2
@@ -25498,8 +25610,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: 1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 1944708823}
   traceLayerMask:
     serializedVersion: 2
@@ -25821,8 +25933,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8dced23641cc64d822fbfc32717cfb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
-  direction: {x: 0, y: -1}
-  raySpeed: 1
+  direction: {x: -1, y: 0}
+  raySpeed: 8
   lineRenderer: {fileID: 2002106546}
   traceLayerMask:
     serializedVersion: 2
@@ -26064,7 +26176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 2024358586}
   traceLayerMask:
     serializedVersion: 2
@@ -26077,7 +26189,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2024358583}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -26225,7 +26337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 2045058333}
   traceLayerMask:
     serializedVersion: 2
@@ -26238,7 +26350,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045058330}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -26381,7 +26493,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2103469166}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -26496,7 +26608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a2_r4_RayEmitter
   direction: {x: 0, y: -1}
-  raySpeed: 1
+  raySpeed: 8
   lineRenderer: {fileID: 2103469168}
   traceLayerMask:
     serializedVersion: 2

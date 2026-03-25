@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 public class RayHazardEmitter : MonoBehaviour
 {
     [SerializeField] private Vector2 direction = new Vector2();
-    [SerializeField] private float raySpeed = 1f;
+    [SerializeField] private float raySpeed = 3f;
     [SerializeField] private LineRenderer lineRenderer;
     [SerializeField] private LayerMask traceLayerMask;
    
@@ -26,6 +26,7 @@ public class RayHazardEmitter : MonoBehaviour
 
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, transform.position);
+        lineRenderer.material.SetFloat("_Speed", raySpeed);
         lineRenderer.enabled = false;
     }
 
@@ -69,10 +70,10 @@ public class RayHazardEmitter : MonoBehaviour
 
             else
             {
-                Vector3 advancePos = lineRenderer.GetPosition(1) + ((Vector3)direction * raySpeed);
+                Vector3 advancePos = lineRenderer.GetPosition(1) + ((Vector3)direction * raySpeed * .01f);
                 lineRenderer.SetPosition(1, advancePos);
             }
-
+            //Debug.Log(lineRenderer.GetPosition(1));
             yield return new WaitForEndOfFrame();
         }
     }

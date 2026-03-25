@@ -16,4 +16,12 @@ public class WarningIndicatorsGroupActivator : MonoBehaviour
             indicators[i].FlashIndicator(duration, interval, flashDuration);
         }
     }
+
+    public void StopFlashIndicators()
+    {
+        for (int i = 0; i < indicators.Count; i++)
+        {
+            indicators[i].StopFlashIndicator();
+        }
+    }
 }

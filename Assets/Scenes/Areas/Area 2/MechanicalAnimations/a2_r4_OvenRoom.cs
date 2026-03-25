@@ -16,6 +16,9 @@ public class a2_r4_OvenRoom : MonoBehaviour
     [SerializeField] private WarningIndicatorsGroupActivator leftIndicators;
     [SerializeField] private WarningIndicatorsGroupActivator rightIndicators;
 
+    [SerializeField] private RayHazardEmitterGroup topRayHazards;
+    [SerializeField] private RayHazardEmitterGroup leftRayHazards;
+    [SerializeField] private RayHazardEmitterGroup rightRayHazards;
     private void Start()
     {
         playerObj = GameObject.FindAnyObjectByType<BatteryController>().gameObject;
@@ -57,21 +60,26 @@ public class a2_r4_OvenRoom : MonoBehaviour
         // Reenable Camera Zoom
         camZoomVolume.SetActive(true);
 
-        topIndicators.FlashIndicators(5f, .25f, .125f);
-        yield return new WaitForSeconds(5f);
+        topIndicators.FlashIndicators(6f, .25f, .125f);
+        yield return new WaitForSeconds(6f);
         Debug.Log("Macrowave from the TOP");
-
+        topRayHazards.EmitBegin();
         yield return new WaitForSeconds(5f);
+        topRayHazards.EmitEnd();
 
-        rightIndicators.FlashIndicators(5f, .25f, .125f);
-        yield return new WaitForSeconds(5f);
+        rightIndicators.FlashIndicators(5.5f, .25f, .125f);
+        yield return new WaitForSeconds(5.5f);
         Debug.Log("Macrowave from the RIGHT");
-
+        rightRayHazards.EmitBegin();
         yield return new WaitForSeconds(5f);
+        rightRayHazards.EmitEnd();
 
         leftIndicators.FlashIndicators(5f, .25f, .125f);
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(5f);
         Debug.Log("Macrowave from the LEFT");
+        leftRayHazards.EmitBegin();
+        yield return new WaitForSeconds(5f);
+        leftRayHazards.EmitEnd();
     }
 
 
