@@ -26,7 +26,7 @@ public class RayHazardEmitter : MonoBehaviour
 
         lineRenderer.SetPosition(0, transform.position);
         lineRenderer.SetPosition(1, transform.position);
-        lineRenderer.material.SetFloat("_Speed", raySpeed);
+        lineRenderer.material.SetFloat("_Speed", raySpeed * 0.5f);
         lineRenderer.enabled = false;
     }
 

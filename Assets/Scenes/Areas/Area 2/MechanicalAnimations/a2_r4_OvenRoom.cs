@@ -67,15 +67,15 @@ public class a2_r4_OvenRoom : MonoBehaviour
         yield return new WaitForSeconds(5f);
         topRayHazards.EmitEnd();
 
-        rightIndicators.FlashIndicators(5.5f, .25f, .125f);
-        yield return new WaitForSeconds(5.5f);
+        rightIndicators.FlashIndicators((playerObj.transform.position.x >= 13.5) ? 9f : 5.5f, .25f, .125f); /// Gives players more time if they have fallen way to the left.
+        yield return new WaitForSeconds((playerObj.transform.position.x >= 13.5) ? 9f : 5.5f);
         Debug.Log("Macrowave from the RIGHT");
         rightRayHazards.EmitBegin();
         yield return new WaitForSeconds(5f);
         rightRayHazards.EmitEnd();
 
-        leftIndicators.FlashIndicators(5f, .25f, .125f);
-        yield return new WaitForSeconds(5f);
+        leftIndicators.FlashIndicators((playerObj.transform.position.x <= -11.5) ? 8f : 5f, .25f, .125f); /// Gives players more time if they fallen way to the left.
+        yield return new WaitForSeconds((playerObj.transform.position.x <= -11.5) ? 8f : 5f);
         Debug.Log("Macrowave from the LEFT");
         leftRayHazards.EmitBegin();
         yield return new WaitForSeconds(5f);
