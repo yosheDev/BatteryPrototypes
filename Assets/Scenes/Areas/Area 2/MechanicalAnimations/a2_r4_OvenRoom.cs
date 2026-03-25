@@ -10,6 +10,11 @@ public class a2_r4_OvenRoom : MonoBehaviour
     [SerializeField] private List<Collider2D> hallwayCamBounds = new List<Collider2D>();
     [SerializeField] private GameObject camZoomVolume;
     [SerializeField] private GameObject rotateScrap;
+    [SerializeField] private Animator scrapAnimator;
+
+    [SerializeField] private WarningIndicatorsGroupActivator topIndicators;
+    [SerializeField] private WarningIndicatorsGroupActivator leftIndicators;
+    [SerializeField] private WarningIndicatorsGroupActivator rightIndicators;
 
     private void Start()
     {
@@ -28,7 +33,7 @@ public class a2_r4_OvenRoom : MonoBehaviour
         // Wait until player is within trigger bounds.
         while (true)
         {
-            if (Mathf.Abs(playerObj.transform.position.x - 1.15f) < .1f)
+            if (playerObj.transform.position.x > 1.15f  && playerObj.transform.position.y > 13f)
             {
                 break;
             }
@@ -49,17 +54,37 @@ public class a2_r4_OvenRoom : MonoBehaviour
             CameraManager.instance.UpdateConfinedBounds();
         }
 
-        // Shut off conveyor belt.
-        float currentVelocity = 0f;
-        while (conveyorEffector.speed > 0f)
-        {
-            conveyorEffector.speed -= Mathf.SmoothDamp(conveyorEffector.speed, 0f, ref currentVelocity, 1f);
-            yield return null;
-        }
-
         // Reenable Camera Zoom
         camZoomVolume.SetActive(true);
 
-        
+        topIndicators.FlashIndicators(5f, .25f, .125f);
+        yield return new WaitForSeconds(5f);
+        Debug.Log("Macrowave from the TOP");
+
+        yield return new WaitForSeconds(5f);
+
+        rightIndicators.FlashIndicators(5f, .25f, .125f);
+        yield return new WaitForSeconds(5f);
+        Debug.Log("Macrowave from the RIGHT");
+
+        yield return new WaitForSeconds(5f);
+
+        leftIndicators.FlashIndicators(5f, .25f, .125f);
+        yield return new WaitForSeconds(4f);
+        Debug.Log("Macrowave from the LEFT");
     }
+
+
+
+
+
+
+
+    // Turn on conveyor belt.
+    //float currentVelocity = 0f;
+    //    while (conveyorEffector.speed < 8f)
+    //    {
+    //        conveyorEffector.speed -= Mathf.SmoothDamp(conveyorEffector.speed, 8f, ref currentVelocity, 1f);
+    //        yield return null;
+    //    }
 }
