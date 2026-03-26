@@ -18,7 +18,6 @@ public class DollyVelocity : MonoBehaviour
         batteryController = GameObject.FindAnyObjectByType<BatteryController>();
         cam = gameObject.GetComponent<CinemachineCamera>();
         zoom = CameraManager.instance.GetPositionComposer().CameraDistance;
-        //zoom = CameraManager.instance._currentCamera.Lens.OrthographicSize;
     }
     void FixedUpdate()
     {
@@ -26,9 +25,7 @@ public class DollyVelocity : MonoBehaviour
         {
             float zoomVelocityAlpha = FunctionLibraryF.MapRangeClamped(zoomVelocityRange.x, zoomVelocityRange.y, 0f, 1f, batteryController.velocity);
             zoom = Mathf.MoveTowards(zoom, Mathf.Lerp(zoomRange.x, zoomRange.y, zoomVelocityAlpha), zoomInterpSpeed);
-            //Debug.Log(zoom);
             CameraManager.instance.SetCameraDistance(zoom + additionalZoom);
-            //CameraManager.instance._currentCamera.Lens.OrthographicSize = zoom;
         }
     }
 

@@ -23,8 +23,6 @@ public class CameraManager : MonoBehaviour
     private Dictionary<Transform, Coroutine> removeTargetCoroutines = new Dictionary<Transform, Coroutine>();
     private Dictionary<Transform, Coroutine> addTargetCoroutines = new Dictionary<Transform, Coroutine>();
 
-    public Camera perspectiveCam;   /// This is used for the backgrounds to acheive nice parallax with zoom.
-
     private HashSet<CameraZoomVolume> overlappedZoomVolumes = new HashSet<CameraZoomVolume>();
     private Coroutine camZoomRoutine;
 
@@ -256,12 +254,16 @@ public class CameraManager : MonoBehaviour
 
     #region Other Camera Utility
     public void SetCameraDistance(float camDistance)
-    {
+    { 
         _positionComposer.CameraDistance = camDistance;
-        _currentCamera.Lens.OrthographicSize = camDistance;
-        _confiner.InvalidateLensCache(); /// Expensive but this will not work without it.
+        //_currentCamera.Lens.OrthographicSize = camDistance; /// DISABLED cause no longer using orthographic camera.
+        _confiner.InvalidateLensCache();
     }
 
+    public float GetCameraDistance()
+    {
+        return _positionComposer.CameraDistance;
+    }
     void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
         // If this is a room, update confined camera bounds with those found in the room's scene.
