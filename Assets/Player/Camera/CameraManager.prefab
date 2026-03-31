@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9056737812581026182}
   - component: {fileID: 5589258013804496190}
-  - component: {fileID: 7207801634004665818}
   - component: {fileID: 271518851429908167}
   m_Layer: 0
   m_Name: BackgroundBlurCamera1
@@ -85,14 +84,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &7207801634004665818
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 293006630294854908}
-  m_Enabled: 1
 --- !u!114 &271518851429908167
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,7 +191,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8208491911159996048}
   - component: {fileID: 4162338702182481961}
-  - component: {fileID: 64566431342039809}
   - component: {fileID: 7039107591773505755}
   m_Layer: 0
   m_Name: BackgroundBlurCamera2
@@ -275,14 +265,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &64566431342039809
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5390015843285364059}
-  m_Enabled: 1
 --- !u!114 &7039107591773505755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -532,11 +514,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -5.5600004
       objectReference: {fileID: 0}
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -9.05
       objectReference: {fileID: 0}
     - target: {fileID: 956093866804550009, guid: 067ddebf4e8766949bf8fbc79c9aa109, type: 3}
       propertyPath: m_LocalPosition.z
