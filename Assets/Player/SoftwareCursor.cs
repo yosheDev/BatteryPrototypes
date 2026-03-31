@@ -335,4 +335,9 @@ public class SoftwareCursor : MonoBehaviour
             transform.position = (Vector2)parentForPos.transform.position + localPos;
         }
     }
+
+    public Vector2 GetAimDir()
+    {
+        return aimDir;
+    }
 }

@@ -782,6 +782,12 @@ public class BatteryController : MonoBehaviour
             interactObj.Interact(this);
         }
     }
+    
+    public void LeftClick(InputAction.CallbackContext context)
+    {
+        rb.AddForce(softwareCursor.GetAimDir() * 5f);
+        Debug.Log("Shoot!");
+    }
     #endregion
     public void ChangeWeldState(WeldState newState)
     {
