@@ -28,6 +28,7 @@ public class BatteryController : MonoBehaviour
     public TractorBeamVFX posTractorBeamVFX;
     public MagneticSurface negativeMag;
     public TractorBeamVFX negTractorBeamVFX;
+    private FerroProjectilePool projectilePool;
     #endregion
 
     [Header("Control Settings")]
@@ -51,11 +52,13 @@ public class BatteryController : MonoBehaviour
 
     [HideInInspector] public float playerGravity;
 
+    /// TO DO: Make a player audio script to handle all these references.
     #region Audio
     [Header("Audio")]
     [SerializeField] private AudioSource sfxSurfaceGeneric;
     [SerializeField] private AudioSource sfxSurfaceMagnet;
     [SerializeField] private AudioSource sfxMagneticBeam;
+    [SerializeField] private AudioSource sfxFerroProjectile;
     #endregion
     //==============================================================================================================================
     #region Private
@@ -136,6 +139,7 @@ public class BatteryController : MonoBehaviour
         playerGravity = rb.gravityScale;
         battery = GetComponent<Battery>();
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
+        projectilePool = GetComponent<FerroProjectilePool>();
 
         playerColOffset = gameObject.GetComponent<BoxCollider2D>().offset;
         playerColSize = gameObject.GetComponent<BoxCollider2D>().size;
@@ -212,6 +216,15 @@ public class BatteryController : MonoBehaviour
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
         #endregion
 
+        if (velocity <= .1f)
+        {
+            battery.regenerationRate = .75f;
+        }
+        else
+        {
+            battery.regenerationRate = 1.5f;
+        }
+
         // If not in a room transition.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
         {
@@ -260,7 +273,7 @@ public class BatteryController : MonoBehaviour
 
                 }
             }
-            
+
             #endregion
 
             #region Weld To Surface / Update Weld Surface Data
@@ -362,7 +375,7 @@ public class BatteryController : MonoBehaviour
                     if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
                     {
                         ChangeWeldState(WeldState.Welded);
-                    }   
+                    }
 
                 }
                 else
@@ -573,7 +586,7 @@ public class BatteryController : MonoBehaviour
                     // Prevent NaN
                     if (float.IsNaN(curForce.x))
                     {
-                        curForce = Vector2.zero; 
+                        curForce = Vector2.zero;
                     }
 
                     Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
@@ -642,7 +655,7 @@ public class BatteryController : MonoBehaviour
                     negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
                     negTractorBeamVFX.SetForceMagnitude(0f);
                 }
-                
+
                 // SFX
                 if (negativeFields.Count + positiveFields.Count > 0)
                 {
@@ -677,7 +690,7 @@ public class BatteryController : MonoBehaviour
                     scoutPosOffset = Vector2.zero;
                 }
             }
-            
+
             scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
             #endregion
         }
@@ -840,7 +853,7 @@ public class BatteryController : MonoBehaviour
     
     public void LeftClick(InputAction.CallbackContext context)
     {
-        if (!context.started || isGrounded || isShootDisabled)
+        if (!context.started || isGrounded || isShootDisabled || !AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
         {
             return;
         }
@@ -866,8 +879,9 @@ public class BatteryController : MonoBehaviour
                 battery.SubtractPercent(shotBatteryDrain);
                 if (rb.linearVelocity.magnitude - startVelMag < 5f)
                 {
+                    projectilePool.ShootProjectile(negativeMag.transform.position, negativeMag.transform.rotation, new Vector3(.25f, .5f, .5f));
                     rb.AddForce(softwareCursor.GetAimDir() * forceAmounts[shotCount]);
-                    sfxSurfaceMagnet.Play();
+                    sfxFerroProjectile.Play();
                 }
                 yield return new WaitForSeconds(.15f);
                 shotCount++;

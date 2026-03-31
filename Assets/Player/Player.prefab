@@ -1761,6 +1761,8 @@ GameObject:
   - component: {fileID: 238116842634995736}
   - component: {fileID: 6690378576019444788}
   - component: {fileID: 322359499541593061}
+  - component: {fileID: 7371173790949300151}
+  - component: {fileID: 7552396332889286236}
   m_Layer: 3
   m_Name: PlayerSprite
   m_TagString: Player
@@ -2155,6 +2157,7 @@ MonoBehaviour:
   sfxSurfaceGeneric: {fileID: 238116842634995736}
   sfxSurfaceMagnet: {fileID: 6690378576019444788}
   sfxMagneticBeam: {fileID: 322359499541593061}
+  sfxFerroProjectile: {fileID: 7552396332889286236}
   cursorPosWS: {x: 0, y: 0}
   mouseDelta: {x: 0, y: 0}
   weldSurfaceNormal: {x: 0, y: 0}
@@ -2176,6 +2179,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Battery
   initialPercent: 100
   percent: 100
+  regenerationRate: 1.5
 --- !u!114 &1550937807734155731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2406,6 +2410,116 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &7371173790949300151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159612945940311858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42f98cfe6b41d574c9f811a54a6d594f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FerroProjectilePool
+  projectilePrefab: {fileID: 233275120931642013, guid: d1ea8031239f3a94a9db5546a6191058, type: 3}
+--- !u!82 &7552396332889286236
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159612945940311858}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: f65edbf6c0fa3614bbfbdba407ef8553, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 2
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0

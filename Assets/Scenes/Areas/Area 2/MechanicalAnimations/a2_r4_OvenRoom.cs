@@ -118,7 +118,7 @@ public class a2_r4_OvenRoom : MonoBehaviour
 
         topIndicators.FlashIndicators(10f, .25f, .125f);
         leftIndicators.FlashIndicators(10f, .25f, .125f);
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(11f);
         //Debug.Log("Macrowave from the LEFT and TOP");
         topRayHazards.EmitBegin();
         leftRayHazards.EmitBegin();

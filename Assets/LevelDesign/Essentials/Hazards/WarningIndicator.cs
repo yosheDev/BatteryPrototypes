@@ -42,7 +42,7 @@ public class WarningIndicator : MonoBehaviour
     {
         // Get screen bounds based on camera
         Camera mainCamera = Camera.main;
-        screenBounds = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, mainCamera.transform.position.z));
+        screenBounds = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, Mathf.Abs(mainCamera.transform.position.z - gameObject.transform.position.z)));
 
         // Get sprite size
         spriteWidth = renderer.bounds.size.x / 2;

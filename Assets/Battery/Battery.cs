@@ -1,5 +1,8 @@
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 /// This class is for anything with a battery.
 
 public class Battery : MonoBehaviour
@@ -7,6 +10,8 @@ public class Battery : MonoBehaviour
     [Range(0, 100)]
     [SerializeField] private byte initialPercent = 100;
     public byte percent = 100;
+    public float regenerationRate = 0f;
+    private Coroutine regenRoutine;
 
     public delegate void OnPercentChanged();
     public event OnPercentChanged onPercentChanged;
@@ -17,6 +22,11 @@ public class Battery : MonoBehaviour
     private void Awake()
     {
         percent = initialPercent;
+
+        if (regenerationRate > 0f)
+        {
+            regenRoutine = StartCoroutine(Regenerate());
+        }
     }
 
     #region Arithmetic
@@ -84,6 +94,32 @@ public class Battery : MonoBehaviour
         onCorrode?.Invoke();
     }
 
+    public void BeginRegeneration()
+    {
+        if (regenRoutine == null)
+        {
+            if (regenerationRate > 0f)
+            {
+                regenRoutine = StartCoroutine(Regenerate());
+            }
+        }
+    }
+    public void StopRegeneration()
+    {
+        if (regenRoutine != null)
+        {
+            StopCoroutine(regenRoutine);
+        }
+    }
+
+    private IEnumerator Regenerate()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(regenerationRate);
+            AddPercent(1);
+        }
+    }
     #region Getters / Setters
     public void SetPercent(byte newPercent)
     {
