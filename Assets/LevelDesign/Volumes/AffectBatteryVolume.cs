@@ -56,6 +56,11 @@ public class AffectBatteryVolume : MonoBehaviour
             foundBattery = collision.gameObject.GetComponent<Battery>();
             //Debug.Log("EXIT -> Found Battery: " + foundBattery + "   Collider: " + collision);
             affectedBatteries.Remove(foundBattery);
+
+            if (affectedBatteries.Count == 0)
+            {
+                StopCoroutine(AffectBatteries());
+            }
         }  
     }
 

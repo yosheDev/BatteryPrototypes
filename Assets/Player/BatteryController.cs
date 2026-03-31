@@ -856,7 +856,7 @@ public class BatteryController : MonoBehaviour
     {
         float startVelMag = rb.linearVelocity.magnitude;
         int shotCount = 0;
-        List<float> forceAmounts = new List<float>() { 150f, 100f, 100f };
+        List<float> forceAmounts = new List<float>() { 125f, 50f, 100f };
         rb.linearDamping = .03f;
 
         while(shotCount < 3)
@@ -871,7 +871,11 @@ public class BatteryController : MonoBehaviour
                 }
                 yield return new WaitForSeconds(.15f);
                 shotCount++;
-            }  
+            }
+            else
+            {
+                shotCount = 99999;
+            }
         }
 
         rb.linearDamping = .01f;

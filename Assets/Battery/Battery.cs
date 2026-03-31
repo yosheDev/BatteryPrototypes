@@ -22,13 +22,13 @@ public class Battery : MonoBehaviour
     #region Arithmetic
     public void AddPercent(byte amount)
     {
-        if ((int)percent + amount < 0)
+        if (percent + amount < 0)
         {
             percent = (byte)0;
             onPercentChanged?.Invoke();
             return;
         }
-        else if ((int)percent + amount > 100)
+        else if (percent + amount > 100)
         {
             percent = (byte)100;
             onPercentChanged?.Invoke();
@@ -51,13 +51,13 @@ public class Battery : MonoBehaviour
 
     public void SubtractPercent(byte amount)
     {
-        if ((int)percent - amount < 0)
+        if (percent - amount < 0)
         {
             percent = (byte)0;
             onPercentChanged?.Invoke();
             return;
         }
-        else if ((int)percent - amount > 100)
+        else if (percent - amount > 100)
         {
             percent = (byte)100;
             onPercentChanged?.Invoke();
