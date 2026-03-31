@@ -12,6 +12,7 @@ using Unity.VisualScripting;
 public class BatteryController : MonoBehaviour
 {
     #region Properties
+    #region References
     [Header("References")]
     [SerializeField] private GameObject scalePivot;
     [SerializeField] private GameObject weldBlob;
@@ -27,10 +28,12 @@ public class BatteryController : MonoBehaviour
     public TractorBeamVFX posTractorBeamVFX;
     public MagneticSurface negativeMag;
     public TractorBeamVFX negTractorBeamVFX;
+    #endregion
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
 
+    [HideInInspector] private bool isGrounded = false;
     // Weld
     public float weldAngleClamp = 75f;
     [SerializeField] private LayerMask weldLayerMask;
@@ -38,18 +41,22 @@ public class BatteryController : MonoBehaviour
     // Launch
     [SerializeField] private float launchMaxExponent = 1.13f;
     [SerializeField] private float launchBaseConstant = 500f;
+    private float launchBatteryDrain = 20;
 
+    // Shot
+    private bool isShootDisabled = false;
+    private byte shotBatteryDrain = 5;
     // Battery
     [HideInInspector] public Battery battery;
 
     [HideInInspector] public float playerGravity;
 
+    #region Audio
     [Header("Audio")]
-
     [SerializeField] private AudioSource sfxSurfaceGeneric;
     [SerializeField] private AudioSource sfxSurfaceMagnet;
     [SerializeField] private AudioSource sfxMagneticBeam;
-
+    #endregion
     //==============================================================================================================================
     #region Private
     // Surface Parent
@@ -208,6 +215,54 @@ public class BatteryController : MonoBehaviour
         // If not in a room transition.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
         {
+            #region Determine Grounded State
+            if (weldState != WeldState.None)
+            {
+                isGrounded = true;
+                isShootDisabled = false;
+            }
+            else
+            {
+                if (neutralDetector.neutralDetected)
+                {
+                    RaycastHit2D groundedHit = Physics2D.Raycast(rb.position, Vector2.down, 10f, 1 << LayerMask.NameToLayer("Default"));
+                    if (groundedHit)
+                    {
+                        if (Vector2.Dot(groundedHit.normal, Vector2.up) >= 0.5f)
+                        {
+                            isGrounded = true;
+                            isShootDisabled = false;
+                        }
+                    }
+                    else
+                    {
+                        isGrounded = false;
+                    }
+                }
+                else
+                {
+                    RaycastHit2D attachMagHit = Physics2D.Raycast(rb.position, Vector2.down, 1.35f, 1 << LayerMask.NameToLayer("MagnetSurface"));
+                    if (attachMagHit)
+                    {
+                        isGrounded = true;
+                        isShootDisabled = false;
+                    }
+
+                    isGrounded = false;
+                    if (positiveMag.affectFields.Count + negativeMag.affectFields.Count > 0)
+                    {
+                        // Speed up shoot recovery rate.
+                    }
+                    else
+                    {
+                        // Return shoot recovery rate to normal.
+                    }
+
+                }
+            }
+            
+            #endregion
+
             #region Weld To Surface / Update Weld Surface Data
             // If Weld is inputted.
             if (weldInput)
@@ -720,7 +775,7 @@ public class BatteryController : MonoBehaviour
             }
             else
             {
-                if (battery.GetPercent() >= 25)
+                if (battery.GetPercent() >= launchBatteryDrain)
                 {
                     LaunchFromWeld();
                 }
@@ -785,8 +840,42 @@ public class BatteryController : MonoBehaviour
     
     public void LeftClick(InputAction.CallbackContext context)
     {
-        rb.AddForce(softwareCursor.GetAimDir() * 5f);
-        Debug.Log("Shoot!");
+        if (!context.started || isGrounded || isShootDisabled)
+        {
+            return;
+        }
+
+        isShootDisabled = true;
+
+        #region Burst Shot
+        StartCoroutine(BurstShot());
+        #endregion
+    }
+
+    private IEnumerator BurstShot()
+    {
+        float startVelMag = rb.linearVelocity.magnitude;
+        int shotCount = 0;
+        List<float> forceAmounts = new List<float>() { 150f, 100f, 100f };
+        rb.linearDamping = .03f;
+
+        while(shotCount < 3)
+        {
+            if (battery.GetPercent() > shotBatteryDrain)
+            {
+                battery.SubtractPercent(shotBatteryDrain);
+                if (rb.linearVelocity.magnitude - startVelMag < 5f)
+                {
+                    rb.AddForce(softwareCursor.GetAimDir() * forceAmounts[shotCount]);
+                    sfxSurfaceMagnet.Play();
+                }
+                yield return new WaitForSeconds(.15f);
+                shotCount++;
+            }  
+        }
+
+        rb.linearDamping = .01f;
+        yield break;
     }
     #endregion
     public void ChangeWeldState(WeldState newState)
@@ -927,7 +1016,7 @@ public class BatteryController : MonoBehaviour
         //weldInput = false; /// Flush input (uncommenting means players will need to repress space to weld to another surface after launch.)
         StartCoroutine(LockWeldState(.2f));
 
-        battery.SubtractPercent(FunctionLibraryF.MapRangeClamped(.25f, 1f, 4f, 20f, softwareCursor.GetLaunchAlpha()));
+        battery.SubtractPercent(FunctionLibraryF.MapRangeClamped(.25f, 1f, 4f, launchBatteryDrain, softwareCursor.GetLaunchAlpha()));
 
         float launchForce = Mathf.Pow(launchBaseConstant, FunctionLibraryF.MapRangeClamped(0f, 1f, 1.1f, launchMaxExponent, softwareCursor.GetLaunchAlpha()));
         rb.AddForceAtPosition(-playerWeldMag.transform.up * launchForce, playerWeldMag.transform.position);
