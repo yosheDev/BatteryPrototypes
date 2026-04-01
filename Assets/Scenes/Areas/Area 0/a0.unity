@@ -119,6 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &6754238 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7819478811370910259, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 159300435}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &93452004 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1054502265016936750, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
@@ -365,6 +376,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3105146972456289778, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: m_Volume
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4289535551989248043, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: m_Name
       value: AreaManager
@@ -388,11 +403,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: 0.028410792
+      value: -5.56
       objectReference: {fileID: 0}
     - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: -0.0046361685
+      value: -9.05
       objectReference: {fileID: 0}
     - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: visObjTest
@@ -409,7 +424,7 @@ PrefabInstance:
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: batterySlider
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2144804645}
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: playerBattery
       value: 
@@ -417,14 +432,14 @@ PrefabInstance:
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: playerLivesText
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6754238}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.028410792
+      value: -5.56
       objectReference: {fileID: 0}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0046361685
+      value: -9.05
       objectReference: {fileID: 0}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalPosition.z
@@ -523,6 +538,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
   m_PrefabInstance: {fileID: 1515492325}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2144804645 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4629887031375558571, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 159300435}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1001 &2476134751011327115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -614,15 +640,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1279020731569833818, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.828739
+      value: -11.4171505
       objectReference: {fileID: 0}
     - target: {fileID: 1279020731569833818, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.2320461
+      value: -11.2774105
       objectReference: {fileID: 0}
     - target: {fileID: 1806027618725748036, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_Aperture
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1806027618725748036, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: field of view
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1806027618725748036, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_Curvature.y
@@ -690,11 +720,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578456198219527783, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.828739
+      value: -11.4171505
       objectReference: {fileID: 0}
     - target: {fileID: 6578456198219527783, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.2320461
+      value: -11.2774105
       objectReference: {fileID: 0}
     - target: {fileID: 6627629801027345211, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: Targets.Array.data[0].Object
@@ -702,11 +732,15 @@ PrefabInstance:
       objectReference: {fileID: 1515492334}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.828739
+      value: -11.4171505
       objectReference: {fileID: 0}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.2320461
+      value: -11.2774105
+      objectReference: {fileID: 0}
+    - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 6646184805457534860, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_Name

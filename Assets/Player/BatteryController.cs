@@ -1078,16 +1078,16 @@ public class BatteryController : MonoBehaviour
     }
     public void Restart()
     {
-        // TO DO: Should this reload room completely? Need to go about resetting the state of the room.
-        // NOTE: Make sure restarting does NOT use up a player life.
         if (AreaManager.instance.roomManager.doesResetFullyReloadLevel)
         {
             AreaManager.instance.ReloadCurrentRoom();
+            battery.SetPercent(GameInstance.instance.roomStartBattery);
         }
         else
         {
             transform.position = startPos;
             rb.linearVelocity = Vector3.zero;
+            battery.SetPercent(GameInstance.instance.roomStartBattery);
         } 
     }
 
@@ -1096,15 +1096,29 @@ public class BatteryController : MonoBehaviour
         // TO DO: Ensure reset room state when respawning in the same room.
         // TO DO: Reset battery percentage to be what is was upon entering the room.
         // TO DO: Checkpoint logic
-        if (GameInstance.instance.playerLives <= 0)
+        switch(GameInstance.instance.difficulty)
         {
-            AreaManager.instance.Respawn();
+            case GameInstance.GameDifficulty.Easy:
+                Restart();
+                break;
+
+            case GameInstance.GameDifficulty.Normal:
+                if (GameInstance.instance.playerLives <= 0)
+                {
+                    AreaManager.instance.Respawn();
+                }
+                else
+                {
+                    GameInstance.instance.SetPlayerLives((byte)(GameInstance.instance.playerLives - 1));
+                    Restart();
+                }
+                break;
+
+            case GameInstance.GameDifficulty.Hardcore:
+                break;
+            default:
+                break;
         }
-        else
-        {
-            GameInstance.instance.SetPlayerLives((byte)(GameInstance.instance.playerLives - 1));
-            Restart();
-        }    
     }
 
     public void OnTriggerEnter2D(Collider2D collision)

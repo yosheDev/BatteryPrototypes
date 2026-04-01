@@ -24,6 +24,7 @@ public class RoomManager : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
+        GameInstance.instance.roomStartBattery = GameObject.FindAnyObjectByType<BatteryController>().battery.GetPercent();
         respawnPos = (Vector2)gameObject.transform.position;
         if (isCheckpointRoom)
         {

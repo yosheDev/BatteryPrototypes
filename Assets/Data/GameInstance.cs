@@ -2,10 +2,19 @@ using UnityEngine;
 
 public class GameInstance : MonoBehaviour
 {
+    public enum GameDifficulty
+    {
+        Easy,
+        Normal,
+        Hardcore
+    }
     // NOTES:
     // I believe the goal for this class will be to keep data that could be wanted at any given time in any scene. This class will likely communicate directly with save/load system and data and cache certain parts of it when needed.
     // Will likely call save game / load game from this script.
     // This script could also possible keep track of application data if not already tracked by Unity.
+
+    [Header("Game Data")]
+    public GameDifficulty difficulty;
 
     [Header("Player Data")]
     public byte playerLives = 5;
