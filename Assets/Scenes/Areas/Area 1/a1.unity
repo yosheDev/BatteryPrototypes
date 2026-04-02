@@ -300,6 +300,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!4 &237103083 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+  m_PrefabInstance: {fileID: 1515492325}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &785512078
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -355,7 +360,7 @@ PrefabInstance:
     - target: {fileID: 6627629801027345211, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: Targets.Array.data[0].Object
       value: 
-      objectReference: {fileID: 1201116645}
+      objectReference: {fileID: 237103083}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.05746
@@ -484,22 +489,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
---- !u!4 &1201116645 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1201116646 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-  m_PrefabInstance: {fileID: 1515492325}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd2ce268e6f98264bb1a10f60fc76490, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BatteryController
 --- !u!1001 &1212553033
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -515,7 +504,7 @@ PrefabInstance:
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: playerController
       value: 
-      objectReference: {fileID: 1201116646}
+      objectReference: {fileID: 0}
     - target: {fileID: 964199039054461169, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.6499996
@@ -579,11 +568,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: -37.91
+      value: -2.6499996
       objectReference: {fileID: 0}
     - target: {fileID: 833065636794077562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: -0.29999995
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000558570038641704, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_Distance
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: visObjTest
@@ -649,6 +642,10 @@ PrefabInstance:
       propertyPath: m_Parameters.m_EndRange
       value: 1.4585261
       objectReference: {fileID: 0}
+    - target: {fileID: 6563665004846503657, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: mainCam
       value: 
@@ -660,6 +657,14 @@ PrefabInstance:
     - target: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: surfaceCol
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592402005633591479, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_Angle
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 8592402005633591479, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

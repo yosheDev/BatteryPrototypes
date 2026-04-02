@@ -1897,8 +1897,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.2963783, y: 1.9717329}
-  m_EdgeRadius: 0.22
+  m_Size: {x: 0.37, y: 2.06}
+  m_EdgeRadius: 0.17
 --- !u!50 &6563665004846503657
 Rigidbody2D:
   serializedVersion: 5
@@ -1912,8 +1912,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0.01
-  m_AngularDamping: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 935316eb34b4edf4c8cfe596a99e03ec, type: 2}
   m_IncludeLayers:
@@ -1925,7 +1925,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &7553798359228777383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2145,7 +2145,9 @@ MonoBehaviour:
   posTractorBeamVFX: {fileID: 5323207232177294541}
   negativeMag: {fileID: 2989805380013838047}
   negTractorBeamVFX: {fileID: 6242327048165954340}
-  rotationFactor: 30
+  rotationFactor: 50
+  rotationTorqueFactor: 3
+  rotationTorqueDrag: 0.1
   weldAngleClamp: 75
   weldLayerMask:
     serializedVersion: 2
