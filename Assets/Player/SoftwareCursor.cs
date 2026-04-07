@@ -14,6 +14,8 @@ public class SoftwareCursor : MonoBehaviour
     public LaunchAimControlMethods launchAimControlMethod = LaunchAimControlMethods.FreeRange;
     private Vector2 localPos;
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
+    private Vector2 lastFramePos = new Vector2(0f, 0f);
+    //[HideInInspector] public float velocity = 0f;
     public GameObject parentForPos;
     private Vector3 parentLastPos;
     private Quaternion parentLastRot = Quaternion.identity;
@@ -31,6 +33,9 @@ public class SoftwareCursor : MonoBehaviour
 
     void Update()
     {
+        //velocity = ((Vector2)transform.position - lastFramePos).magnitude / Time.deltaTime;
+        lastFramePos = transform.position;
+
         #region Adjust For Parent Rotation Angle
         if (batteryController.GetParentSource() == null)
         {
@@ -132,6 +137,7 @@ public class SoftwareCursor : MonoBehaviour
         // Update Local Pos (maybe make this its own function later if launch aim rework agrees with it. Also the aimDir set below? The clamping is different in Free LaunchAim so maybe not?)
         if (!justWelded)
         {
+            Debug.Log(batteryController.mouseDelta * .02f);
             localPos += (batteryController.mouseDelta * .02f);
             localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2.5f, 2.5f)));
         }
@@ -194,7 +200,7 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
-                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos == batteryController.positiveMag.gameObject ? .8f + playerSpriteLength + cursorDistanceTweak : .8f + cursorDistanceTweak));
+                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos == batteryController.positiveMag.gameObject ? .5f + playerSpriteLength + cursorDistanceTweak : .5f + cursorDistanceTweak));
                 worldPos = (Vector2)parentForPos.transform.position + localPos;
                 transform.position = worldPos;
             }
