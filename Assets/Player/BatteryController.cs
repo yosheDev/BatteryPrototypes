@@ -284,7 +284,7 @@ public class BatteryController : MonoBehaviour
             #endregion
 
             #region Prevent Fast Rotation Into Floors
-            if (posPreventer.neutralDetected && negPreventer.neutralDetected)
+            if (posPreventer.neutralDetected || negPreventer.neutralDetected)
             {
                 rb.angularDamping = 80f;
             }
