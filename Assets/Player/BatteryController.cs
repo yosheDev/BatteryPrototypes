@@ -295,6 +295,9 @@ public class BatteryController : MonoBehaviour
             #endregion
 
             #region Weld To Surface / Update Weld Surface Data
+
+            Collider2D evalAttractSurface = null; /// Used for non-welding states to know if they are pressed against a magnet surface or not.
+
             // If Weld is inputted.
             if (weldInput)
             {
@@ -405,7 +408,7 @@ public class BatteryController : MonoBehaviour
             else if (!weldInput && weldState == WeldState.None && !lockWeldState)
             {
                 #region Reduce Gravity When Touching Mag Surface (Game Feel for Climbing / Sticking)
-                Collider2D evalAttractSurface = null;
+                
 
                 Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
                 Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
@@ -493,8 +496,10 @@ public class BatteryController : MonoBehaviour
             #region Weld State Update Functionality
             if (weldState == WeldState.None)
             {
-                if (true)
+                // If is NOT touching a magnet or like within range of magnet.
+                if (evalAttractSurface == null)
                 {
+                    Debug.Log("Moving with NEWER");
                     // Side Torque for stabilization
                     float currentAngle = rb.rotation;
                     float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
@@ -517,26 +522,21 @@ public class BatteryController : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.Log("OG");
+                    Debug.Log("Moving with OG");
                     // If on a neutral surface, use rigidbody for foddian movement or walk around.
                     if (neutralDetector.neutralDetected)
                     {
                         //Debug.Log("Neutral is detected!");
                         intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
                         rb.MoveRotation(intermediateRot);
-                        //if (velocity > 10f)
-                        //{
-                        //    rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
-                        //Debug.Log("Neutral Detected  - Clamping velocity to 10.");
-                        //}
                     }
                     else
                     {
                         // Manually Update Transforms to face software cursor.
-                        //transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-                        intermediateRot = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-                        rb.MoveRotation(intermediateRot);
-                        //intermediateRot = transform.rotation;
+                        transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                        //intermediateRot = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                        //rb.MoveRotation(intermediateRot);
+                        intermediateRot = transform.rotation;
                     }
                 }
             }

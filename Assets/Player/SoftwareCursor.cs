@@ -137,7 +137,6 @@ public class SoftwareCursor : MonoBehaviour
         // Update Local Pos (maybe make this its own function later if launch aim rework agrees with it. Also the aimDir set below? The clamping is different in Free LaunchAim so maybe not?)
         if (!justWelded)
         {
-            Debug.Log(batteryController.mouseDelta * .02f);
             localPos += (batteryController.mouseDelta * .02f);
             localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2.5f, 2.5f)));
         }
