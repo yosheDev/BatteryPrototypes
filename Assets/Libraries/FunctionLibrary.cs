@@ -35,5 +35,13 @@ namespace FunctionLibrary
         }
         public static bool IsInLayerMask(GameObject obj, LayerMask mask) => (mask.value & (1 << obj.layer)) != 0;
         public static bool IsInLayerMask(int layer, LayerMask mask) => (mask.value & (1 << layer)) != 0;
+
+        public static Vector2 ClampMagnitudeRange(Vector2 v, float max, float min)
+        {
+            double sm = v.sqrMagnitude;
+            if (sm > (double)max * (double)max) return v.normalized * max;
+            else if (sm < (double)min * (double)min) return v.normalized * min;
+            return v;
+        }
     }
 }

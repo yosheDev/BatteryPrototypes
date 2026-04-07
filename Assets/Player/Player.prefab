@@ -987,6 +987,94 @@ ParticleSystemForceField:
         m_RotationOrder: 4
     m_MultiplyDragByParticleSize: 1
     m_MultiplyDragByParticleVelocity: 1
+--- !u!1 &2971469082456212838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4922851825122214788}
+  - component: {fileID: 4684828768420616002}
+  - component: {fileID: 4683190839822738937}
+  m_Layer: 0
+  m_Name: NegFastRotationPreventer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4922851825122214788
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2971469082456212838}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.018, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3630706780392114562}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &4684828768420616002
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2971469082456212838}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 2.2, y: 0.54}
+  m_Direction: 1
+--- !u!114 &4683190839822738937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2971469082456212838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc1e8dbb89510c4790d3cd847ab318e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFastRotationPreventer
+  batteryController: {fileID: 8047242034082428540}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
+  neutralDetected: 0
+  charge: 0
 --- !u!1 &4644490251549961983
 GameObject:
   m_ObjectHideFlags: 0
@@ -1788,6 +1876,8 @@ Transform:
   - {fileID: 2941665126616726414}
   - {fileID: 2457281506785981380}
   - {fileID: 652112300881806616}
+  - {fileID: 3732591403248668177}
+  - {fileID: 4922851825122214788}
   - {fileID: 6097647039660893970}
   - {fileID: 3170367064088638647}
   - {fileID: 4443011902334099594}
@@ -1897,8 +1987,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.2963783, y: 1.9717329}
-  m_EdgeRadius: 0.22
+  m_Size: {x: 0.37, y: 2.06}
+  m_EdgeRadius: 0.17
 --- !u!50 &6563665004846503657
 Rigidbody2D:
   serializedVersion: 5
@@ -1912,8 +2002,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0.01
-  m_AngularDamping: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 935316eb34b4edf4c8cfe596a99e03ec, type: 2}
   m_IncludeLayers:
@@ -1925,7 +2015,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!114 &7553798359228777383
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2095,6 +2185,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: a52eea2e-a5c5-4e53-ab80-326009127d21
     m_ActionName: 'Player/LeftClick[/Mouse/leftButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8047242034082428540}
+        m_TargetAssemblyTypeName: BatteryController, Assembly-CSharp
+        m_MethodName: RightClick
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: f2317761-bb96-493f-a7c7-6ec77f074b72
+    m_ActionName: 'Player/RightClick[/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: KeyboardAndMouse
   m_DefaultActionMap: Player
@@ -2145,7 +2251,11 @@ MonoBehaviour:
   posTractorBeamVFX: {fileID: 5323207232177294541}
   negativeMag: {fileID: 2989805380013838047}
   negTractorBeamVFX: {fileID: 6242327048165954340}
-  rotationFactor: 30
+  posPreventer: {fileID: 330613524148996668}
+  negPreventer: {fileID: 4683190839822738937}
+  rotationFactor: 50
+  rotationTorqueFactor: 8
+  rotationTorqueDrag: 0.2
   weldAngleClamp: 75
   weldLayerMask:
     serializedVersion: 2
@@ -2703,6 +2813,7 @@ MonoBehaviour:
   batteryController: {fileID: 8047242034082428540}
   cursorDistanceTweak: 0
   launchAimControlMethod: 1
+  velocity: 0
   parentForPos: {fileID: 5159612945940311858}
 --- !u!1 &6195558018165382177
 GameObject:
@@ -2809,6 +2920,94 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &6329944712284458527
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3732591403248668177}
+  - component: {fileID: 9098750527568579460}
+  - component: {fileID: 330613524148996668}
+  m_Layer: 0
+  m_Name: PosFastRotationPreventer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3732591403248668177
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6329944712284458527}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.901, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3630706780392114562}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!70 &9098750527568579460
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6329944712284458527}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 2.2, y: 0.54}
+  m_Direction: 1
+--- !u!114 &330613524148996668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6329944712284458527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc1e8dbb89510c4790d3cd847ab318e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerFastRotationPreventer
+  batteryController: {fileID: 8047242034082428540}
+  mask:
+    serializedVersion: 2
+    m_Bits: 1
+  neutralDetected: 0
+  charge: 1
 --- !u!1 &7547158745546023232
 GameObject:
   m_ObjectHideFlags: 0

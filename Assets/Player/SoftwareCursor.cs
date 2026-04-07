@@ -1,7 +1,6 @@
 using UnityEngine;
 using FunctionLibrary;
 using System.Collections;
-using UnityEngine.UIElements;
 
 public class SoftwareCursor : MonoBehaviour
 {
@@ -15,6 +14,8 @@ public class SoftwareCursor : MonoBehaviour
     public LaunchAimControlMethods launchAimControlMethod = LaunchAimControlMethods.FreeRange;
     private Vector2 localPos;
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
+    private Vector2 lastFramePos = new Vector2(0f, 0f);
+    //[HideInInspector] public float velocity = 0f;
     public GameObject parentForPos;
     private Vector3 parentLastPos;
     private Quaternion parentLastRot = Quaternion.identity;
@@ -32,6 +33,9 @@ public class SoftwareCursor : MonoBehaviour
 
     void Update()
     {
+        //velocity = ((Vector2)transform.position - lastFramePos).magnitude / Time.deltaTime;
+        lastFramePos = transform.position;
+
         #region Adjust For Parent Rotation Angle
         if (batteryController.GetParentSource() == null)
         {

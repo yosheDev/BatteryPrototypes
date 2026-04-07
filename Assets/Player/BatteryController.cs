@@ -1,13 +1,13 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
+using FunctionLibrary;
+using Magnet;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using System.Linq;
-using Magnet;
-using FunctionLibrary;
-using UnityEditor.Experimental.GraphView;
+using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class BatteryController : MonoBehaviour
 {
@@ -29,10 +29,15 @@ public class BatteryController : MonoBehaviour
     public MagneticSurface negativeMag;
     public TractorBeamVFX negTractorBeamVFX;
     private FerroProjectilePool projectilePool;
+    [SerializeField] private PlayerFastRotationPreventer posPreventer;
+    [SerializeField] private PlayerFastRotationPreventer negPreventer;
     #endregion
 
     [Header("Control Settings")]
     [SerializeField] private float rotationFactor;
+    [SerializeField] private float rotationTorqueFactor = 8f;
+    [SerializeField] private float rotationTorqueDrag = .2f;
+    private float angularRotVelocity; // Used for smooth damp.
 
     [HideInInspector] private bool isGrounded = false;
     // Weld
@@ -216,6 +221,7 @@ public class BatteryController : MonoBehaviour
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
         #endregion
 
+        #region Passive Battery Regeneration
         if (velocity <= .1f)
         {
             battery.regenerationRate = .75f;
@@ -224,6 +230,7 @@ public class BatteryController : MonoBehaviour
         {
             battery.regenerationRate = 1.5f;
         }
+        #endregion
 
         // If not in a room transition.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
@@ -276,7 +283,21 @@ public class BatteryController : MonoBehaviour
 
             #endregion
 
+            #region Prevent Fast Rotation Into Floors
+            if (posPreventer.neutralDetected && negPreventer.neutralDetected)
+            {
+                rb.angularDamping = 80f;
+            }
+            else
+            {
+                rb.angularDamping = Mathf.SmoothDamp(rb.angularDamping, .01f, ref angularRotVelocity, .1f);
+            }
+            #endregion
+
             #region Weld To Surface / Update Weld Surface Data
+
+            Collider2D evalAttractSurface = null; /// Used for non-welding states to know if they are pressed against a magnet surface or not.
+
             // If Weld is inputted.
             if (weldInput)
             {
@@ -386,8 +407,8 @@ public class BatteryController : MonoBehaviour
             }
             else if (!weldInput && weldState == WeldState.None && !lockWeldState)
             {
-                #region Reduce Gravity When Touching Surface (Game Feel for Climbing / Sticking)
-                Collider2D evalAttractSurface = null;
+                #region Reduce Gravity When Touching Mag Surface (Game Feel for Climbing / Sticking)
+                
 
                 Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
                 Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
@@ -475,25 +496,49 @@ public class BatteryController : MonoBehaviour
             #region Weld State Update Functionality
             if (weldState == WeldState.None)
             {
-                // If on a neutral surface, use rigidbody for foddian movement or walk around.
-                if (neutralDetector.neutralDetected)
+                // If is NOT touching a magnet or like within range of magnet.
+                if (evalAttractSurface == null)
                 {
-                    //Debug.Log("Neutral is detected!");
-                    intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
-                    rb.MoveRotation(intermediateRot);
-                    if (velocity > 10f)
-                    {
-                        rb.linearVelocity = Vector2.ClampMagnitude(rb.linearVelocity.normalized, 10f);
-                        //Debug.Log("Neutral Detected  - Clamping velocity to 10.");
-                    }
+                    Debug.Log("Moving with NEWER");
+                    // Side Torque for stabilization
+                    float currentAngle = rb.rotation;
+                    float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
+                    float torque = angleDifference;
+                    rb.AddTorque(torque * Time.fixedDeltaTime);
+
+                    // Drag
+                    //rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, Mathf.Min(0f, rb.angularVelocity / 2f), Time.fixedDeltaTime * 2f);
+
+
+                    // Correct Torque for aiming to software cursor
+                    Vector3 dirA = transform.rotation * Vector3.up;
+                    Vector3 dirB = targetAimQuat * Vector3.up;
+                    float signedAngle = Vector3.SignedAngle(dirA, dirB, Vector3.forward);
+                    float torqueAmount = (Mathf.Abs(signedAngle) <= 90f ? signedAngle : 90f * Mathf.Sign(signedAngle)) * rotationTorqueFactor;
+                    rb.AddTorque(torqueAmount, ForceMode2D.Force);
+
+                    // Damping
+                    rb.AddTorque(-rb.angularVelocity * rotationTorqueDrag, ForceMode2D.Force);
                 }
                 else
                 {
-                    // Manually Update Transforms to face software cursor.
-                    transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-                    intermediateRot = transform.rotation;
+                    Debug.Log("Moving with OG");
+                    // If on a neutral surface, use rigidbody for foddian movement or walk around.
+                    if (neutralDetector.neutralDetected)
+                    {
+                        //Debug.Log("Neutral is detected!");
+                        intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
+                        rb.MoveRotation(intermediateRot);
+                    }
+                    else
+                    {
+                        // Manually Update Transforms to face software cursor.
+                        transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                        //intermediateRot = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                        //rb.MoveRotation(intermediateRot);
+                        intermediateRot = transform.rotation;
+                    }
                 }
-
             }
             else if (weldState == WeldState.Welded)
             {
@@ -721,7 +766,7 @@ public class BatteryController : MonoBehaviour
 
     public void UpdateMouseDelta(InputAction.CallbackContext context)
     {
-        mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : mouseDelta; /// Magnitude check protects against mouse connectivity errors.
+        mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
     }
 
     public void Scout(InputAction.CallbackContext context)
@@ -895,6 +940,11 @@ public class BatteryController : MonoBehaviour
         rb.linearDamping = .01f;
         yield break;
     }
+
+    public void RightClick(InputAction.CallbackContext context)
+    {
+        Debug.Log("Right click test");
+    }
     #endregion
     public void ChangeWeldState(WeldState newState)
     {
@@ -958,6 +1008,7 @@ public class BatteryController : MonoBehaviour
                 weldedSurface = null;
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(gameObject);
                 rotationFactor = 30f;
+                rb.constraints = RigidbodyConstraints2D.None;
                 gameObject.GetComponent<HingeJoint2D>().enabled = false;
                 gameObject.GetComponent<HingeJoint2D>().enabled = false;
                 weldBlob.SetActive(false);
@@ -974,6 +1025,7 @@ public class BatteryController : MonoBehaviour
                 }
                     
                 rotationFactor = 15f;
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 UpdateScalePivotTransforms();
                 gameObject.transform.parent = scalePivot.transform;
                 // Set anchor data for the hingejoint
