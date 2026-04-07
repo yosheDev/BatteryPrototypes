@@ -8,7 +8,6 @@ public class PlayerFace : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Debug.Log(batteryController.GetRigidBody().angularVelocity);
         if (Mathf.Abs(batteryController.GetRigidBody().angularVelocity) < 180f)
         {
             // Interp back to neutral rotation.

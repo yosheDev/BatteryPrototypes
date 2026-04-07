@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2558605670993023090}
   m_Layer: 0
   m_Name: Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1092,7 +1092,7 @@ GameObject:
   - component: {fileID: 4683190839822738937}
   m_Layer: 0
   m_Name: NegFastRotationPreventer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3159,7 +3159,7 @@ GameObject:
   - component: {fileID: 330613524148996668}
   m_Layer: 0
   m_Name: PosFastRotationPreventer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3247,7 +3247,7 @@ GameObject:
   - component: {fileID: 2584491016241001540}
   m_Layer: 0
   m_Name: NeutralFloorDetector
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3509,7 +3509,7 @@ GameObject:
   - component: {fileID: 2649839604640953938}
   m_Layer: 0
   m_Name: ParentSurfaceDetector
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

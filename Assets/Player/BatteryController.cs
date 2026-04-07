@@ -499,7 +499,6 @@ public class BatteryController : MonoBehaviour
                 // If is NOT touching a magnet or like within range of magnet.
                 if (evalAttractSurface == null)
                 {
-                    Debug.Log("Moving with NEWER");
                     // Side Torque for stabilization
                     float currentAngle = rb.rotation;
                     float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
@@ -522,7 +521,6 @@ public class BatteryController : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Moving with OG");
                     // If on a neutral surface, use rigidbody for foddian movement or walk around.
                     if (neutralDetector.neutralDetected)
                     {
@@ -943,7 +941,82 @@ public class BatteryController : MonoBehaviour
 
     public void RightClick(InputAction.CallbackContext context)
     {
-        Debug.Log("Right click test");
+        if (context.started)
+        {
+            Collider2D[] positiveEndOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + (Vector2)(positiveMag.transform.up * .2f), .5f, 1 << LayerMask.NameToLayer("Default"));
+            Collider2D[] negativeEndOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + (Vector2)(negativeMag.transform.up * .2f), .5f, 1 << LayerMask.NameToLayer("Default"));
+
+            int positiveOverlaps = 0;
+            int negativeOverlaps = 0;
+
+            #region Filter Results
+            for (int i = 0; i < positiveEndOverlap.Length; i++)
+            {
+                if (!positiveEndOverlap[i].gameObject.CompareTag("Player"))
+                {
+                    positiveOverlaps++;
+                }
+                else
+                {
+                    positiveEndOverlap[i] = null;
+                }
+            }
+
+            for (int i = 0; i < negativeEndOverlap.Length; i++)
+            {
+                if (!negativeEndOverlap[i].gameObject.CompareTag("Player"))
+                {
+                    negativeOverlaps++;
+                }
+                else
+                {
+                    negativeEndOverlap[i] = null;
+                }
+            }
+            #endregion
+
+            //Debug.Log(positiveOverlaps + negativeOverlaps);
+            if (positiveOverlaps + negativeOverlaps > 0)
+            {
+                if (positiveOverlaps > 0)
+                {
+                    Vector2 dir = Vector2.zero;
+                    Vector2[] dirs = new Vector2[positiveEndOverlap.Length];
+                    for (int i = 0; i < positiveEndOverlap.Length; i++)
+                    {
+                        if (positiveEndOverlap[i] == null)
+                        {
+                            continue;
+                        }
+                        
+                        dirs[i] = ((Vector2)positiveMag.transform.position - positiveEndOverlap[i].ClosestPoint((Vector2)positiveMag.transform.position)).normalized;
+                        dir += dirs[i];
+                    }
+                    dir /= dirs.Length;
+                    rb.AddForceAtPosition(Vector2.Lerp(dir, -positiveMag.transform.up, 0.5f) * 700f, positiveMag.transform.position);
+                }
+
+                if (negativeOverlaps > 0)
+                {
+                    Vector2 dir = Vector2.zero;
+                    Vector2[] dirs = new Vector2[negativeEndOverlap.Length];
+                    for (int i = 0; i < negativeEndOverlap.Length; i++)
+                    {
+                        if (negativeEndOverlap[i] == null)
+                        {
+                            continue;
+                        }
+                        //Debug.Log(negativeEndOverlap[i]);
+                        dirs[i] = ((Vector2)negativeMag.transform.position - negativeEndOverlap[i].ClosestPoint((Vector2)negativeMag.transform.position)).normalized;
+                        //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + ((Vector3)dirs[i] * 5f), Color.green, 1f);
+                        dir += dirs[i];
+                    }
+                    dir /= dirs.Length;
+                    rb.AddForceAtPosition(Vector2.Lerp(dir, -negativeMag.transform.up, 0.5f) * 700f, negativeMag.transform.position);
+                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + ((Vector3)dir * 5f), Color.red, 1f);
+                }
+            }
+        }
     }
     #endregion
     public void ChangeWeldState(WeldState newState)
