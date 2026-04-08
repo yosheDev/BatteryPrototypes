@@ -34,32 +34,59 @@ public class BatteryController : MonoBehaviour
     #endregion
 
     [Header("Control Settings")]
-    [SerializeField] private float rotationFactor;
+    [SerializeField] private float rotationFactor;              /// Is this deprecated now? Or still used for magnetic surfaces movement.
     [SerializeField] private float rotationTorqueFactor = 8f;
     [SerializeField] private float rotationTorqueDrag = .2f;
     private float angularRotVelocity; // Used for smooth damp.
 
     [HideInInspector] private bool isGrounded = false;
-    // Weld
+
+    #region Abilities
+
+    private byte abilityProgression = 0;    /// Since ability progression is linear, using a byte to store what player has.
+
+    #region Welding
+    // TO DO: Put this into its own component or serializable class.
     public float weldAngleClamp = 75f;
     [SerializeField] private LayerMask weldLayerMask;
+    public enum WeldState
+    {
+        None,
+        Welded,
+        LaunchAim,
+    }
 
-    // Launch
+    [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
+    [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
+    private Collider2D weldedSurface;                           /// Surface player is welded to. Used mostly to get the gameObject.
+    private Vector3 adjustedWeldAimDir;
+    [HideInInspector] public WeldState weldState = WeldState.None;
+    private bool lockWeldState = false;
+
+    #endregion
+
+    #region Launching
+    // TO DO: Put this into its own component or serializable class.
     [SerializeField] private float launchMaxExponent = 1.13f;
     [SerializeField] private float launchBaseConstant = 500f;
     private float launchBatteryDrain = 20;
+    #endregion Launching
 
-    // Shot
+    #region Projectile
+    // TO DO: Put this into its own component or serializable class.
     private bool isShootDisabled = false;
     private byte shotBatteryDrain = 5;
+    #endregion
+
+    #endregion
     // Battery
     [HideInInspector] public Battery battery;
 
     [HideInInspector] public float playerGravity;
-
-    /// TO DO: Make a player audio script to handle all these references.
+    
     #region Audio
     [Header("Audio")]
+    // TO DO: Make a player audio component or script to handle all these references.
     [SerializeField] private AudioSource sfxSurfaceGeneric;
     [SerializeField] private AudioSource sfxSurfaceMagnet;
     [SerializeField] private AudioSource sfxMagneticBeam;
@@ -76,21 +103,7 @@ public class BatteryController : MonoBehaviour
     // Cursor
     [HideInInspector] public Vector2 cursorPosWS;
     [HideInInspector] public Vector2 mouseDelta;
-
-    // Welding
-    public enum WeldState
-    {
-        None,
-        Welded,
-        LaunchAim,
-    }
-
-    [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
-    [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
-    private Collider2D weldedSurface;                           /// Surface player is welded to. Used mostly to get the gameObject.
-    private Vector3 adjustedWeldAimDir;
-    [HideInInspector] public WeldState weldState = WeldState.None;
-    private bool lockWeldState = false;
+    
     private Vector2 playerColOffset;
     private Vector2 playerColSize;
 
@@ -294,427 +307,432 @@ public class BatteryController : MonoBehaviour
             }
             #endregion
 
-            #region Weld To Surface / Update Weld Surface Data
-
             Collider2D evalAttractSurface = null; /// Used for non-welding states to know if they are pressed against a magnet surface or not.
 
-            // If Weld is inputted.
-            if (weldInput)
+            if (abilityProgression > 0) // Does player have magnetism unlocked?
             {
-                #region Weld
-                Collider2D evalWeldSurface = null; /// Surface of the magnet to cling to.
-                bool magCharge = false;            /// The charge of the players magnet that is clinging.
-
-                #region Get Cling Magnet Surface
-                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
-                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
-
-                // Positive
-                if (evalWeldSurface == null)
+                #region Weld To Surface / Update Weld Surface Data
+                // If Weld is inputted.
+                if (weldInput)
                 {
-                    foreach (Collider2D col in positiveOverlap)
+                    #region Weld
+                    Collider2D evalWeldSurface = null; /// Surface of the magnet to cling to.
+                    bool magCharge = false;            /// The charge of the players magnet that is clinging.
+
+                    #region Get Cling Magnet Surface
+                    Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
+                    Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+
+                    // Positive
+                    if (evalWeldSurface == null)
                     {
-                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                        // If can weld to this magnet.
-                        if (curMag != null && curMag._magData.charge == -1)
+                        foreach (Collider2D col in positiveOverlap)
                         {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
-                            bool isOccluded = false;
-                            foreach (RaycastHit2D hit in hits)
+                            MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                            // If can weld to this magnet.
+                            if (curMag != null && curMag._magData.charge == -1)
                             {
-                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                                bool isOccluded = false;
+                                foreach (RaycastHit2D hit in hits)
                                 {
-                                    isOccluded = true;
+                                    if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                    {
+                                        isOccluded = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isOccluded)
+                                {
+                                    evalWeldSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                    magCharge = true; /// Refers to players clinging magnet charge.
                                     break;
                                 }
                             }
-
-                            if (!isOccluded)
-                            {
-                                evalWeldSurface = curMag.gameObject.GetComponent<Collider2D>();
-                                magCharge = true; /// Refers to players clinging magnet charge.
-                                break;
-                            }
                         }
                     }
-                }
 
-                // Negative
-                if (evalWeldSurface == null)
-                {
-                    foreach (Collider2D col in negativeOverlap)
+                    // Negative
+                    if (evalWeldSurface == null)
                     {
-                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                        // If can weld to this magnet.
-                        if (curMag != null && curMag._magData.charge == 1)
+                        foreach (Collider2D col in negativeOverlap)
                         {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
-                            bool isOccluded = false;
-                            foreach (RaycastHit2D hit in hits)
+                            MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                            // If can weld to this magnet.
+                            if (curMag != null && curMag._magData.charge == 1)
                             {
-                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                                bool isOccluded = false;
+                                foreach (RaycastHit2D hit in hits)
                                 {
-                                    isOccluded = true;
+                                    if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                    {
+                                        isOccluded = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isOccluded)
+                                {
+                                    evalWeldSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                    magCharge = false; /// Refers to players clinging magnet charge.
                                     break;
                                 }
                             }
+                        }
+                    }
+                    #endregion
 
-                            if (!isOccluded)
+                    if (evalWeldSurface != null)
+                    {
+                        // Update Weld Vectors to match.
+                        /// (Somewhat expensive, but can't be avoided as this needs done every frame to account for rotating/translating parent surfaces as well as sudden changes to level state.)
+                        weldedSurface = evalWeldSurface;
+                        playerWeldMag = (magCharge ? positiveMag : negativeMag);
+                        Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
+                        // Apply Custom Force
+                        Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f))).normalized;
+                        //Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldedSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
+                        Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+                        //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
+
+                        // Raycast to the point, get normal back.
+                        RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), weldAimDir, 1.5f, weldLayerMask);
+                        foreach (RaycastHit2D hit in hits)
+                        {
+                            if (hit.collider == weldedSurface)
                             {
-                                evalWeldSurface = curMag.gameObject.GetComponent<Collider2D>();
-                                magCharge = false; /// Refers to players clinging magnet charge.
-                                break;
+                                weldSurfaceNormal = hit.normal;
+                            }
+                        }
+
+                        if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
+                        {
+                            ChangeWeldState(WeldState.Welded);
+                        }
+
+                    }
+                    else
+                    {
+                        ChangeWeldState(WeldState.None);
+                    }
+                    #endregion
+                }
+                else if (!weldInput && weldState == WeldState.None && !lockWeldState)
+                {
+                    #region Reduce Gravity When Touching Mag Surface (Game Feel for Climbing / Sticking)
+
+
+                    Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
+                    Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+
+                    // Positive
+                    if (evalAttractSurface == null)
+                    {
+                        foreach (Collider2D col in positiveOverlap)
+                        {
+                            MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                            // If can weld to this magnet.
+                            if (curMag != null && curMag._magData.charge == -1)
+                            {
+                                RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                                bool isOccluded = false;
+                                foreach (RaycastHit2D hit in hits)
+                                {
+                                    if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                    {
+                                        isOccluded = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isOccluded)
+                                {
+                                    evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                #endregion
 
-                if (evalWeldSurface != null)
-                {
-                    // Update Weld Vectors to match.
-                    /// (Somewhat expensive, but can't be avoided as this needs done every frame to account for rotating/translating parent surfaces as well as sudden changes to level state.)
-                    weldedSurface = evalWeldSurface;
-                    playerWeldMag = (magCharge ? positiveMag : negativeMag);
-                    Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
-                    // Apply Custom Force
-                    Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f))).normalized;
-                    //Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldedSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
-                    Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-                    //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
-
-                    // Raycast to the point, get normal back.
-                    RaycastHit2D[] hits = Physics2D.RaycastAll(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f), weldAimDir, 1.5f, weldLayerMask);
-                    foreach (RaycastHit2D hit in hits)
+                    // Negative
+                    if (evalAttractSurface == null)
                     {
-                        if (hit.collider == weldedSurface)
+                        foreach (Collider2D col in negativeOverlap)
                         {
-                            weldSurfaceNormal = hit.normal;
+                            MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                            // If can weld to this magnet.
+                            if (curMag != null && curMag._magData.charge == 1)
+                            {
+                                RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                                bool isOccluded = false;
+                                foreach (RaycastHit2D hit in hits)
+                                {
+                                    if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                    {
+                                        isOccluded = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!isOccluded)
+                                {
+                                    evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                    break;
+                                }
+                            }
                         }
                     }
 
-                    if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
+                    // Reduce gravity
+                    if (evalAttractSurface != null)
                     {
-                        ChangeWeldState(WeldState.Welded);
+                        rb.gravityScale = playerGravity * 0f;
+                        rb.linearDamping = 20f;
                     }
-
+                    else
+                    {
+                        rb.gravityScale = playerGravity;
+                        rb.linearDamping = .01f;
+                    }
+                    #endregion
+                    //Debug.Log(rb.gravityScale);
                 }
                 else
                 {
-                    ChangeWeldState(WeldState.None);
-                }
-                #endregion
-            }
-            else if (!weldInput && weldState == WeldState.None && !lockWeldState)
-            {
-                #region Reduce Gravity When Touching Mag Surface (Game Feel for Climbing / Sticking)
-                
-
-                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
-                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
-
-                // Positive
-                if (evalAttractSurface == null)
-                {
-                    foreach (Collider2D col in positiveOverlap)
-                    {
-                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                        // If can weld to this magnet.
-                        if (curMag != null && curMag._magData.charge == -1)
-                        {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
-                            bool isOccluded = false;
-                            foreach (RaycastHit2D hit in hits)
-                            {
-                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
-                                {
-                                    isOccluded = true;
-                                    break;
-                                }
-                            }
-
-                            if (!isOccluded)
-                            {
-                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // Negative
-                if (evalAttractSurface == null)
-                {
-                    foreach (Collider2D col in negativeOverlap)
-                    {
-                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                        // If can weld to this magnet.
-                        if (curMag != null && curMag._magData.charge == 1)
-                        {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
-                            bool isOccluded = false;
-                            foreach (RaycastHit2D hit in hits)
-                            {
-                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
-                                {
-                                    isOccluded = true;
-                                    break;
-                                }
-                            }
-
-                            if (!isOccluded)
-                            {
-                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                // Reduce gravity
-                if (evalAttractSurface != null)
-                {
-                    rb.gravityScale = playerGravity * 0f;
-                    rb.linearDamping = 20f;
-                }
-                else
-                {
+                    // This is so can still launch off without damping and gravity being different.
                     rb.gravityScale = playerGravity;
                     rb.linearDamping = .01f;
                 }
                 #endregion
-                //Debug.Log(rb.gravityScale);
             }
-            else
-            {
-                // This is so can still launch off without damping and gravity being different.
-                rb.gravityScale = playerGravity;
-                rb.linearDamping = .01f;
-            }
-            #endregion
-
+            
             #region Weld State Update Functionality
-            if (weldState == WeldState.None)
-            {
-                // If is NOT touching a magnet or like within range of magnet.
-                if (evalAttractSurface == null)
+                if (weldState == WeldState.None)
                 {
-                    // Side Torque for stabilization
-                    float currentAngle = rb.rotation;
-                    float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
-                    float torque = angleDifference;
-                    rb.AddTorque(torque * Time.fixedDeltaTime);
-
-                    // Drag
-                    //rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, Mathf.Min(0f, rb.angularVelocity / 2f), Time.fixedDeltaTime * 2f);
-
-
-                    // Correct Torque for aiming to software cursor
-                    Vector3 dirA = transform.rotation * Vector3.up;
-                    Vector3 dirB = targetAimQuat * Vector3.up;
-                    float signedAngle = Vector3.SignedAngle(dirA, dirB, Vector3.forward);
-                    float torqueAmount = (Mathf.Abs(signedAngle) <= 90f ? signedAngle : 90f * Mathf.Sign(signedAngle)) * rotationTorqueFactor;
-                    rb.AddTorque(torqueAmount, ForceMode2D.Force);
-
-                    // Damping
-                    rb.AddTorque(-rb.angularVelocity * rotationTorqueDrag, ForceMode2D.Force);
-                }
-                else
-                {
-                    // If on a neutral surface, use rigidbody for foddian movement or walk around.
-                    if (neutralDetector.neutralDetected)
+                    // If is NOT touching a magnet or like within range of magnet.
+                    if (evalAttractSurface == null)
                     {
-                        //Debug.Log("Neutral is detected!");
-                        intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
-                        rb.MoveRotation(intermediateRot);
+                        // Side Torque for stabilization
+                        float currentAngle = rb.rotation;
+                        float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
+                        float torque = angleDifference;
+                        rb.AddTorque(torque * Time.fixedDeltaTime);
+
+                        // Drag
+                        //rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, Mathf.Min(0f, rb.angularVelocity / 2f), Time.fixedDeltaTime * 2f);
+
+
+                        // Correct Torque for aiming to software cursor
+                        Vector3 dirA = transform.rotation * Vector3.up;
+                        Vector3 dirB = targetAimQuat * Vector3.up;
+                        float signedAngle = Vector3.SignedAngle(dirA, dirB, Vector3.forward);
+                        float torqueAmount = (Mathf.Abs(signedAngle) <= 90f ? signedAngle : 90f * Mathf.Sign(signedAngle)) * rotationTorqueFactor;
+                        rb.AddTorque(torqueAmount, ForceMode2D.Force);
+
+                        // Damping
+                        rb.AddTorque(-rb.angularVelocity * rotationTorqueDrag, ForceMode2D.Force);
                     }
                     else
                     {
-                        // Manually Update Transforms to face software cursor.
-                        transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-                        //intermediateRot = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-                        //rb.MoveRotation(intermediateRot);
-                        intermediateRot = transform.rotation;
+                        // If on a neutral surface, use rigidbody for foddian movement or walk around.
+                        if (neutralDetector.neutralDetected)
+                        {
+                            //Debug.Log("Neutral is detected!");
+                            intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
+                            rb.MoveRotation(intermediateRot);
+                        }
+                        else
+                        {
+                            // Manually Update Transforms to face software cursor.
+                            transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                            //intermediateRot = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                            //rb.MoveRotation(intermediateRot);
+                            intermediateRot = transform.rotation;
+                        }
                     }
                 }
-            }
-            else if (weldState == WeldState.Welded)
-            {
-                Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
-
-                intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-                rb.MoveRotation(intermediateRot);
-
-                scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                scalePivot.transform.rotation = intermediateRot;
-
-                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
-                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
-
-                // Tractor Beam VFX
-                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
-                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
-                posTractorBeamVFX.SetForceMagnitude(0f);
-                negTractorBeamVFX.SetForceMagnitude(0f);
-            }
-            else if (weldState == WeldState.LaunchAim)
-            {
-                Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, (playerWeldMag == positiveMag ? -1f * weldAimDir : weldAimDir));
-
-                ////Physics2D.SyncTransforms();
-                intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-                rb.MoveRotation(intermediateRot);
-
-                // Adjust scale pivot rotation and scale.
-                scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                scalePivot.transform.rotation = intermediateRot;
-
-                // Update player collider size and offset to be even smaller as they squish smaller. This prevents bugs with the rotation causing welding to force exit.
-                gameObject.GetComponent<BoxCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
-                gameObject.GetComponent<BoxCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
-
-                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
-                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
-
-                // Tractor Beam VFX
-                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
-                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
-                posTractorBeamVFX.SetForceMagnitude(0f);
-                negTractorBeamVFX.SetForceMagnitude(0f);
-            }
-            #endregion
-
-            #region Apply Magnetic Forces
-            if (weldState == WeldState.None)
-            {
-                // Get Overlapped Magneting Fields From Magnet Components 
-                /// Handle + and - sides seperately, as those will apply forces at different points of player collider.
-
-                #region Combine Positive Magnet Forces
-                Vector2 combinedPositiveForces = Vector2.zero;
-                Vector2 positiveMagDir = (positiveMag.transform.up).normalized;
-
-                List<MagnetComponentBase> positiveFields = positiveMag.affectFields.ToList();
-                for (int i = 0; i < positiveFields.Count; i++)
+                else if (weldState == WeldState.Welded)
                 {
-                    Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, rb.linearVelocity);
+                    Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                    Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
-                    // Prevent NaN
-                    if (float.IsNaN(curForce.x))
-                    {
-                        curForce = Vector2.zero;
-                    }
+                    intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                    rb.MoveRotation(intermediateRot);
 
-                    Vector2 adjustedAimDir = (positiveFields[i]._magData.charge * positiveMag._magData.charge == -1 ? positiveMagDir : -positiveMagDir);
-                    // Will not be accounted for if pole is facing opposite direction (for game feel.)
-                    if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
-                    {
-                        //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
-                        float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
-                        combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
-                    }
-                }
-                #endregion
+                    scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                    scalePivot.transform.rotation = intermediateRot;
 
-                #region Combine Negative Magnet Forces
-                Vector2 combinedNegativeForces = Vector2.zero;
-                Vector2 negativeMagDir = (negativeMag.transform.up).normalized;
+                    weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                    weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
 
-                List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
-                for (int i = 0; i < negativeFields.Count; i++)
-                {
-                    Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, rb.linearVelocity);
-                    // Prevent NaN
-                    if (float.IsNaN(curForce.x))
-                    {
-                        curForce = Vector2.zero;
-                    }
-
-                    Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
-                    // Will not be accounted for if pole is facing opposite direction (for game feel.)
-                    if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
-                    {
-                        //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
-                        float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
-                        combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
-                    }
-                }
-                #endregion
-
-                // Apply Forces
-
-                float velocityMultiplier = 1f;// FunctionLibraryF.MapRangeClamped(0f, 10f, .8f, 1.15f, velocity);
-                float angularMultiplier = 1f;//FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
-
-                // Positive
-                rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
-                //Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
-
-                if (positiveFields.Count > 0)
-                {
-                    Vector2 posEndPos;
-                    RaycastHit2D posHit = Physics2D.Raycast(positiveMag.transform.position, (combinedPositiveForces.normalized * ((Vector2.Dot(positiveMag.transform.up, combinedPositiveForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
-                    if (posHit)
-                    {
-                        posEndPos = posHit.point;
-                    }
-                    else
-                    {
-                        posEndPos = (Vector2)positiveMag.transform.position + ((combinedPositiveForces.normalized * -5f));
-                    }
-                    posTractorBeamVFX.SetEndPos(posEndPos);
-                    posTractorBeamVFX.SetForceMagnitude(combinedPositiveForces.magnitude);
-                }
-                else
-                {
+                    // Tractor Beam VFX
                     posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
-                    posTractorBeamVFX.SetForceMagnitude(0f);
-                }
-
-                // Negative
-                rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
-                //Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
-
-                if (negativeFields.Count > 0)
-                {
-                    Vector2 negEndPos;
-                    RaycastHit2D negHit = Physics2D.Raycast(negativeMag.transform.position, (combinedNegativeForces.normalized * ((Vector2.Dot(negativeMag.transform.up, combinedNegativeForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
-                    if (negHit)
-                    {
-                        negEndPos = negHit.point;
-                    }
-                    else
-                    {
-                        negEndPos = (Vector2)negativeMag.transform.position + ((combinedNegativeForces.normalized * -5f));
-                    }
-                    //Debug.DrawLine(negEndPos, negEndPos + new Vector2(0f, .5f), Color.darkSalmon, .1f);
-                    negTractorBeamVFX.SetEndPos(negEndPos);
-                    negTractorBeamVFX.SetForceMagnitude(combinedNegativeForces.magnitude);
-                }
-                else
-                {
                     negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                    posTractorBeamVFX.SetForceMagnitude(0f);
                     negTractorBeamVFX.SetForceMagnitude(0f);
                 }
-
-                // SFX
-                if (negativeFields.Count + positiveFields.Count > 0)
+                else if (weldState == WeldState.LaunchAim)
                 {
-                    if (!sfxMagneticBeam.isPlaying)
+                    Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                    Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, (playerWeldMag == positiveMag ? -1f * weldAimDir : weldAimDir));
+
+                    ////Physics2D.SyncTransforms();
+                    intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                    rb.MoveRotation(intermediateRot);
+
+                    // Adjust scale pivot rotation and scale.
+                    scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                    scalePivot.transform.rotation = intermediateRot;
+
+                    // Update player collider size and offset to be even smaller as they squish smaller. This prevents bugs with the rotation causing welding to force exit.
+                    gameObject.GetComponent<BoxCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
+                    gameObject.GetComponent<BoxCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
+
+                    weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                    weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                    // Tractor Beam VFX
+                    posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                    negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                    posTractorBeamVFX.SetForceMagnitude(0f);
+                    negTractorBeamVFX.SetForceMagnitude(0f);
+                }
+            #endregion
+
+            if (abilityProgression > 0) // Does player have magnetism unlocked?
+            {
+                #region Apply Magnetic Forces
+                if (weldState == WeldState.None)
+                {
+                    // Get Overlapped Magneting Fields From Magnet Components 
+                    /// Handle + and - sides seperately, as those will apply forces at different points of player collider.
+
+                    #region Combine Positive Magnet Forces
+                    Vector2 combinedPositiveForces = Vector2.zero;
+                    Vector2 positiveMagDir = (positiveMag.transform.up).normalized;
+
+                    List<MagnetComponentBase> positiveFields = positiveMag.affectFields.ToList();
+                    for (int i = 0; i < positiveFields.Count; i++)
                     {
-                        sfxMagneticBeam.Play();
+                        Vector2 curForce = positiveFields[i].GetAppliedForce(positiveMag._magData, positiveMag.transform.position, positiveMag._fieldAttractDistance, rb.linearVelocity);
+
+                        // Prevent NaN
+                        if (float.IsNaN(curForce.x))
+                        {
+                            curForce = Vector2.zero;
+                        }
+
+                        Vector2 adjustedAimDir = (positiveFields[i]._magData.charge * positiveMag._magData.charge == -1 ? positiveMagDir : -positiveMagDir);
+                        // Will not be accounted for if pole is facing opposite direction (for game feel.)
+                        if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
+                        {
+                            //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
+                            float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                            combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                        }
+                    }
+                    #endregion
+
+                    #region Combine Negative Magnet Forces
+                    Vector2 combinedNegativeForces = Vector2.zero;
+                    Vector2 negativeMagDir = (negativeMag.transform.up).normalized;
+
+                    List<MagnetComponentBase> negativeFields = negativeMag.affectFields.ToList();
+                    for (int i = 0; i < negativeFields.Count; i++)
+                    {
+                        Vector2 curForce = negativeFields[i].GetAppliedForce(negativeMag._magData, negativeMag.transform.position, negativeMag._fieldAttractDistance, rb.linearVelocity);
+                        // Prevent NaN
+                        if (float.IsNaN(curForce.x))
+                        {
+                            curForce = Vector2.zero;
+                        }
+
+                        Vector2 adjustedAimDir = (negativeFields[i]._magData.charge * negativeMag._magData.charge == -1 ? negativeMagDir : -negativeMagDir);
+                        // Will not be accounted for if pole is facing opposite direction (for game feel.)
+                        if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
+                        {
+                            //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
+                            float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                            combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                        }
+                    }
+                    #endregion
+
+                    // Apply Forces
+
+                    float velocityMultiplier = 1f;// FunctionLibraryF.MapRangeClamped(0f, 10f, .8f, 1.15f, velocity);
+                    float angularMultiplier = 1f;//FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
+
+                    // Positive
+                    rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
+                    //Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
+
+                    if (positiveFields.Count > 0)
+                    {
+                        Vector2 posEndPos;
+                        RaycastHit2D posHit = Physics2D.Raycast(positiveMag.transform.position, (combinedPositiveForces.normalized * ((Vector2.Dot(positiveMag.transform.up, combinedPositiveForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
+                        if (posHit)
+                        {
+                            posEndPos = posHit.point;
+                        }
+                        else
+                        {
+                            posEndPos = (Vector2)positiveMag.transform.position + ((combinedPositiveForces.normalized * -5f));
+                        }
+                        posTractorBeamVFX.SetEndPos(posEndPos);
+                        posTractorBeamVFX.SetForceMagnitude(combinedPositiveForces.magnitude);
+                    }
+                    else
+                    {
+                        posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                        posTractorBeamVFX.SetForceMagnitude(0f);
                     }
 
-                    sfxMagneticBeam.volume = FunctionLibraryF.MapRangeClamped(0f, 30f, 0f, 1f, (combinedNegativeForces + combinedPositiveForces).magnitude) * FunctionLibraryF.MapRangeClamped(0f, 2f, .2f, 1f, velocity);
+                    // Negative
+                    rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
+                    //Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
+
+                    if (negativeFields.Count > 0)
+                    {
+                        Vector2 negEndPos;
+                        RaycastHit2D negHit = Physics2D.Raycast(negativeMag.transform.position, (combinedNegativeForces.normalized * ((Vector2.Dot(negativeMag.transform.up, combinedNegativeForces.normalized) >= 0) ? 1 : -1)), 100f, 1 << 8);
+                        if (negHit)
+                        {
+                            negEndPos = negHit.point;
+                        }
+                        else
+                        {
+                            negEndPos = (Vector2)negativeMag.transform.position + ((combinedNegativeForces.normalized * -5f));
+                        }
+                        //Debug.DrawLine(negEndPos, negEndPos + new Vector2(0f, .5f), Color.darkSalmon, .1f);
+                        negTractorBeamVFX.SetEndPos(negEndPos);
+                        negTractorBeamVFX.SetForceMagnitude(combinedNegativeForces.magnitude);
+                    }
+                    else
+                    {
+                        negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                        negTractorBeamVFX.SetForceMagnitude(0f);
+                    }
+
+                    // SFX
+                    if (negativeFields.Count + positiveFields.Count > 0)
+                    {
+                        if (!sfxMagneticBeam.isPlaying)
+                        {
+                            sfxMagneticBeam.Play();
+                        }
+
+                        sfxMagneticBeam.volume = FunctionLibraryF.MapRangeClamped(0f, 30f, 0f, 1f, (combinedNegativeForces + combinedPositiveForces).magnitude) * FunctionLibraryF.MapRangeClamped(0f, 2f, .2f, 1f, velocity);
+                    }
+                    else
+                    {
+                        sfxMagneticBeam.Stop();
+                    }
                 }
-                else
-                {
-                    sfxMagneticBeam.Stop();
-                }
+                #endregion
             }
-            #endregion
 
             #region Scouting
             if (scoutState == ScoutState.Scouting)
@@ -754,14 +772,6 @@ public class BatteryController : MonoBehaviour
     }
 
     #region Input Actions
-    public void DebugSkipToNextRoom()   // Remove this in builds.
-    {
-        if (Application.isEditor)
-        {
-            AreaManager.instance.ReachedObjective(GameObject.FindAnyObjectByType<roomObjective>().gameObject);
-        }
-    }
-
     public void UpdateMouseDelta(InputAction.CallbackContext context)
     {
         mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
@@ -795,27 +805,33 @@ public class BatteryController : MonoBehaviour
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.Spawn))
         {
             AreaManager.instance.ReleasePlayer();
+            ChangeWeldState(WeldState.None);
+            weldInput = false;
         }
 
         else
         {
-            if (context.canceled)
+            // Does player have magnetism unlocked?
+            if (abilityProgression > 0)
             {
-                if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
+                if (context.canceled)
                 {
-                    softwareCursor.InvertLocalPos();
+                    if (weldState == WeldState.LaunchAim && playerWeldMag == positiveMag)
+                    {
+                        softwareCursor.InvertLocalPos();
+                    }
+                    ChangeWeldState(WeldState.None);
                 }
-                ChangeWeldState(WeldState.None);
-            }
 
-            if (playerInput.currentControlScheme.Equals("Gamepad"))
-            {
+                if (playerInput.currentControlScheme.Equals("Gamepad"))
+                {
 
-            }
-            else
-            {
-                weldInput = (context.ReadValue<float>() == 1 ? true : false);
-            }
+                }
+                else
+                {
+                    weldInput = (context.ReadValue<float>() == 1 ? true : false);
+                }
+            }    
         }
     }
 
@@ -1307,5 +1323,48 @@ public class BatteryController : MonoBehaviour
         return surfaceParent;
     }
 
+    #endregion
+
+    #region Debug
+    public void DebugSkipToNextRoom()   // Remove this in builds.
+    {
+        if (Application.isEditor)
+        {
+            AreaManager.instance.ReachedObjective(GameObject.FindAnyObjectByType<roomObjective>().gameObject);
+        }
+    }
+
+    public void ProgressAbility(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            ProgressAbility();
+        }
+    }
+
+    public void ProgressAbility()
+    {
+        if (abilityProgression < 255)
+        {
+            abilityProgression++;
+            GameInstance.instance.UpdatePlayerAbilityProgression(abilityProgression);
+        }
+    }
+    public void RevertAbility(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            RevertAbility();
+        }
+    }
+
+    public void RevertAbility()
+    {
+        if (abilityProgression > 0)
+        {
+            abilityProgression--;
+            GameInstance.instance.UpdatePlayerAbilityProgression(abilityProgression);
+        }
+    }
     #endregion
 }

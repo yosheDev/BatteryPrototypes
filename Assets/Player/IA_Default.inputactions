@@ -95,6 +95,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "DebugProgressAbility",
+                    "type": "Button",
+                    "id": "a7fcab34-0a5a-4750-bdc7-99c698afa92b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DebugRevertAbility",
+                    "type": "Button",
+                    "id": "cca0bc08-ffee-4afe-9870-0fa7b2fcfcb1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -315,6 +333,28 @@
                     "processors": "",
                     "groups": ";KeyboardAndMouse",
                     "action": "RightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb48e012-2dc9-40ba-84ce-f5b286507c43",
+                    "path": "<Keyboard>/equals",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardAndMouse;Gamepad",
+                    "action": "DebugProgressAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3c137dcb-6547-46e8-846b-9b62d386cf0a",
+                    "path": "<Keyboard>/minus",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KeyboardAndMouse;Gamepad",
+                    "action": "DebugRevertAbility",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

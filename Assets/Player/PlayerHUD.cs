@@ -1,3 +1,4 @@
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Slider batterySlider;
     [SerializeField] private Battery playerBattery;
     [SerializeField] private TextMeshProUGUI playerLivesText;
+    [SerializeField] private TextMeshProUGUI abilityProgressText;
 
     private void Awake()
     {
@@ -23,6 +25,9 @@ public class PlayerHUD : MonoBehaviour
             GameInstance.instance.onPlayerLivesChanged += UpdatePlayerLives;
             playerLivesText.SetText(GameInstance.instance.playerLives.ToString());
         }
+
+        GameInstance.instance.onPlayerAbilityProgressChange += UpdateAbilityText;
+        GameInstance.instance.UpdatePlayerAbilityProgression(GameInstance.instance.playerAbilityProgression);
     }
 
     // Listen for player battery value change.
@@ -34,5 +39,11 @@ public class PlayerHUD : MonoBehaviour
     private void UpdatePlayerLives()
     {
         playerLivesText.SetText(GameInstance.instance.playerLives.ToString());
+    }
+
+    public void UpdateAbilityText()
+    {
+        StringBuilder newText = new StringBuilder("Ability Progress: " + GameInstance.instance.playerAbilityProgression.ToString(), 21);
+        abilityProgressText.text = newText.ToString();
     }
 }

@@ -18,13 +18,23 @@ public class GameInstance : MonoBehaviour
 
     [Header("Player Data")]
     public byte playerLives = 5;
+    public byte playerAbilityProgression = 0;
 
     public delegate void OnPlayerLivesChanged();
     public event OnPlayerLivesChanged onPlayerLivesChanged;
 
+    public delegate void OnPlayerAbilityProgressChange();
+    public event OnPlayerLivesChanged onPlayerAbilityProgressChange;
+
     #region Room Start Record
     public byte roomStartBattery = 100;
     #endregion
+
+    public void UpdatePlayerAbilityProgression(byte newProgression)
+    {
+        playerAbilityProgression = newProgression;
+        onPlayerAbilityProgressChange?.Invoke();
+    }
 
     #region Singleton
     public static GameInstance instance;
