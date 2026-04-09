@@ -253,7 +253,7 @@ public class SoftwareCursor : MonoBehaviour
 
     public void SetLocalPos(Vector2 inLocalPos)
     {
-        Debug.Log("Software Cursor Local: " + localPos);
+        // Debug.Log("Software Cursor Local: " + localPos);
         localPos = inLocalPos;
         localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
         transform.position = (Vector2)parentForPos.transform.position + localPos;

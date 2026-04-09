@@ -324,6 +324,10 @@ public class BatteryController : MonoBehaviour
                     #region Get Cling Magnet Surface
                     Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
                     Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (negativeMag.transform.up * .3f), Color.yellow, .5f);
+                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (-negativeMag.transform.up * .3f), Color.yellow, .5f); Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (negativeMag.transform.up * .3f), Color.yellow, .5f);
+                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (negativeMag.transform.right * .3f), Color.yellow, .5f);
+                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (-negativeMag.transform.right * .3f), Color.yellow, .5f);
 
                     // Positive
                     if (evalWeldSurface == null)
@@ -571,10 +575,6 @@ public class BatteryController : MonoBehaviour
                 float angleFromNormal = Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)weldSurfaceNormal, Vector3.forward);
                 Vector3 clampVector = Quaternion.AngleAxis(weldAngleClamp * -1f * Mathf.Sign(angleFromNormal), Vector3.forward) * (Vector3)weldSurfaceNormal;
 
-                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 2f);
-                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 2f);
-                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 2f);
-
                 float totalAngle = Vector3.Angle(weldSurfaceNormal, clampVector);
                 float angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
                 float angle2 = Vector3.Angle(weldAimDir, clampVector);
@@ -586,9 +586,16 @@ public class BatteryController : MonoBehaviour
                 }
                 else
                 {
+                    //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
+                    //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
+                    //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
+
                     //Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
                     //Debug.Log(angle1 + " " + angle2 + " " + totalAngle);
-                    rb.MoveRotation(Quaternion.LookRotation(Vector3.forward, clampVector));
+
+                    rb.MoveRotation(Quaternion.Euler(0, 0, rb.rotation) * Quaternion.AngleAxis(Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)clampVector, Vector3.forward), Vector3.forward));
+                    intermediateRot = Quaternion.Euler(0, 0, rb.rotation);
+
                     softwareCursor.SetLocalPos(clampVector * 10f);
                 }
 
