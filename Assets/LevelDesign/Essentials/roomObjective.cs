@@ -8,7 +8,7 @@ public class roomObjective : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // If not the player.
-        if (!(collision.gameObject != null && collision.gameObject.CompareTag("Player")))
+        if (!(collision.gameObject != null && collision.gameObject.GetComponent<Rigidbody2D>() != null && collision.gameObject.CompareTag("Player")))
         {
             return;
         }

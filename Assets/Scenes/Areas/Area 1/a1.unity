@@ -558,8 +558,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3105146972456289778, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: m_Volume
-      value: 0
+      value: 0.09
       objectReference: {fileID: 0}
+    - target: {fileID: 3105146972456289778, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: fdb0978677f0d1f4bb15c5c096083a3d, type: 3}
     - target: {fileID: 4289535551989248043, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: m_Name
       value: AreaManager

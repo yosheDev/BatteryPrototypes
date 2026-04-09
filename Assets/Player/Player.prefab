@@ -1194,10 +1194,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4556257301489368216}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.033999998, y: -0.099999905, z: 0}
-  m_LocalScale: {x: 0.14089184, y: 0.14089184, z: 0.14089184}
-  m_ConstrainProportionsScale: 0
+  m_LocalRotation: {x: -0, y: -0, z: 0.0000001872535, w: 1}
+  m_LocalPosition: {x: -0.054999996, y: -0.099, z: 0}
+  m_LocalScale: {x: 0.18, y: 0.18, z: 0.18}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2153969486156585816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1270,12 +1270,12 @@ ParentConstraint:
   m_Enabled: 1
   serializedVersion: 2
   m_Weight: 1
-  m_TranslationAtRest: {x: -0.033999998, y: -0.099999905, z: 0}
+  m_TranslationAtRest: {x: -0.054999996, y: -0.099, z: 0}
   m_RotationAtRest: {x: 0, y: 0, z: 0}
   m_TranslationOffsets:
-  - {x: 0.114, y: 0, z: 0}
+  - {x: 0.13499999, y: -0.0009999275, z: 0}
   m_RotationOffsets:
-  - {x: 0, y: 0, z: -179.99994}
+  - {x: 0, y: 0, z: -179.99992}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1

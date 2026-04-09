@@ -570,33 +570,55 @@ public class BatteryController : MonoBehaviour
             else if (weldState == WeldState.Welded)
             {
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
                 float angleFromNormal = Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)weldSurfaceNormal, Vector3.forward);
+     
                 Vector3 clampVector = Quaternion.AngleAxis(weldAngleClamp * -1f * Mathf.Sign(angleFromNormal), Vector3.forward) * (Vector3)weldSurfaceNormal;
 
-                float totalAngle = Vector3.Angle(weldSurfaceNormal, clampVector);
-                float angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
-                float angle2 = Vector3.Angle(weldAimDir, clampVector);
+                if (playerWeldMag == positiveMag)
+                {
+                    clampVector = Vector3.Reflect(clampVector, (Vector3)weldSurfaceNormal);
+                }
+
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
+
+                float totalAngle;
+                float angle1;
+                float angle2;
+                if (playerWeldMag == negativeMag)
+                {
+                    totalAngle = Vector3.Angle(weldSurfaceNormal, clampVector);
+                    angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
+                    angle2 = Vector3.Angle(weldAimDir, clampVector);
+                }
+                else
+                {
+                    totalAngle = Vector3.Angle(-weldSurfaceNormal, clampVector);
+                    angle1 = Vector3.Angle(weldAimDir, -weldSurfaceNormal);
+                    angle2 = Vector3.Angle(weldAimDir, clampVector);
+                }
+
                 if (Mathf.Abs(angle1 + angle2) - Mathf.Abs(totalAngle) < .01f)
                 {
-                    //Debug.Log("I am at an appropriate welding angle.");
+                    Debug.Log("I am at an appropriate welding angle.");
                     intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
                 }
                 else
                 {
-                    //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
-                    //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
-                    //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
 
-                    //Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
-                    //Debug.Log(angle1 + " " + angle2 + " " + totalAngle);
 
-                    rb.MoveRotation(Quaternion.Euler(0, 0, rb.rotation) * Quaternion.AngleAxis(Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)clampVector, Vector3.forward), Vector3.forward));
-                    intermediateRot = Quaternion.Euler(0, 0, rb.rotation);
+                    Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
+                    Debug.Log(angle1 + " " + angle2 + " " + totalAngle);
 
-                    softwareCursor.SetLocalPos(clampVector * 10f);
+                    //rb.MoveRotation(Quaternion.Euler(0, 0, rb.rotation) * Quaternion.AngleAxis(Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)clampVector, Vector3.forward), Vector3.forward));
+                    //intermediateRot = Quaternion.Euler(0, 0, rb.rotation);
+
+                    //softwareCursor.SetLocalPos(clampVector * 10f);
                 }
 
                 scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
