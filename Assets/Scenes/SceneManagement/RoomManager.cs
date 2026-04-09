@@ -17,6 +17,10 @@ public class RoomManager : MonoBehaviour
 
     private void Start()
     {
+        if (spawnMechanism == null)
+        {
+            spawnMechanism = GameObject.FindAnyObjectByType<SpawningMechanism>();
+        }
         StartCoroutine(DelayedStart());
     }
 
