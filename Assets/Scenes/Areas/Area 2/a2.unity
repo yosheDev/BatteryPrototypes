@@ -480,6 +480,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
+--- !u!114 &959206304 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6166198744064667863, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 194574934}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!4 &1201116645 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
@@ -601,6 +612,10 @@ PrefabInstance:
       propertyPath: playerLivesText
       value: 
       objectReference: {fileID: 194574935}
+    - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: abilityProgressText
+      value: 
+      objectReference: {fileID: 959206304}
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalPosition.x
       value: -37.91
@@ -640,6 +655,10 @@ PrefabInstance:
     - target: {fileID: 2153969486156585816, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4587624203421380279, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_TranslationOffsets.Array.data[0].x
+      value: 0.11400223
       objectReference: {fileID: 0}
     - target: {fileID: 4981228276706610175, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_Parameters.m_EndRange

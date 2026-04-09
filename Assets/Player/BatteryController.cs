@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.UI.Image;
 
 public class BatteryController : MonoBehaviour
 {
@@ -169,6 +170,8 @@ public class BatteryController : MonoBehaviour
         previousRotation = transform.rotation;
         previousWeldUp = -negativeMag.transform.up;
         intermediateRot = transform.rotation;
+
+        abilityProgression = GameInstance.instance.playerAbilityProgression;
         #endregion
 
         #region Bind Delegates
@@ -192,7 +195,6 @@ public class BatteryController : MonoBehaviour
 
             float rotAngle = Quaternion.Angle(surfaceParent.transform.rotation, parentLastRot);
             rotAngle = -1f * Vector3.SignedAngle((surfaceParent.transform.rotation * Vector3.up), (parentLastRot * Vector3.up), Vector3.forward);
-
             
             // Rotate and Move Player
             if (gameObject.transform.parent == scalePivot.transform)
@@ -424,8 +426,14 @@ public class BatteryController : MonoBehaviour
                     #region Reduce Gravity When Touching Mag Surface (Game Feel for Climbing / Sticking)
 
 
-                    Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
-                    Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+                    Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .05f), .5f, weldLayerMask);
+                    Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), .5f, weldLayerMask);
+                    #region Debug Circle
+                    //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f) + (-(Vector2)negativeMag.transform.up * .5f), Color.green, .5f);
+                    //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f) + ((Vector2)negativeMag.transform.up * .5f), Color.green, .5f);
+                    //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f) + (-(Vector2)negativeMag.transform.right * .5f), Color.green, .5f);
+                    //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f) + ((Vector2)negativeMag.transform.right * .5f), Color.green, .5f);
+                    #endregion
 
                     // Positive
                     if (evalAttractSurface == null)
@@ -497,7 +505,6 @@ public class BatteryController : MonoBehaviour
                         rb.linearDamping = .01f;
                     }
                     #endregion
-                    //Debug.Log(rb.gravityScale);
                 }
                 else
                 {
@@ -628,9 +635,19 @@ public class BatteryController : MonoBehaviour
                         // Will not be accounted for if pole is facing opposite direction (for game feel.)
                         if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                         {
-                            //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
-                            float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
-                            combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                            float aimDirInfluenceAlpha;
+                            if (evalAttractSurface == null)
+                            {
+                                aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                                combinedPositiveForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                            }
+                            else
+                            {
+                                aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                                Vector2 nonFlippedForce = (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                                nonFlippedForce *= FunctionLibraryF.MapRangeClamped(.5f, 1f, .3f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                                combinedPositiveForces += nonFlippedForce;
+                            }
                         }
                     }
                     #endregion
@@ -653,9 +670,22 @@ public class BatteryController : MonoBehaviour
                         // Will not be accounted for if pole is facing opposite direction (for game feel.)
                         if (Vector2.Dot(adjustedAimDir, curForce.normalized) >= 0f)
                         {
-                            //float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 10f, .75f, .3f, velocity);
-                            float aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
-                            combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                            float aimDirInfluenceAlpha;
+                            if (evalAttractSurface == null)
+                            {
+                                //Debug.Log("Normal Pull");
+                                aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                                combinedNegativeForces += (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                            }
+                            else
+                            {
+                                //Debug.Log("Pull straight to wall");
+                                aimDirInfluenceAlpha = FunctionLibraryF.MapRangeClamped(0f, 1f, 0f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                                Vector2 nonFlippedForce = (Vector2.Dot(adjustedAimDir, curForce.normalized) * Vector2.ClampMagnitude((curForce.magnitude * Vector2.Lerp(curForce, (adjustedAimDir * curForce.magnitude), aimDirInfluenceAlpha).normalized), 80f));
+                                nonFlippedForce *= FunctionLibraryF.MapRangeClamped(.5f, 1f, .3f, 1f, Vector2.Dot(adjustedAimDir, curForce.normalized));
+                                combinedNegativeForces += nonFlippedForce;
+                                //Debug.DrawLine((Vector2)negativeMag.transform.position, (Vector2)negativeMag.transform.position + (nonFlippedForce * 5f), Color.blue, 1f);
+                            }  
                         }
                     }
                     #endregion
@@ -666,9 +696,17 @@ public class BatteryController : MonoBehaviour
                     float angularMultiplier = 1f;//FunctionLibraryF.MapRangeClamped(0f, 25f, 1f, 1.25f, Mathf.Abs(angularVelocity));
 
                     // Positive
-                    rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
+                    if (evalAttractSurface == null)
+                    {
+                        rb.AddForceAtPosition(combinedPositiveForces * velocityMultiplier * angularMultiplier, positiveMag.transform.position);
+                    }
+                    else
+                    {
+                        rb.AddForce(combinedPositiveForces * velocityMultiplier * angularMultiplier);
+                    }
                     //Debug.DrawLine(positiveMag.transform.position, (Vector2)positiveMag.transform.position + (combinedPositiveForces * .25f));
 
+                    #region Positive Beam VFX
                     if (positiveFields.Count > 0)
                     {
                         Vector2 posEndPos;
@@ -689,11 +727,20 @@ public class BatteryController : MonoBehaviour
                         posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
                         posTractorBeamVFX.SetForceMagnitude(0f);
                     }
+                    #endregion
 
                     // Negative
-                    rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
+                    if (evalAttractSurface == null)
+                    {
+                        rb.AddForceAtPosition(combinedNegativeForces * velocityMultiplier * angularMultiplier, negativeMag.transform.position);
+                    }
+                    else
+                    {
+                        rb.AddForce(combinedNegativeForces * velocityMultiplier * angularMultiplier);
+                    }
                     //Debug.DrawLine(negativeMag.transform.position, (Vector2)negativeMag.transform.position + (combinedNegativeForces * .25f));
 
+                    #region Negative Beam VFX
                     if (negativeFields.Count > 0)
                     {
                         Vector2 negEndPos;
@@ -715,8 +762,9 @@ public class BatteryController : MonoBehaviour
                         negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
                         negTractorBeamVFX.SetForceMagnitude(0f);
                     }
+                    #endregion
 
-                    // SFX
+                    #region Beam SFX
                     if (negativeFields.Count + positiveFields.Count > 0)
                     {
                         if (!sfxMagneticBeam.isPlaying)
@@ -730,6 +778,7 @@ public class BatteryController : MonoBehaviour
                     {
                         sfxMagneticBeam.Stop();
                     }
+                    #endregion
                 }
                 #endregion
             }
