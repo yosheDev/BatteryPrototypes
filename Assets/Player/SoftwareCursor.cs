@@ -158,21 +158,18 @@ public class SoftwareCursor : MonoBehaviour
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
             #region Previous Method
-            // Clamp localPos back within range.
-            //if (justWelded)
-            //{
             #region Interp To Clamped Range Method
-            //Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
-            ////Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
-            ////Debug.Log("Alpha: " + correctWeldAlpha);
-            //Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
+        //Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
+        ////Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
+        ////Debug.Log("Alpha: " + correctWeldAlpha);
+        //Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
 
-            //transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * GetDesiredCursorDistance(-4f, 2.5f));
+        //transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * GetDesiredCursorDistance(-4f, 2.5f));
 
-            //localPos = transform.position - parentForPos.transform.position;
-            //localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2f, 2f)));
-            //localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
-            #endregion
+        //localPos = transform.position - parentForPos.transform.position;
+        //localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2f, 2f)));
+        //localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
+        #endregion
 
             #region Teleport Within Clamped Range Method
             /// This method is kept commented in case the simple math needs looked at. Interp version is better and is basically just this but with the slerp.
@@ -186,11 +183,7 @@ public class SoftwareCursor : MonoBehaviour
             //localPos = (batteryController.weldState == BatteryController.WeldState.Welded) ? (parentForPos == batteryController.positiveMag.gameObject ? ClampMagnitudeRange(localPos, 2.5f + playerSpriteLength, 2.45f + playerSpriteLength) : ClampMagnitudeRange(localPos, 2.5f, 2.45f)) : Vector2.ClampMagnitude(localPos, 2f);
             //localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
             #endregion
-            //}
-            //else
-            //{
-            //    localPos = lastFrameLocalPos;
-            //}
+
             #endregion
 
             #region Updated Method
@@ -202,7 +195,7 @@ public class SoftwareCursor : MonoBehaviour
             {
                 localPos = lastFrameLocalPos;
             }
-            #endregion
+        #endregion
         }
         else
         {

@@ -516,7 +516,7 @@ public class BatteryController : MonoBehaviour
             }
             
             #region Weld State Update Functionality
-                if (weldState == WeldState.None)
+            if (weldState == WeldState.None)
                 {
                     // If is NOT touching a magnet or like within range of magnet.
                     if (evalAttractSurface == null)
@@ -540,6 +540,9 @@ public class BatteryController : MonoBehaviour
 
                         // Damping
                         rb.AddTorque(-rb.angularVelocity * rotationTorqueDrag, ForceMode2D.Force);
+
+                        // Continue updating intermediateRot so other move modes can transition well.
+                        intermediateRot = transform.rotation;
                     }
                     else
                     {
@@ -560,27 +563,48 @@ public class BatteryController : MonoBehaviour
                         }
                     }
                 }
-                else if (weldState == WeldState.Welded)
-                {
-                    Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                    Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+            else if (weldState == WeldState.Welded)
+            {
+                Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
+                float angleFromNormal = Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)weldSurfaceNormal, Vector3.forward);
+                Vector3 clampVector = Quaternion.AngleAxis(weldAngleClamp * -1f * Mathf.Sign(angleFromNormal), Vector3.forward) * (Vector3)weldSurfaceNormal;
+
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 2f);
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 2f);
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 2f);
+
+                float totalAngle = Vector3.Angle(weldSurfaceNormal, clampVector);
+                float angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
+                float angle2 = Vector3.Angle(weldAimDir, clampVector);
+                if (Mathf.Abs(angle1 + angle2) - Mathf.Abs(totalAngle) < .01f)
+                {
+                    //Debug.Log("I am at an appropriate welding angle.");
                     intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
-
-                    scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                    scalePivot.transform.rotation = intermediateRot;
-
-                    weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
-                    weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
-
-                    // Tractor Beam VFX
-                    posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
-                    negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
-                    posTractorBeamVFX.SetForceMagnitude(0f);
-                    negTractorBeamVFX.SetForceMagnitude(0f);
                 }
-                else if (weldState == WeldState.LaunchAim)
+                else
+                {
+                    //Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
+                    //Debug.Log(angle1 + " " + angle2 + " " + totalAngle);
+                    rb.MoveRotation(Quaternion.LookRotation(Vector3.forward, clampVector));
+                    softwareCursor.SetLocalPos(clampVector * 10f);
+                }
+
+                scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                scalePivot.transform.rotation = intermediateRot;
+
+                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+
+                // Tractor Beam VFX
+                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                posTractorBeamVFX.SetForceMagnitude(0f);
+                negTractorBeamVFX.SetForceMagnitude(0f);
+            }
+            else if (weldState == WeldState.LaunchAim)
                 {
                     Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
                     Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, (playerWeldMag == positiveMag ? -1f * weldAimDir : weldAimDir));
