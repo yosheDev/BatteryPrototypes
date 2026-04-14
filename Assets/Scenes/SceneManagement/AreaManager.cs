@@ -42,8 +42,20 @@ public class AreaManager : MonoBehaviour
 
     private bool isResetting = false;  /// Is true when player is resetting to beginning of the current room.
 
-    [Header("Player Data")] // Should I make this into its own script?
+    [Header("Player Data")] // Why is this here? Isn't this in GameInstance.cs?
     public byte playerLives = 5; // Player lives.
+
+    [System.Serializable]
+    public class RoomMusic
+    {
+        public string roomName;
+        public AudioClip music;
+        public float volume = -1f;
+        public bool hasTriggered = false;
+    }
+    [Header("Music")]
+    [Tooltip("If not null, this music will play upon initial loading of this room.")]
+    [SerializeField] private List<RoomMusic> roomMusicList;
 
     #region Singleton
     public static AreaManager instance;
@@ -109,6 +121,7 @@ public class AreaManager : MonoBehaviour
 
                 Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager. AreaManager.roomNum is parsed to be " + roomNum + ". Manually setting Confiner2D bounds.");
                 CameraManager.instance.UpdateConfinedBounds();
+                CheckForMusicChange();
 
                 SetTransitionState(AreaTransitionState.Spawn);
                 return;
@@ -183,6 +196,8 @@ public class AreaManager : MonoBehaviour
         CameraManager.instance.WarpCamera();
         SetTransitionState(AreaTransitionState.Spawn);
         playerController.battery.percent = GameInstance.instance.roomStartBattery;
+
+        CheckForMusicChange();
     }
 
     public void ReloadCurrentRoom()
@@ -275,6 +290,21 @@ public class AreaManager : MonoBehaviour
         SetTransitionState(AreaTransitionState.ObjectiveReached);
     }
 
+    public void CheckForMusicChange()
+    {
+        foreach (RoomMusic musicData in roomMusicList)
+        {
+            if (SceneManager.GetActiveScene().name == musicData.roomName)
+            {
+                if (musicData.hasTriggered == false)
+                {
+                    musicData.hasTriggered = true;
+                    AudioManager.instance.PlayMusicClip(musicData.music, musicData.volume);
+                }
+                break;
+            }
+        }
+    }
     #region Checkpoint
     /// <summary>
     /// Update the checkpoint room and respawn position. Automatically resets respawn counter if this is a newly registered checkpoint room.
@@ -323,6 +353,7 @@ public class AreaManager : MonoBehaviour
     }
 
     #endregion
+
     #region Utility
     public bool IsTransitionState(AreaTransitionState state)
     {

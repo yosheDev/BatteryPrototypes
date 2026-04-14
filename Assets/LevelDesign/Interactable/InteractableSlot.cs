@@ -1,10 +1,11 @@
 using Magnet;
 using NUnit.Framework;
-using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using System.Runtime.CompilerServices;
+using TMPro;
+using UnityEngine;
 
 public class InteractableSlot : MonoBehaviour, IInteractable
 {
@@ -12,6 +13,7 @@ public class InteractableSlot : MonoBehaviour, IInteractable
     [SerializeField] private TextMeshPro displayText;
 
     [Header("Parameters")]
+    public bool usesBattery = true;                                     /// Does this use battery?
     public float batteryCost = 25f;                                     /// Player battery cost to interact with this slot.
     public bool canOnlyUseOnce = false;                                 /// If true, slot is only interactable once.
     private bool canInteract = true;                                    /// Cannot interact with this slot when this is false.
@@ -32,7 +34,7 @@ public class InteractableSlot : MonoBehaviour, IInteractable
         /// This function should not even be callable if canInteract is false, so don't worry about that check here.
         
         /// Does player have enough resources?
-        if (playerController.battery.percent >= batteryCost)
+        if (playerController.battery.percent >= batteryCost || !usesBattery)
         {
             playerController.battery.SetPercent(playerController.battery.percent - batteryCost);
             SetDisplayState(false);
@@ -67,16 +69,24 @@ public class InteractableSlot : MonoBehaviour, IInteractable
             }
             catch { }
 
-            if (eventEndDelays.IndexOf(i) != -1)
+            // Is valid index.
+            if (i >= 0 && i < eventEndDelays.Count)
             {
-                yield return new WaitForSeconds(eventEndDelays[i]);
+                if (eventEndDelays[i] > 0f)
+                {
+                    yield return new WaitForSeconds(eventEndDelays[i]);
+                }
+                else
+                {
+                    yield return null;
+                }
             }
             else
             {
                 yield return null;
             }
 
-            i++;
+                i++;
         }
         yield break;
     }
@@ -112,8 +122,16 @@ public class InteractableSlot : MonoBehaviour, IInteractable
 
     private void SetDisplayState(bool display)
     {
-        displayText.enabled = display;
-        displayText.SetText("E<br>" + batteryCost + "%");
+        if (usesBattery)
+        {
+            displayText.enabled = display;
+            displayText.SetText("E<br>" + batteryCost + "%");
+        }
+        else
+        {
+            displayText.enabled = display;
+            displayText.SetText("E");
+        }    
     }
     // NOTE: Only display interact text if can be interacted with (like not a single use interaction slot)
 }

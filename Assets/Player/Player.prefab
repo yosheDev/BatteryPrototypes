@@ -2077,6 +2077,7 @@ GameObject:
   - component: {fileID: 322359499541593061}
   - component: {fileID: 7371173790949300151}
   - component: {fileID: 7552396332889286236}
+  - component: {fileID: 7672027892262536964}
   m_Layer: 3
   m_Name: PlayerSprite
   m_TagString: Player
@@ -2510,6 +2511,7 @@ MonoBehaviour:
   posTractorBeamVFX: {fileID: 5323207232177294541}
   negativeMag: {fileID: 2989805380013838047}
   negTractorBeamVFX: {fileID: 6242327048165954340}
+  spriteManager: {fileID: 7672027892262536964}
   posPreventer: {fileID: 330613524148996668}
   negPreventer: {fileID: 4683190839822738937}
   rotationFactor: 50
@@ -2966,6 +2968,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7672027892262536964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159612945940311858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ade6324efefe76459d9f21911975550, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpriteManager
+  bodySpriteRenderer: {fileID: 2558605670993023090}
+  faceSpriteRenderer: {fileID: 7078389114891367622}
+  bodyMagnets: {fileID: 21300000, guid: ba59c216667647c4a924a081d4e4076c, type: 3}
+  bodyNoMagnets: {fileID: 21300000, guid: 11ef77719a0d0b140a72b32fb62c0118, type: 3}
 --- !u!1 &5928797191248678415
 GameObject:
   m_ObjectHideFlags: 0

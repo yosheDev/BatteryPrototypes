@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Magnet;
 
-public class RoomManager : MonoBehaviour
+public class RoomManager : MonoBehaviour, IInterfaceEvent
 {
     [Header("Room Data")]
     public bool isCheckpointRoom = false;
@@ -42,5 +43,26 @@ public class RoomManager : MonoBehaviour
         
         // figure out which one of these I will use and use only that.
         AreaManager.instance.UpdateCheckpointData(AreaManager.instance.GetCurrentRoom(), respawnPos);
+    }
+
+    public void InterfaceEvent(string name)
+    {
+        switch(name)
+        {
+            case "SetPlayerInputDisabled":
+                GameInstance.instance.SetPlayerInputMode(BatteryController.PlayerInputMode.Disabled);
+                break;
+            case "SetPlayerInputUIOnly":
+                GameInstance.instance.SetPlayerInputMode(BatteryController.PlayerInputMode.UIOnly);
+                break;
+            case "SetPlayerInputScene":
+                GameInstance.instance.SetPlayerInputMode(BatteryController.PlayerInputMode.Scene);
+                break;
+            case "SetPlayerInputEnabled":
+                GameInstance.instance.SetPlayerInputMode(BatteryController.PlayerInputMode.Enabled);
+                break;
+            default:
+                break;
+        }
     }
 }

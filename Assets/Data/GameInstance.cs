@@ -8,6 +8,7 @@ public class GameInstance : MonoBehaviour
         Normal,
         Hardcore
     }
+
     // NOTES:
     // I believe the goal for this class will be to keep data that could be wanted at any given time in any scene. This class will likely communicate directly with save/load system and data and cache certain parts of it when needed.
     // Will likely call save game / load game from this script.
@@ -19,6 +20,7 @@ public class GameInstance : MonoBehaviour
     [Header("Player Data")]
     public byte playerLives = 5;
     public byte playerAbilityProgression = 0;
+    public bool playerInputIgnored = false;
 
     public delegate void OnPlayerLivesChanged();
     public event OnPlayerLivesChanged onPlayerLivesChanged;
@@ -34,6 +36,11 @@ public class GameInstance : MonoBehaviour
     {
         playerAbilityProgression = newProgression;
         onPlayerAbilityProgressChange?.Invoke();
+    }
+
+    public void SetPlayerInputMode(BatteryController.PlayerInputMode mode)
+    {
+        GameObject.FindAnyObjectByType<BatteryController>().inputMode = mode;
     }
 
     #region Singleton

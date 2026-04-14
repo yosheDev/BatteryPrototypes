@@ -30,6 +30,7 @@ public class BatteryController : MonoBehaviour
     public MagneticSurface negativeMag;
     public TractorBeamVFX negTractorBeamVFX;
     private FerroProjectilePool projectilePool;
+    [SerializeField] private PlayerSpriteManager spriteManager;
     [SerializeField] private PlayerFastRotationPreventer posPreventer;
     [SerializeField] private PlayerFastRotationPreventer negPreventer;
     #endregion
@@ -39,12 +40,21 @@ public class BatteryController : MonoBehaviour
     [SerializeField] private float rotationTorqueFactor = 8f;
     [SerializeField] private float rotationTorqueDrag = .2f;
     private float angularRotVelocity; // Used for smooth damp.
-
     [HideInInspector] private bool isGrounded = false;
+    public enum PlayerInputMode
+    {
+        Disabled,
+        UIOnly,
+        Scene,
+        Enabled
+    }
+
+    public PlayerInputMode inputMode = PlayerInputMode.Enabled;
 
     #region Abilities
 
     private byte abilityProgression = 0;    /// Since ability progression is linear, using a byte to store what player has.
+
 
     #region Welding
     // TO DO: Put this into its own component or serializable class.
@@ -80,6 +90,7 @@ public class BatteryController : MonoBehaviour
     #endregion
 
     #endregion
+
     // Battery
     [HideInInspector] public Battery battery;
 
@@ -172,6 +183,7 @@ public class BatteryController : MonoBehaviour
         intermediateRot = transform.rotation;
 
         abilityProgression = GameInstance.instance.playerAbilityProgression;
+        spriteManager.UpdateSpriteByProgression(abilityProgression);
         #endregion
 
         #region Bind Delegates
@@ -247,8 +259,8 @@ public class BatteryController : MonoBehaviour
         }
         #endregion
 
-        // If not in a room transition.
-        if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
+        // If Player should be able to move around.
+        if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None) && inputMode == PlayerInputMode.Enabled)
         {
             #region Determine Grounded State
             if (weldState != WeldState.None)
@@ -1436,6 +1448,7 @@ public class BatteryController : MonoBehaviour
         }
     }
 
+    #region Ability Progression
     public void ProgressAbility(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -1450,6 +1463,7 @@ public class BatteryController : MonoBehaviour
         {
             abilityProgression++;
             GameInstance.instance.UpdatePlayerAbilityProgression(abilityProgression);
+            spriteManager.UpdateSpriteByProgression(abilityProgression);
         }
     }
     public void RevertAbility(InputAction.CallbackContext context)
@@ -1466,7 +1480,9 @@ public class BatteryController : MonoBehaviour
         {
             abilityProgression--;
             GameInstance.instance.UpdatePlayerAbilityProgression(abilityProgression);
+            spriteManager.UpdateSpriteByProgression(abilityProgression);
         }
     }
+    #endregion
     #endregion
 }
