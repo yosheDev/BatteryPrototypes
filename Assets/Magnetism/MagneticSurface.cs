@@ -148,9 +148,12 @@ public class MagneticSurface : MagnetComponentBase
         #region Magnetism Force
         // 1 - Get correct charge.
         float combinedAmp = magData.charge * _magData.charge;
-
+        //if(Vector2.Distance(posWS, nearestPoint) < .5f)
+        //{
+        //    Debug.Log(Vector2.Distance(posWS, nearestPoint));
+        //}
         // 2 - Inverse Exponent Formula. Ensure distance to always be above zero(also padding for game feel). Gets maximum attenuation of both magDatas to act with. Ensure attenuation is not under 1.
-        float proximityPadding = Mathf.Clamp(.1f, .01f, float.MaxValue); /// Adjust to affect too large of forces when magnet is nearly touching the other magnet.
+        float proximityPadding = Mathf.Clamp(.3f, .01f, float.MaxValue); /// Adjust to affect too large of forces when magnet is nearly touching the other magnet.
         float force = combinedAmp * (1 / (Mathf.Pow(Mathf.Max(Vector2.Distance(posWS, nearestPoint), proximityPadding), (Mathf.Max(1f, Mathf.Max(_magData.attenuation, magData.attenuation)) * _attenuationModifier))));
 
         // 3 - Modify force magnitude. Account for magnets' strength. Account for target magnet's velocity.

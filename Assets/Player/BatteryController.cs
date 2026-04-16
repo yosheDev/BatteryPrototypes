@@ -310,22 +310,12 @@ public class BatteryController : MonoBehaviour
 
             #endregion
 
-            #region Prevent Fast Rotation Into Floors
-            if (posPreventer.neutralDetected || negPreventer.neutralDetected)
-            {
-                rb.angularDamping = 80f;
-            }
-            else
-            {
-                rb.angularDamping = Mathf.SmoothDamp(rb.angularDamping, .01f, ref angularRotVelocity, .1f);
-            }
-            #endregion
-
             Collider2D evalAttractSurface = null; /// Used for non-welding states to know if they are pressed against a magnet surface or not.
 
+            #region Detect Magnets
             if (abilityProgression > 0) // Does player have magnetism unlocked?
             {
-                #region Weld To Surface / Update Weld Surface Data
+                #region Weld To Surface / Update Weld Surface Data / Reduce Gravity when Climbing
                 // If Weld is inputted.
                 if (weldInput)
                 {
@@ -530,7 +520,85 @@ public class BatteryController : MonoBehaviour
                 }
                 #endregion
             }
-            
+            else
+            {
+                #region Update evalAttractSurface
+                Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .05f), .5f, weldLayerMask);
+                Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), .5f, weldLayerMask);
+
+                // Positive
+                if (evalAttractSurface == null)
+                {
+                    foreach (Collider2D col in positiveOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == -1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Negative
+                if (evalAttractSurface == null)
+                {
+                    foreach (Collider2D col in negativeOverlap)
+                    {
+                        MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
+                        // If can weld to this magnet.
+                        if (curMag != null && curMag._magData.charge == 1)
+                        {
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
+                            {
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                evalAttractSurface = curMag.gameObject.GetComponent<Collider2D>();
+                                break;
+                            }
+                        }
+                    }
+                }
+                #endregion
+            }
+            #endregion
+
+            #region Prevent Fast Rotation Into Floors
+            if (posPreventer.neutralDetected || negPreventer.neutralDetected || (evalAttractSurface != null && weldState == WeldState.None))
+            {
+                rb.angularDamping = 80f;
+                //Debug.Log("Preventing fast rotation into floors 1");
+            }
+            else
+            {
+                rb.angularDamping = Mathf.SmoothDamp(rb.angularDamping, .01f, ref angularRotVelocity, .1f);
+            }
+            #endregion
+
             #region Weld State Update Functionality
             if (weldState == WeldState.None)
                 {
@@ -559,6 +627,8 @@ public class BatteryController : MonoBehaviour
 
                         // Continue updating intermediateRot so other move modes can transition well.
                         intermediateRot = transform.rotation;
+
+                    //Debug.Log("Preventing fast rotation into floors 2");
                     }
                     else
                     {
