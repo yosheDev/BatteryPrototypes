@@ -9,9 +9,6 @@ using UnityEngine;
 
 public class InteractTrigger : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private TextMeshPro displayText;
-
     [Header("Parameters")]
     public bool usesBattery = false;                                     /// Does this use battery?
     public float batteryCost = 0f;                                     /// Player battery cost to interact with this slot.
@@ -65,6 +62,16 @@ public class InteractTrigger : MonoBehaviour
         int i = 0;
         while (i < eventObjects.Count)
         {
+            #region Special Universal Overrides
+            if (eventNames[i] == "Hide")
+            {
+                if (eventObjects[i].GetComponent<SpriteRenderer>() != null)
+                {
+                    eventObjects[i].GetComponent<SpriteRenderer>().enabled = false;
+                }
+            }
+            #endregion
+
             try
             {
                 IInterfaceEvent intEvent = eventObjects[i].GetComponent<IInterfaceEvent>();
