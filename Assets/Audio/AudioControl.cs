@@ -1,15 +1,23 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AudioControl : MonoBehaviour
 {
     private enum AudioControlMode
     {
-        FadeOut
+        FadeOut,
+        PlayMusic,
+        FadeIn
     }
     [SerializeField] private SpriteRenderer spriteRenderer;
+    private bool triggered = false;
 
     [Header("Control")]
     [SerializeField] private AudioControlMode controlMode;
+
+    [Header("Play Music")]
+    [SerializeField] private AudioClip musicToPlay;
+    [SerializeField] private float musicVolume = .08f;
 
     void Start()
     {
@@ -18,9 +26,29 @@ public class AudioControl : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (triggered)
+        {
+            return;
+        }
+
         if (collision.gameObject.GetComponent<BatteryController>() != null)
         {
-            AudioManager.instance.FadeOutMusic(2f);
+            switch(controlMode)
+            {
+                case AudioControlMode.FadeOut:
+                    AudioManager.instance.FadeOutMusic(2f);
+                    break;
+                case AudioControlMode.PlayMusic:
+                    AudioManager.instance.PlayMusicClip(musicToPlay, musicVolume);
+                    break;
+                case AudioControlMode.FadeIn:
+                    AudioManager.instance.FadeInMusic(2f);
+                    break;
+                default:
+                    break;
+            }
+
+            triggered = true;
         }
     }
 }

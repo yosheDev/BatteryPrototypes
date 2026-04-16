@@ -603,7 +603,7 @@ public class BatteryController : MonoBehaviour
             if (weldState == WeldState.None)
                 {
                     // If is NOT touching a magnet or like within range of magnet.
-                    if (evalAttractSurface == null)
+                    if (evalAttractSurface == null || abilityProgression < 1)
                     {
                         // Side Torque for stabilization
                         float currentAngle = rb.rotation;
