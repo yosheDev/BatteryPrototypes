@@ -4,15 +4,15 @@ using System.Collections.Generic;
 public class PhysicsManualPlayerSag : MonoBehaviour
 {
     [SerializeField] private Collider2D spriteShapeCol;
-    [SerializeField] private float playerForceFactor = 8f;
+    [SerializeField] private float playerForceFactor = 10f;
     [SerializeField] private List<Transform> bones;
     private int boneIndex = 0;
 
     Rigidbody2D rb;
     private Vector2 restPosition;
 
-    [SerializeField] private float springStrength = 1f;
-    [SerializeField] private float damping = .3f;
+    [SerializeField] private float springStrength = 8f;
+    [SerializeField] private float damping = 3f;
 
     private void Start()
     {
@@ -27,6 +27,13 @@ public class PhysicsManualPlayerSag : MonoBehaviour
                 break;
             }
         }
+    }
+
+    private void FixedUpdate()
+    {
+        // --- Spring back to rest
+        Vector2 offset = restPosition - rb.position;
+        rb.AddForce(offset * springStrength + (-rb.linearVelocity * damping));
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -47,14 +54,14 @@ public class PhysicsManualPlayerSag : MonoBehaviour
 
         t = 1f - (t * t);
 
-        //totalForce += (spriteShapeCol.ClosestPoint(playerClosestPos) - (Vector2)playerClosestPos).normalized * (playerForceFactor * t);
-        totalForce += Vector2.down * (playerForceFactor * t);
+        totalForce += (spriteShapeCol.ClosestPoint(playerClosestPos) - (Vector2)playerClosestPos).normalized * (playerForceFactor * t);
+        //totalForce += Vector2.down * (playerForceFactor * t);
 
         Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 3f), Color.red, .2f);
 
-        // --- Spring back to rest
-        Vector2 offset = restPosition - rb.position;
-        totalForce += offset * springStrength;
+        //// --- Spring back to rest
+        //Vector2 offset = restPosition - rb.position;
+        //totalForce += offset * springStrength;
 
         // --- Proper damping (critical)
         totalForce += -rb.linearVelocity * damping;
