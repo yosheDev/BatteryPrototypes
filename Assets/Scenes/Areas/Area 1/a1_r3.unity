@@ -7934,20 +7934,20 @@ AudioReverbZone:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1078270212}
   m_Enabled: 1
-  m_MinDistance: 14.826498
+  m_MinDistance: 18.193111
   m_MaxDistance: 19.787815
-  m_ReverbPreset: 21
+  m_ReverbPreset: 22
   m_Room: -1000
-  m_RoomHF: 0
-  m_DecayTime: 1.65
-  m_DecayHFRatio: 1.5
-  m_Reflections: -1363
-  m_ReflectionsDelay: 0.008
-  m_Reverb: -1153
-  m_ReverbDelay: 0.012
+  m_RoomHF: -1000
+  m_DecayTime: 2.81
+  m_DecayHFRatio: 0.14
+  m_Reflections: 429
+  m_ReflectionsDelay: 0.014
+  m_Reverb: 1023
+  m_ReverbDelay: 0.021
   m_HFReference: 5000
-  m_Diffusion: 100
-  m_Density: 100
+  m_Diffusion: 80
+  m_Density: 60
   m_LFReference: 250
   m_RoomLF: 0
 --- !u!4 &1078270214
