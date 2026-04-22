@@ -14,6 +14,7 @@ public class CameraManager : MonoBehaviour
 
     private CinemachineCamera[] _cameras;
     public CinemachineCamera _currentCamera;
+    public Camera _confiningCamera;
 
     private CinemachinePositionComposer _positionComposer;
     private CinemachineTargetGroup _targetGroup;
@@ -257,6 +258,7 @@ public class CameraManager : MonoBehaviour
     { 
         _positionComposer.CameraDistance = camDistance;
         //_currentCamera.Lens.OrthographicSize = camDistance; /// DISABLED cause no longer using orthographic camera.
+        _confiningCamera.orthographicSize = camDistance;
         _confiner.InvalidateLensCache();
     }
 
