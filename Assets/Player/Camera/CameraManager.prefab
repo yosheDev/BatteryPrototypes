@@ -139,7 +139,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2643066962996429256}
   - component: {fileID: 1105629428417643959}
-  - component: {fileID: 2453513121789445095}
   - component: {fileID: 7782953912339684242}
   - component: {fileID: 3715791628327276507}
   m_Layer: 0
@@ -216,14 +215,6 @@ Camera:
   m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &2453513121789445095
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1942296501338076125}
-  m_Enabled: 1
 --- !u!114 &7782953912339684242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -676,7 +667,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DollyVelocity
   zoomRange: {x: 10, y: 15}
   zoomVelocityRange: {x: 5, y: 10}
-  zoomInterpSpeed: 0.01
+  doesZoomHaveEasing: 1
+  zoomInterpEaseSpeed: 1
+  zoomInterpLinearSpeed: 0.015
 --- !u!1001 &707044810116357054
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -30,6 +30,8 @@ public class BatteryController : MonoBehaviour
     public MagneticSurface negativeMag;
     public TractorBeamVFX negTractorBeamVFX;
     private FerroProjectilePool projectilePool;
+    [SerializeField] private SpringJoint2D grappleJoint;
+    [SerializeField] private GrappleRendererVFX grappleRenderer;
     [SerializeField] private PlayerSpriteManager spriteManager;
     [SerializeField] private PlayerFastRotationPreventer posPreventer;
     [SerializeField] private PlayerFastRotationPreventer negPreventer;
@@ -87,6 +89,12 @@ public class BatteryController : MonoBehaviour
     // TO DO: Put this into its own component or serializable class.
     private bool isShootDisabled = false;
     private byte shotBatteryDrain = 5;
+    #endregion
+
+    #region Grappling
+    [SerializeField] private float grappleRange = 8f;
+    private bool isGrappling = false;
+    private Transform grapplePoint;
     #endregion
 
     #endregion
@@ -938,6 +946,24 @@ public class BatteryController : MonoBehaviour
 
             scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
             #endregion
+
+            #region Grappling
+            if (isGrappling)
+            {
+                grappleJoint.enabled = Vector2.Distance(transform.position, grapplePoint.position) >= grappleJoint.distance;
+
+                float grappleRotBoost = FunctionLibraryF.MapRangeClamped(-30, 30, -2, 2, angularVelocity);
+                Vector2 dirToGrapplePoint = (grapplePoint.position - transform.position).normalized;
+                Vector2 grappleRotBoostDir = Quaternion.Euler(0, 0, (grappleRotBoost < 0f) ? -90f : 90f) * dirToGrapplePoint;
+                rb.AddForce(Mathf.Abs(grappleRotBoost) * grappleRotBoostDir);
+
+                if (Vector2.Dot(-dirToGrapplePoint, Vector2.down) > .6f)
+                {
+                    rb.AddForce(Quaternion.Euler(0, 0, (rb.linearVelocityX > 0f) ? -90f : 90f) * dirToGrapplePoint * .75f);
+                    Debug.DrawLine(transform.position, transform.position + (Quaternion.Euler(0, 0, (rb.linearVelocityX > 0f) ? -90f : 90f) * dirToGrapplePoint * 2f), Color.yellow, .5f);
+                }
+            }
+            #endregion
         }
         else
         {
@@ -1143,78 +1169,129 @@ public class BatteryController : MonoBehaviour
     {
         if (context.started)
         {
-            Collider2D[] positiveEndOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + (Vector2)(positiveMag.transform.up * .2f), .5f, 1 << LayerMask.NameToLayer("Default"));
-            Collider2D[] negativeEndOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + (Vector2)(negativeMag.transform.up * .2f), .5f, 1 << LayerMask.NameToLayer("Default"));
-
-            int positiveOverlaps = 0;
-            int negativeOverlaps = 0;
-
-            #region Filter Results
-            for (int i = 0; i < positiveEndOverlap.Length; i++)
+            if (!isGrappling)
             {
-                if (!positiveEndOverlap[i].gameObject.CompareTag("Player"))
+                // Grapple has higher priority than bumpers. Bumpers will not happen if grapple does.
+                #region Grapple
+                List<Collider2D> grapplePoints = new List<Collider2D>();
+                Collider2D[] grappleCircleOverlap = Physics2D.OverlapCircleAll(transform.position, grappleRange, (int)LayerMask.GetMask("Default"));
+                foreach (Collider2D col in grappleCircleOverlap)
                 {
-                    positiveOverlaps++;
+                    if (col.CompareTag("Grapple"))
+                    {
+                        grapplePoints.Add(col);
+                    }
                 }
-                else
+
+                if (grapplePoints.Count > 0)
                 {
-                    positiveEndOverlap[i] = null;
+                    // Get the closest one.
+                    Collider2D nearestGrapplePoint = (grapplePoints.OrderBy(c => (transform.position - c.transform.position).sqrMagnitude).ToList())[0];
+                    grapplePoint = nearestGrapplePoint.transform;
+
+                    // Update renderer
+                    Transform[] lineTrans = new Transform[2];
+                    lineTrans[0] = transform;
+                    lineTrans[1] = grapplePoint;
+                    grappleRenderer.SetPoints(lineTrans);
+                    grappleRenderer.SetState(true);
+
+                    // Update state
+                    grappleJoint.distance = Mathf.Clamp(1.05f * Vector2.Distance(transform.position, grapplePoint.position), 1.5f, float.MaxValue);
+                    grappleJoint.connectedAnchor = nearestGrapplePoint.transform.position;
+                    //grappleJoint.enabled = true;
+
+                    isGrappling = true;
+
+                    return;
                 }
+                #endregion
+
+                #region Bumpers
+                Collider2D[] positiveEndOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + (Vector2)(positiveMag.transform.up * .2f), .5f, 1 << LayerMask.NameToLayer("Default"));
+                Collider2D[] negativeEndOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + (Vector2)(negativeMag.transform.up * .2f), .5f, 1 << LayerMask.NameToLayer("Default"));
+
+                int positiveOverlaps = 0;
+                int negativeOverlaps = 0;
+
+                #region Filter Results
+                for (int i = 0; i < positiveEndOverlap.Length; i++)
+                {
+                    if (!positiveEndOverlap[i].gameObject.CompareTag("Player"))
+                    {
+                        positiveOverlaps++;
+                    }
+                    else
+                    {
+                        positiveEndOverlap[i] = null;
+                    }
+                }
+
+                for (int i = 0; i < negativeEndOverlap.Length; i++)
+                {
+                    if (!negativeEndOverlap[i].gameObject.CompareTag("Player"))
+                    {
+                        negativeOverlaps++;
+                    }
+                    else
+                    {
+                        negativeEndOverlap[i] = null;
+                    }
+                }
+                #endregion
+
+                //Debug.Log(positiveOverlaps + negativeOverlaps);
+                if (positiveOverlaps + negativeOverlaps > 0)
+                {
+                    if (positiveOverlaps > 0)
+                    {
+                        Vector2 dir = Vector2.zero;
+                        Vector2[] dirs = new Vector2[positiveEndOverlap.Length];
+                        for (int i = 0; i < positiveEndOverlap.Length; i++)
+                        {
+                            if (positiveEndOverlap[i] == null)
+                            {
+                                continue;
+                            }
+
+                            dirs[i] = ((Vector2)positiveMag.transform.position - positiveEndOverlap[i].ClosestPoint((Vector2)positiveMag.transform.position)).normalized;
+                            dir += dirs[i];
+                        }
+                        dir /= dirs.Length;
+                        rb.AddForceAtPosition(Vector2.Lerp(dir, -positiveMag.transform.up, 0.5f) * 700f, positiveMag.transform.position);
+                    }
+
+                    if (negativeOverlaps > 0)
+                    {
+                        Vector2 dir = Vector2.zero;
+                        Vector2[] dirs = new Vector2[negativeEndOverlap.Length];
+                        for (int i = 0; i < negativeEndOverlap.Length; i++)
+                        {
+                            if (negativeEndOverlap[i] == null)
+                            {
+                                continue;
+                            }
+                            //Debug.Log(negativeEndOverlap[i]);
+                            dirs[i] = ((Vector2)negativeMag.transform.position - negativeEndOverlap[i].ClosestPoint((Vector2)negativeMag.transform.position)).normalized;
+                            //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + ((Vector3)dirs[i] * 5f), Color.green, 1f);
+                            dir += dirs[i];
+                        }
+                        dir /= dirs.Length;
+                        rb.AddForceAtPosition(Vector2.Lerp(dir, -negativeMag.transform.up, 0.5f) * 700f, negativeMag.transform.position);
+                        //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + ((Vector3)dir * 5f), Color.red, 1f);
+                    }
+                }
+                #endregion
             }
 
-            for (int i = 0; i < negativeEndOverlap.Length; i++)
+        }
+        else if (context.canceled)
+        {
+            if (isGrappling)
             {
-                if (!negativeEndOverlap[i].gameObject.CompareTag("Player"))
-                {
-                    negativeOverlaps++;
-                }
-                else
-                {
-                    negativeEndOverlap[i] = null;
-                }
-            }
-            #endregion
-
-            //Debug.Log(positiveOverlaps + negativeOverlaps);
-            if (positiveOverlaps + negativeOverlaps > 0)
-            {
-                if (positiveOverlaps > 0)
-                {
-                    Vector2 dir = Vector2.zero;
-                    Vector2[] dirs = new Vector2[positiveEndOverlap.Length];
-                    for (int i = 0; i < positiveEndOverlap.Length; i++)
-                    {
-                        if (positiveEndOverlap[i] == null)
-                        {
-                            continue;
-                        }
-                        
-                        dirs[i] = ((Vector2)positiveMag.transform.position - positiveEndOverlap[i].ClosestPoint((Vector2)positiveMag.transform.position)).normalized;
-                        dir += dirs[i];
-                    }
-                    dir /= dirs.Length;
-                    rb.AddForceAtPosition(Vector2.Lerp(dir, -positiveMag.transform.up, 0.5f) * 700f, positiveMag.transform.position);
-                }
-
-                if (negativeOverlaps > 0)
-                {
-                    Vector2 dir = Vector2.zero;
-                    Vector2[] dirs = new Vector2[negativeEndOverlap.Length];
-                    for (int i = 0; i < negativeEndOverlap.Length; i++)
-                    {
-                        if (negativeEndOverlap[i] == null)
-                        {
-                            continue;
-                        }
-                        //Debug.Log(negativeEndOverlap[i]);
-                        dirs[i] = ((Vector2)negativeMag.transform.position - negativeEndOverlap[i].ClosestPoint((Vector2)negativeMag.transform.position)).normalized;
-                        //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + ((Vector3)dirs[i] * 5f), Color.green, 1f);
-                        dir += dirs[i];
-                    }
-                    dir /= dirs.Length;
-                    rb.AddForceAtPosition(Vector2.Lerp(dir, -negativeMag.transform.up, 0.5f) * 700f, negativeMag.transform.position);
-                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + ((Vector3)dir * 5f), Color.red, 1f);
-                }
+                grappleRenderer.SetState(false);
+                grappleJoint.enabled = false;
+                isGrappling = false;
             }
         }
     }
