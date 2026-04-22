@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WarningIndicatorsGroupActivator : MonoBehaviour
 {
-    [SerializeField] private List<WarningIndicator> indicators = new List<WarningIndicator>();
+    [SerializeField] private List<ClampRenderersToScreen> indicators = new List<ClampRenderersToScreen>();
     //[SerializeField] private float duration = 4f;
     //[SerializeField] private float interval = .25f;
     //[SerializeField] private float flashDuration = .15f;

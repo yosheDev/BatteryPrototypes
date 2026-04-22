@@ -272,7 +272,7 @@ public class BatteryController : MonoBehaviour
             {
                 if (neutralDetector.neutralDetected)
                 {
-                    RaycastHit2D groundedHit = Physics2D.Raycast(rb.position, Vector2.down, 10f, 1 << LayerMask.NameToLayer("Default"));
+                    RaycastHit2D groundedHit = Physics2D.Raycast(rb.position, Vector2.down, 10f, (int)LayerMask.GetMask("Default", "PhysicsBone"));//(1 << LayerMask.NameToLayer("Default")) | (1 << LayerMask.NameToLayer("PhysicsBone")));
                     if (groundedHit)
                     {
                         if (Vector2.Dot(groundedHit.normal, Vector2.up) >= 0.5f)
@@ -288,7 +288,7 @@ public class BatteryController : MonoBehaviour
                 }
                 else
                 {
-                    RaycastHit2D attachMagHit = Physics2D.Raycast(rb.position, Vector2.down, 1.35f, 1 << LayerMask.NameToLayer("MagnetSurface"));
+                    RaycastHit2D attachMagHit = Physics2D.Raycast(rb.position, Vector2.down, 1.35f, (int)LayerMask.GetMask("MagnetSurface", "PhysicsBone"));//1 << LayerMask.NameToLayer("MagnetSurface"));
                     if (attachMagHit)
                     {
                         isGrounded = true;
@@ -1403,6 +1403,7 @@ public class BatteryController : MonoBehaviour
     }
     public void Restart()
     {
+        projectilePool.ClearPool();
         if (AreaManager.instance.roomManager.doesResetFullyReloadLevel)
         {
             AreaManager.instance.ReloadCurrentRoom();

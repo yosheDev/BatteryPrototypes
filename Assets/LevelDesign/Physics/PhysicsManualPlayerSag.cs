@@ -31,7 +31,7 @@ public class PhysicsManualPlayerSag : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // --- Spring back to rest
+        // Spring back to resting pos
         Vector2 offset = restPosition - rb.position;
         rb.AddForce(offset * springStrength + (-rb.linearVelocity * damping));
     }
@@ -40,7 +40,6 @@ public class PhysicsManualPlayerSag : MonoBehaviour
     {
         if (collision.GetComponent<BatteryController>() != null)
         {
-            Debug.Log(collision);
             ApplyPlayerWeight(collision);
         }
     }
@@ -55,21 +54,16 @@ public class PhysicsManualPlayerSag : MonoBehaviour
         t = 1f - (t * t);
 
         totalForce += (spriteShapeCol.ClosestPoint(playerClosestPos) - (Vector2)playerClosestPos).normalized * (playerForceFactor * t);
-        //totalForce += Vector2.down * (playerForceFactor * t);
 
-        Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 3f), Color.red, .2f);
+        //Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 3f), Color.red, .2f);
 
-        //// --- Spring back to rest
-        //Vector2 offset = restPosition - rb.position;
-        //totalForce += offset * springStrength;
-
-        // --- Proper damping (critical)
+        // Damping
         totalForce += -rb.linearVelocity * damping;
 
 
         rb.AddForce(totalForce);
 
-        // Add force to neighbors
+        // Add Force to Neighbors
         if (boneIndex - 1 >= 0)
         {
             bones[boneIndex - 1].GetComponent<Rigidbody2D>().AddForce(totalForce * 0.5f);

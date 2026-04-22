@@ -22,6 +22,10 @@ public class InteractTrigger : MonoBehaviour
 
     private Coroutine interfaceEvents;
 
+    private void Start()
+    {
+        GetComponent<Renderer>().enabled = false;
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.GetComponent<BatteryController>() != null)

@@ -21,6 +21,7 @@ public class FerroProjectilePool : MonoBehaviour
         }
 
         projectile.GetComponent<FerroProjectile>().Shoot(pos, rot, scale, speed);
+        ferroProjectiles.Add(projectile);
     }
 
 
@@ -33,7 +34,6 @@ public class FerroProjectilePool : MonoBehaviour
                 return true;
             }
         }
-
         return false;
     }
 
@@ -60,5 +60,17 @@ public class FerroProjectilePool : MonoBehaviour
             }
         }
         return count;
+    }
+
+    public void ClearPool()
+    {
+        foreach(GameObject p in ferroProjectiles)
+        {
+            if (p != null)
+            {
+                Destroy(p);
+            }
+        }
+        ferroProjectiles.Clear();
     }
 }
