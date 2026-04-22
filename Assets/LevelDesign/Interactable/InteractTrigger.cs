@@ -14,7 +14,7 @@ public class InteractTrigger : MonoBehaviour
     public float batteryCost = 0f;                                     /// Player battery cost to interact with this slot.
     public bool canOnlyUseOnce = true;                                 /// If true, slot is only interactable once.
     private bool canInteract = true;                                    /// Cannot interact with this slot when this is false.
-
+    [SerializeField] private bool hideAtStart = true;
     [Header("Interface Events")]
     public List<GameObject> eventObjects = new List<GameObject>();      /// Objects to call InterfaceEvent() on.
     public List<string> eventNames = new List<string>();                /// String passed into InterfaceEvent() to specify which is called.
@@ -24,7 +24,7 @@ public class InteractTrigger : MonoBehaviour
 
     private void Start()
     {
-        GetComponent<Renderer>().enabled = false;
+        GetComponent<Renderer>().enabled = !hideAtStart;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
