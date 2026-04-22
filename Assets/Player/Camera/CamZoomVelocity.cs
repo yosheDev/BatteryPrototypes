@@ -5,13 +5,16 @@ using UnityEngine;
 public class DollyVelocity : MonoBehaviour
 {
     [SerializeField] private Vector2 zoomRange = new Vector2(10f, 15f);
-    [SerializeField] private Vector2 zoomVelocityRange = new Vector2(2f, 10f);
-    [SerializeField] private float zoomInterpSpeed = .05f;
+    [SerializeField] private Vector2 zoomVelocityRange = new Vector2(5f, 10f);
+    [SerializeField] private bool doesZoomHaveEasing = true;
+    [SerializeField] private float zoomInterpEaseSpeed = 1f;
+    [SerializeField] private float zoomInterpLinearSpeed = .015f;
 
     private BatteryController batteryController;
     private CinemachineCamera cam;          /// This is the cam that this script is attached to.
     private float zoom = 10f;
     private float additionalZoom = 0f;      /// Other scripts can modify this value for custom zoom behavior.
+    private float currentZoomVelocity;
 
     private void Start()
     {
@@ -24,7 +27,15 @@ public class DollyVelocity : MonoBehaviour
         if (cam.enabled)
         {
             float zoomVelocityAlpha = FunctionLibraryF.MapRangeClamped(zoomVelocityRange.x, zoomVelocityRange.y, 0f, 1f, batteryController.velocity);
-            zoom = Mathf.MoveTowards(zoom, Mathf.Lerp(zoomRange.x, zoomRange.y, zoomVelocityAlpha), zoomInterpSpeed);
+            if (doesZoomHaveEasing)
+            {
+                zoom = Mathf.SmoothDamp(zoom, Mathf.Lerp(zoomRange.x, zoomRange.y, zoomVelocityAlpha), ref currentZoomVelocity, zoomInterpEaseSpeed);
+            }
+            else
+            {
+                zoom = Mathf.MoveTowards(zoom, Mathf.Lerp(zoomRange.x, zoomRange.y, zoomVelocityAlpha), zoomInterpLinearSpeed);
+            }
+               
             CameraManager.instance.SetCameraDistance(zoom + additionalZoom);
         }
     }
