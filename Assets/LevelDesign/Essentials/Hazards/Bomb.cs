@@ -1,30 +1,22 @@
-using UnityEngine;
-using FunctionLibrary;
-using System.Collections;
 using Magnet;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
 
-// Magnetic Point is derived from MagnetComponentBase. It uses a single point as reference for the field(currently, might change?)
-public class MagneticSurface : MagnetComponentBase
+public class Bomb : MagnetComponentBase
 {
-    [Header("Surface Data (Collider types must match.)")]
-    [Tooltip("Collider used for overlapping field operations.")]
-    public Collider2D fieldCol;
     [Tooltip("Collider of the hard-surface collision. If null, uses as a point in space for distance calculations. If valid, uses perimeter of collider for distance calculations.")]
     public Collider2D surfaceCol;
-    [Tooltip("Distance for attraction from closest collider perimeter point.")]
-
-    [Header("Field Attraction Data")]
-    // TO DO: Add toggle to switche between different attuentuation curves. I.E Exponential, Logarithmic, Linear.
-
+    public Collider2D fieldCol;
+    public MagneticTriggers magTrigger;
+    [Tooltip("Affect radius of the bombs magnetic properties.")]
     public float _fieldAttractDistance = 2f;
     [Tooltip("Multiplies with the attenuation in magData. Used for customizing feel of individual magnets. This applies only to the force given to those interacting with this magnet.")]
     public float _attenuationModifier = 1f;
+    [Tooltip("Adjusts influence player magnets will have on this.")]
+    public float _playerMagInfluence = 2f;
 
-    private bool isOnPlayer = false;
-
-    // VFX
-    public bool bakeToMagFieldSDF = true;
-    private MagneticDistanceFieldsManager sdfManager;
+    private Rigidbody2D rb;
 
     private void OnValidate()
     {
@@ -54,7 +46,7 @@ public class MagneticSurface : MagnetComponentBase
                     throw new System.Exception("Field Collider is not a BoxCollider2D, but SurfaceCollider is.");
                 }
             }
-            else if(surfaceCol is CapsuleCollider2D)
+            else if (surfaceCol is CapsuleCollider2D)
             {
                 if (fieldCol is CapsuleCollider2D)
                 {
@@ -81,22 +73,35 @@ public class MagneticSurface : MagnetComponentBase
         }
         #endregion
     }
-
-    private void Awake()
+    private void Start()
     {
-        // Pass surface collider onto the SDF Manager.
-        sdfManager = FindAnyObjectByType<MagneticDistanceFieldsManager>(); /// Only ever one of these at a time.
-        if (sdfManager != null)
+        if (GetComponent<Rigidbody2D>() != null)
         {
-            if (surfaceCol != null && bakeToMagFieldSDF == true)
-            {
-                sdfManager.AddFieldCollider(surfaceCol);
-            }
+            rb = GetComponent<Rigidbody2D>();
         }
-
-        isOnPlayer = gameObject.CompareTag("Player");
     }
-    // ===[ IMagnetic Functions ]===========================
+
+    private void FixedUpdate()
+    {
+        if (rb != null)
+        {
+            List<MagnetComponentBase> otherFields = affectFields.ToList();
+
+            Vector2 totalForce = Vector2.zero;
+            for (int i = 0; i < otherFields.Count; i++)
+            {
+                totalForce += ((otherFields[i].gameObject.CompareTag("Player")) ? _playerMagInfluence : 1f) * otherFields[i].GetAppliedForce(_magData, transform.position, _fieldAttractDistance, rb.linearVelocity);
+            }
+
+            Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 1f), Color.red, .1f);
+            rb.AddForce(totalForce);
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("BOOM!");
+    }
+
     public override MagnetData GetMagDataOverride() /// Parent interface function for IMagnetic calls this abstract function.
     {
         return _magData;
@@ -125,14 +130,6 @@ public class MagneticSurface : MagnetComponentBase
 
     public override Vector2 GetAppliedForceOverride(MagnetData magData, Vector2 posWS, float radius, Vector2 velocity) /// Parent interface function for IMagnetic calls this abstract function.
     {
-        if (isOnPlayer)
-        {
-            // Dot product check.
-            if (Vector2.Dot((posWS - (Vector2)transform.position).normalized, transform.up) <= .5f)
-            {
-                return Vector2.zero;
-            }
-        }
         // _magData = this magnets data.
         // magData = input magnets data.
 

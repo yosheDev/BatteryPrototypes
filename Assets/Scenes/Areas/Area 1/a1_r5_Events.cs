@@ -7,6 +7,7 @@ public class a1_r6_Events : MonoBehaviour, IInterfaceEvent
 {
     public GameObject tabInteractObj;
     public GameObject cameraPanFocusObj;
+    public GameObject gate;
 
     private void Start()
     {
@@ -40,6 +41,8 @@ public class a1_r6_Events : MonoBehaviour, IInterfaceEvent
         yield return new WaitForSeconds(2f);
 
         GameInstance.instance.SetPlayerInputMode(BatteryController.PlayerInputMode.Enabled);
+        gate.GetComponent<IInterfaceEvent>().InterfaceEvent("Activate");
+
         tabInteractObj.SetActive(true);
         yield break;
     }
