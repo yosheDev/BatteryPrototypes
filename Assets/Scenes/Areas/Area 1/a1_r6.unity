@@ -3463,7 +3463,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e14ce56802109499be11608b8582d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MagneticTriggers
-  magnetComponent: {fileID: 1810029855}
+  magnetComponent: {fileID: 1810029858}
   isOnPlayer: 0
 --- !u!4 &1663195789
 Transform:
@@ -3907,7 +3907,8 @@ GameObject:
   - component: {fileID: 1810029852}
   - component: {fileID: 1810029854}
   - component: {fileID: 1810029856}
-  - component: {fileID: 1810029855}
+  - component: {fileID: 1810029858}
+  - component: {fileID: 1810029857}
   m_Layer: 0
   m_Name: Bomb_Negative
   m_TagString: Untagged
@@ -4026,28 +4027,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &1810029855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1810029851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3cfab209b5af0845abbc8b70d6c6278, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bomb
-  _magData:
-    charge: -1
-    strength: 0.05
-    attenuation: 2
-  surfaceCol: {fileID: 1810029854}
-  fieldCol: {fileID: 1663195790}
-  magTrigger: {fileID: 1663195788}
-  _fieldAttractDistance: 10
-  _attenuationModifier: 1
-  _playerMagInfluence: 250
 --- !u!50 &1810029856
 Rigidbody2D:
   serializedVersion: 5
@@ -4060,9 +4039,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_Mass: 0.2
+  m_LinearDamping: 0.02
+  m_AngularDamping: 1
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -4075,6 +4054,42 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &1810029857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810029851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c56b5e6b652f294e9b137804730071d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ContactBomb
+--- !u!114 &1810029858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1810029851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3c9944e82bf3d48b0ba99c5d28f082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MagneticSurface
+  _magData:
+    charge: -1
+    strength: 0.05
+    attenuation: 2
+  fieldCol: {fileID: 1663195790}
+  surfaceCol: {fileID: 1810029854}
+  _fieldAttractDistance: 10
+  _attenuationModifier: 1
+  _playerMagInfluence: 50
+  _maxVelocity: 4
+  _maxAngularVelocity: 10
+  bakeToMagFieldSDF: 0
 --- !u!1001 &1826935615
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4135,6 +4150,63 @@ PrefabInstance:
       addedObject: {fileID: 1713043258}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+--- !u!1001 &1981683714
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 28.92464
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 191675872032133748, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5959409161971075182, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
+      propertyPath: m_Name
+      value: NegMag
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1b30c694ace5fef42bf5ac0ca0810def, type: 3}
 --- !u!1001 &1993674934
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7100,3 +7172,4 @@ SceneRoots:
   - {fileID: 539653952}
   - {fileID: 1810029853}
   - {fileID: 247127002}
+  - {fileID: 1981683714}

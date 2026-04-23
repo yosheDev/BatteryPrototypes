@@ -1,7 +1,9 @@
-using UnityEngine;
 using FunctionLibrary;
-using System.Collections;
 using Magnet;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 // Magnetic Point is derived from MagnetComponentBase. It uses a single point as reference for the field(currently, might change?)
 public class MagneticSurface : MagnetComponentBase
@@ -11,18 +13,26 @@ public class MagneticSurface : MagnetComponentBase
     public Collider2D fieldCol;
     [Tooltip("Collider of the hard-surface collision. If null, uses as a point in space for distance calculations. If valid, uses perimeter of collider for distance calculations.")]
     public Collider2D surfaceCol;
-    [Tooltip("Distance for attraction from closest collider perimeter point.")]
 
     [Header("Field Attraction Data")]
     // TO DO: Add toggle to switche between different attuentuation curves. I.E Exponential, Logarithmic, Linear.
-
     public float _fieldAttractDistance = 2f;
     [Tooltip("Multiplies with the attenuation in magData. Used for customizing feel of individual magnets. This applies only to the force given to those interacting with this magnet.")]
     public float _attenuationModifier = 1f;
 
+    [Header("Rigidbody Only Properties")]
+    private Rigidbody2D rb;
+    [Tooltip("Adjusts influence player magnets will have on this.")]
+    public float _playerMagInfluence = 2f;
+    [Tooltip("The maximum velocity that this is allowed to move.")]
+    public float _maxVelocity = 2f;
+    [Tooltip("The maximum angular velocity that this is allowed to move.")]
+    public float _maxAngularVelocity = 10f;
+
     private bool isOnPlayer = false;
 
     // VFX
+    [Header("VFX")]
     public bool bakeToMagFieldSDF = true;
     private MagneticDistanceFieldsManager sdfManager;
 
@@ -96,6 +106,34 @@ public class MagneticSurface : MagnetComponentBase
 
         isOnPlayer = gameObject.CompareTag("Player");
     }
+
+    private void Start()
+    {
+        if (GetComponent<Rigidbody2D>() != null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
+    }
+    private void FixedUpdate()
+    {
+        if (rb != null && !isOnPlayer)
+        {
+            List<MagnetComponentBase> otherFields = affectFields.ToList();
+            Debug.Log("Affect Fields: " + affectFields.Count + " | Other Fields: " + otherFields.Count);
+            Vector2 totalForce = Vector2.zero;
+            for (int i = 0; i < otherFields.Count; i++)
+            {
+                totalForce += ((otherFields[i].gameObject.CompareTag("Player")) ? _playerMagInfluence : 1f) * otherFields[i].GetAppliedForce(_magData, transform.position, _fieldAttractDistance, rb.linearVelocity);
+            }
+
+            Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 1f), Color.red, .1f);
+            rb.AddForce(totalForce);
+
+            rb.linearVelocity = FunctionLibraryF.ClampMagnitudeRange(rb.linearVelocity, _maxVelocity, 0f);
+            rb.angularVelocity = Mathf.Clamp(rb.angularVelocity, 0f, _maxAngularVelocity);
+        }    
+    }
+
     // ===[ IMagnetic Functions ]===========================
     public override MagnetData GetMagDataOverride() /// Parent interface function for IMagnetic calls this abstract function.
     {

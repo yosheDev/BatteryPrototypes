@@ -12,6 +12,7 @@ public class MagneticTriggers : MonoBehaviour
         if (collision.gameObject != null && !isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             //Debug.Log("Something that is not the player is detecting a player magnet.");
+            //Debug.Log("Adding " + collision.gameObject + " to affectFields on " + gameObject.name);
             magnetComponent.affectFields.Add(collision.gameObject.GetComponent<MagneticTriggers>().magnetComponent);
         }
 
@@ -31,6 +32,14 @@ public class MagneticTriggers : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
+        // Update affectfields so that player could pull/attract this magnet.
+        if (collision.gameObject != null && !isOnPlayer && collision.gameObject.CompareTag("Player"))
+        {
+            //Debug.Log("Something that is not the player is ending detecting a player magnet.");
+            //Debug.Log("Removing " + collision.gameObject + " from affectFields on " + gameObject.name);
+            magnetComponent.affectFields.Add(collision.gameObject.GetComponent<MagneticTriggers>().magnetComponent);
+        }
+
         if (collision.gameObject != null && isOnPlayer && collision.gameObject.CompareTag("Player"))
         {
             return;

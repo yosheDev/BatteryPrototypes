@@ -1,6 +1,5 @@
 using Magnet;
 using System.Collections.Generic;
-using UnityEditor.U2D.Aseprite;
 using UnityEngine;
 
 // This class is to be the parent of all magnet component scripts. This makes finding all magnetic objects much easier and efficient.
