@@ -37,13 +37,12 @@ public class AreaManager : MonoBehaviour
     [Header("Checkpoint Data")]
     [HideInInspector] public Level checkpointLevel;
     [HideInInspector] public Vector2 checkpointRespawnPos = new Vector2(0f, 0f);
-    private uint checkpointRespawnCount = 0;
+    public uint checkpointRespawnCount = 0;
     private bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
 
     private bool isResetting = false;  /// Is true when player is resetting to beginning of the current room.
 
-    [Header("Player Data")] // Why is this here? Isn't this in GameInstance.cs?
-    public byte playerLives = 5; // Player lives.
+    public byte overrideStartLives = 255; /// Upon first load of this area, override GameInstance live counter and set lives to be this.
 
     [System.Serializable]
     public class RoomMusic
@@ -89,6 +88,12 @@ public class AreaManager : MonoBehaviour
         playerController = GameObject.FindAnyObjectByType<BatteryController>();
         playerRB = playerController.gameObject.GetComponent<Rigidbody2D>();
         playerBaseGravity = playerRB.gravityScale;
+
+        // Override player lives if value < 255.
+        if (overrideStartLives < 255)
+        {
+            GameInstance.instance.SetPlayerLives(overrideStartLives);
+        }
 
         roomNum = 1;
 

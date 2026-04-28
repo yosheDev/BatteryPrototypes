@@ -119,7 +119,7 @@ public class MagneticSurface : MagnetComponentBase
         if (rb != null && !isOnPlayer)
         {
             List<MagnetComponentBase> otherFields = affectFields.ToList();
-            Debug.Log("Affect Fields: " + affectFields.Count + " | Other Fields: " + otherFields.Count);
+            //Debug.Log("Affect Fields: " + affectFields.Count + " | Other Fields: " + otherFields.Count);
             Vector2 totalForce = Vector2.zero;
             for (int i = 0; i < otherFields.Count; i++)
             {

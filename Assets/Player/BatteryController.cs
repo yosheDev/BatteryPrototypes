@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.UI.Image;
 
-public class BatteryController : MonoBehaviour
+public class BatteryController : MonoBehaviour, IDamageable
 {
     #region Properties
     #region References
@@ -1494,6 +1494,19 @@ public class BatteryController : MonoBehaviour
         } 
     }
 
+    public void BeginDeath(DamageTypes damageType)
+    {
+        StartCoroutine(DeathAnimation(damageType));
+    }
+    private IEnumerator DeathAnimation(DamageTypes damageType)
+    {
+        rb.linearVelocity = Vector2.zero;
+        inputMode = PlayerInputMode.Disabled;
+        yield return new WaitForSeconds(.75f);
+        inputMode = PlayerInputMode.Enabled;
+        Death();
+        yield break;
+    }
     public void Death()
     {
         // TO DO: Ensure reset room state when respawning in the same room.
@@ -1585,6 +1598,18 @@ public class BatteryController : MonoBehaviour
         return surfaceParent;
     }
 
+    #endregion
+
+    #region IDamageable
+    public void Damage(DamageTypes damageType)
+    {
+        BeginDeath(damageType);
+    }
+
+    public bool IsAffectedByDamageType(DamageTypes damageType)
+    {
+        return true;
+    }
     #endregion
 
     #region Debug

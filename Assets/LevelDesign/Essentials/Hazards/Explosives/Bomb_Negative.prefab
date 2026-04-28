@@ -278,3 +278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c56b5e6b652f294e9b137804730071d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ContactBomb
+  explosionPrefab: {fileID: 2324397695575167871, guid: 5382bb9ac7208ae4b96962131ee31cfe, type: 3}
+  explodeOnAnyHighVelocityContact: 0
+  explodeVelocityThreshold: 10
+  rb: {fileID: 0}

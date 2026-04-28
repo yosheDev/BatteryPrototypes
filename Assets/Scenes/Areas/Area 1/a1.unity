@@ -287,7 +287,10 @@ PrefabInstance:
     m_RemovedGameObjects:
     - {fileID: 8812841804855978224, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 738896742799197087, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 724768949}
   m_SourcePrefab: {fileID: 100100000, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
 --- !u!114 &194574935 stripped
 MonoBehaviour:
@@ -316,6 +319,27 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
   m_PrefabInstance: {fileID: 1515492325}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &724768944 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 738896742799197087, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 194574934}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &724768949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 724768944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56de4b7dc45d9d044b6d9c2d9df5d4b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mechanism
+  isPowered: 0
+  machineParts: []
+  machineOnEvents: []
+  machineOffEvents: []
 --- !u!1001 &785512078
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -587,6 +611,10 @@ PrefabInstance:
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: playerController
       value: 
+      objectReference: {fileID: 1520525000}
+    - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: overrideStartLives
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.size
@@ -822,6 +850,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 93452006}
   m_SourcePrefab: {fileID: 100100000, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+--- !u!114 &1520525000 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8047242034082428540, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+  m_PrefabInstance: {fileID: 1515492325}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd2ce268e6f98264bb1a10f60fc76490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BatteryController
 --- !u!114 &1656108768 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4629887031375558571, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}

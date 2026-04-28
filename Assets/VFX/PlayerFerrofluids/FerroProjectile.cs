@@ -34,7 +34,7 @@ public class FerroProjectile : MonoBehaviour
     {
         if (inPlay)
         {
-            Debug.Log("Collided with " + collision.gameObject);
+            //Debug.Log("Collided with " + collision.gameObject);
             SetState(false);
         }
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class a1_r6_Events : MonoBehaviour, IInterfaceEvent
+public class a1_r5_Events : MonoBehaviour, IInterfaceEvent
 {
     public GameObject tabInteractObj;
     public GameObject cameraPanFocusObj;

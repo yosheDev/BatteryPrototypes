@@ -19,6 +19,7 @@ public class GameInstance : MonoBehaviour
 
     [Header("Player Data")]
     public byte playerLives = 5;
+    public byte maxPlayerLives = 5;
     public byte playerAbilityProgression = 0;
     public bool playerInputIgnored = false;
 
@@ -62,7 +63,7 @@ public class GameInstance : MonoBehaviour
 
     public void ResetPlayerLives()
     {
-        playerLives = 5;
+        playerLives = maxPlayerLives;
         onPlayerLivesChanged?.Invoke();
     }
 
@@ -70,6 +71,11 @@ public class GameInstance : MonoBehaviour
     {
         playerLives = amount;
         instance.onPlayerLivesChanged?.Invoke();
+    }
+
+    public void SetMaxPlayerLives(byte amount)
+    {
+        maxPlayerLives = amount;
     }
     #endregion
 }
