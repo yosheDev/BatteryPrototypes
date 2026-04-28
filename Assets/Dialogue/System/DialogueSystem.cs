@@ -48,6 +48,10 @@ public class DialogueManager : MonoBehaviour
     {
         inDialogue = false;
         dialogueText.gameObject.SetActive(false);
+
+        speakers.Clear();
+        lines.Clear();
+
         onDialogueEnded?.Invoke();
     }
 
@@ -93,7 +97,7 @@ public class DialogueManager : MonoBehaviour
 
     private bool LoadData(string csvName)
     {
-        TextAsset csv = Resources.Load<TextAsset>("Dialogue" + csvName);
+        TextAsset csv = Resources.Load<TextAsset>("Dialogue/" + csvName);
 
         if (csv == null)
         {
@@ -108,10 +112,10 @@ public class DialogueManager : MonoBehaviour
         // Loop through lines(rows) to seperate columns based on commas. (starting at 1 to skip header)
         for (int i = 1; i < rows.Length; i++)
         {
-            if (string.IsNullOrWhiteSpace(lines[i])) continue;
+            if (string.IsNullOrWhiteSpace(rows[i])) continue;
 
             // Split line into columns
-            string[] columns = lines[i].Split(',');
+            string[] columns = rows[i].Split(',');
 
             // Assuming CSV structure: Speaker, Line(English), 
             speakers.Add(columns[0]);

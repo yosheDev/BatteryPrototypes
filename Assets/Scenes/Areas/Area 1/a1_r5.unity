@@ -822,13 +822,33 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+      propertyPath: canOnlyUseOnce
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+      propertyPath: eventNames.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+      propertyPath: eventObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
       propertyPath: 'eventNames.Array.data[0]'
-      value: Activate
+      value: StartDialogue
+      objectReference: {fileID: 0}
+    - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+      propertyPath: 'eventNames.Array.data[1]'
+      value: StartDialogue
       objectReference: {fileID: 0}
     - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
       propertyPath: 'eventObjects.Array.data[0]'
       value: 
-      objectReference: {fileID: 1466835849}
+      objectReference: {fileID: 2141607310}
+    - target: {fileID: 383922259916584854, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+      propertyPath: 'eventObjects.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2141607310}
     - target: {fileID: 424502249211074874, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
       propertyPath: m_Name
       value: TabulatorInteraction
@@ -843,7 +863,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2476445973910949238, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -18.54
+      value: -4.4
       objectReference: {fileID: 0}
     - target: {fileID: 2476445973910949238, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4796,6 +4816,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+--- !u!1 &1457079935 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 424502249211074874, guid: 2a56e350d85601847ab01d535a0076d0, type: 3}
+  m_PrefabInstance: {fileID: 1457079934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1466835849
 GameObject:
   m_ObjectHideFlags: 0
@@ -6050,7 +6075,7 @@ GameObject:
   - component: {fileID: 1963719636}
   - component: {fileID: 1963719635}
   m_Layer: 0
-  m_Name: a1_r6_events
+  m_Name: a1_r5_events
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6127,7 +6152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c06cd0fd7cc8b843a77a2fe07f4b131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::a1_r6_Events
+  tabEnableObj: {fileID: 1457079935}
   tabInteractObj: {fileID: 873906847}
+  tabulator: {fileID: 2141607310}
   cameraPanFocusObj: {fileID: 163137332}
   gate: {fileID: 1466835849}
 --- !u!4 &1963719637
@@ -6312,8 +6339,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2141607312}
   - component: {fileID: 2141607311}
+  - component: {fileID: 2141607313}
   m_Layer: 15
-  m_Name: Terminal Wheel_0
+  m_Name: Tabulator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6393,6 +6421,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1146501980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2141607313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141607310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48ea9907ec3985940a568251b9fae8c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  camFocusTrans: {fileID: 163137333}
+  currentDialogueData: a1_c1_1
 --- !u!1001 &3977103819261406333
 PrefabInstance:
   m_ObjectHideFlags: 0

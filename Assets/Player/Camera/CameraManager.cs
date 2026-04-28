@@ -115,11 +115,12 @@ public class CameraManager : MonoBehaviour
             if (_targetGroup.FindMember(target) == -1)
             {
                 _targetGroup.AddMember(target, 0f, 0f);
+
+
+                // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
+                Coroutine addTargetCoroutine = CameraManager.instance.StartCoroutine(BlendInFollowTarget(target, addDuration));
+                addTargetCoroutines.Add(target, addTargetCoroutine);
             }
-            
-            // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
-            Coroutine addTargetCoroutine = CameraManager.instance.StartCoroutine(BlendInFollowTarget(target, addDuration));
-            addTargetCoroutines.Add(target, addTargetCoroutine);
         }
     }
 

@@ -984,33 +984,53 @@ public class BatteryController : MonoBehaviour, IDamageable
     #region Input Actions
     public void UpdateMouseDelta(InputAction.CallbackContext context)
     {
-        mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
+        if (inputMode == PlayerInputMode.Enabled)
+        {
+            mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
+        }
+        else
+        {
+            mouseDelta = Vector2.zero;
+        }
     }
 
     public void Scout(InputAction.CallbackContext context)
     {
-        if (playerInput.currentControlScheme.Equals("Gamepad"))
+        if (inputMode == PlayerInputMode.Enabled)
         {
-            scoutInput = context.ReadValue<Vector2>();
-        }
-        else
-        {
-            if (context.started)
+            if (playerInput.currentControlScheme.Equals("Gamepad"))
             {
-                scoutState = ScoutState.Scouting;
-                CameraManager.instance.AddFollowTarget(scoutTarget.transform);
-                scoutTarget.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                scoutInput = context.ReadValue<Vector2>();
             }
-            else if (context.canceled)
+            else
             {
-                scoutState = ScoutState.Returning;
+                if (context.started)
+                {
+                    scoutState = ScoutState.Scouting;
+                    CameraManager.instance.AddFollowTarget(scoutTarget.transform);
+                    scoutTarget.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+                }
+                else if (context.canceled)
+                {
+                    scoutState = ScoutState.Returning;
+                }
+                scoutInput = context.ReadValue<Vector2>();
             }
-            scoutInput = context.ReadValue<Vector2>();
         }
     }
 
     public void Weld(InputAction.CallbackContext context)
     {
+        if (inputMode == PlayerInputMode.UIOnly)
+        {
+            if (context.started)
+            {
+                DialogueManager.instance.AdvanceDialogue();
+            }
+            return;
+        }
+
+
         // Break out of spawn mechanism.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.Spawn))
         {
@@ -1114,14 +1134,23 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void Interact(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (inputMode == PlayerInputMode.Enabled)
         {
-            interactObj.Interact(this);
+            if (context.started)
+            {
+                interactObj.Interact(this);
+            }
         }
+            
     }
     
     public void LeftClick(InputAction.CallbackContext context)
     {
+        if (inputMode != PlayerInputMode.Enabled)
+        {
+            return;
+        }
+
         if (!context.started || isGrounded || isShootDisabled || !AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None))
         {
             return;
@@ -1167,6 +1196,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void RightClick(InputAction.CallbackContext context)
     {
+        if (inputMode != PlayerInputMode.Enabled)
+        {
+            return;
+        }
+
         if (context.started)
         {
             if (!isGrappling)
@@ -1473,6 +1507,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void RestartInput(InputAction.CallbackContext context)
     {
+        if (inputMode != PlayerInputMode.Enabled)
+        {
+            return;
+        }
+
         if (context.performed) /// If held for duration specified in the Input Settings.
         {
             Restart();
