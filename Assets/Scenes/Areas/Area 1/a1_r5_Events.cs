@@ -11,7 +11,22 @@ public class a1_r5_Events : MonoBehaviour, IInterfaceEvent
 
     private void Start()
     {
-        tabInteractObj.SetActive(false);
+        // If player died and is respawning here.
+        if (AreaManager.instance.checkpointRespawnCount == 1)
+        {
+            gate.GetComponent<IInterfaceEvent>().InterfaceEvent("Activate");
+
+            // Force new dialogue sequence.
+        }
+        else if (AreaManager.instance.checkpointRespawnCount > 1)
+        {
+            gate.GetComponent<IInterfaceEvent>().InterfaceEvent("Activate");
+        }
+        // First time in the room.
+        else
+        {
+            tabInteractObj.SetActive(false);
+        } 
     }
     public void InterfaceEvent(string name)
     {
