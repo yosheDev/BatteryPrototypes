@@ -148,9 +148,19 @@ public class CameraManager : MonoBehaviour
         }
         else
         {
-            // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
-            Coroutine removeTargetCoroutine = CameraManager.instance.StartCoroutine(BlendOutFollowTarget(target, removeDuration));
-            removeTargetCoroutines.Add(target, removeTargetCoroutine);
+            Coroutine tryGetRoutine = null;
+            removeTargetCoroutines.TryGetValue(target, out tryGetRoutine);
+            if (tryGetRoutine == null)
+            {
+                // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
+                Coroutine removeTargetCoroutine = CameraManager.instance.StartCoroutine(BlendOutFollowTarget(target, removeDuration));
+                removeTargetCoroutines.Add(target, removeTargetCoroutine);
+                Debug.Log("New remove target routine for " + target);
+            }
+            else
+            {
+                Debug.Log("Target " + target + " already has a camera blend out routine happening for it.");
+            }
         }
     }
 

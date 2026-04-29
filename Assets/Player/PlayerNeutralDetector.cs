@@ -51,9 +51,11 @@ public class PlayerNeutralDetector : MonoBehaviour
 
     private IEnumerator NeutralOverlapObserve()
     {
+        List<GameObject> neutralOverlapsList = new List<GameObject>();
         while (true)
         {
-            foreach (GameObject overlapObj in neutralOverlaps)
+            neutralOverlapsList = neutralOverlaps.ToList();
+            foreach (GameObject overlapObj in neutralOverlapsList)
             {
                 Collider2D neutralCol = overlapObj.GetComponent<Collider2D>();
 

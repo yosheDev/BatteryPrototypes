@@ -21,8 +21,11 @@ public class VentFlap : MonoBehaviour, IInterfaceEvent
         switch(eventName)
         {
             case "Open":
-                rb.constraints = RigidbodyConstraints2D.None;
-                rb.WakeUp();
+                if (rb != null)
+                {
+                    rb.constraints = RigidbodyConstraints2D.None;
+                    rb.WakeUp();
+                }
                 break;
             default:
                 break;

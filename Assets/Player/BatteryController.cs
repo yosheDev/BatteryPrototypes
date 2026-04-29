@@ -53,6 +53,8 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public PlayerInputMode inputMode = PlayerInputMode.Enabled;
 
+    private bool isDead = false;
+
     #region Abilities
 
     private byte abilityProgression = 0;    /// Since ability progression is linear, using a byte to store what player has.
@@ -1535,7 +1537,12 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void BeginDeath(DamageTypes damageType)
     {
-        StartCoroutine(DeathAnimation(damageType));
+        if (!isDead)
+        {
+            isDead = true;
+            StartCoroutine(DeathAnimation(damageType));
+        }
+        
     }
     private IEnumerator DeathAnimation(DamageTypes damageType)
     {
@@ -1551,6 +1558,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         // TO DO: Ensure reset room state when respawning in the same room.
         // TO DO: Reset battery percentage to be what is was upon entering the room.
         // TO DO: Checkpoint logic
+        isDead = false;
         switch(GameInstance.instance.difficulty)
         {
             case GameInstance.GameDifficulty.Easy:
