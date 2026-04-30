@@ -131,14 +131,21 @@ public class MagneticSurface : MagnetComponentBase
             for (int i = 0; i < otherFields.Count; i++)
             {
                 totalForce += ((otherFields[i].gameObject.CompareTag("Player")) ? _playerMagInfluence : 1f) * otherFields[i].GetAppliedForce(_magData, transform.position, _fieldAttractDistance, rb.linearVelocity);
+                //if (otherFields[i].gameObject.CompareTag("Player"))
+                //{ Debug.Log(totalForce + " | " + _playerMagInfluence); }
             }
 
-            Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 1f), Color.red, .1f);
+            //Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 1f), Color.red, .1f);
             rb.AddForce(Vector2.ClampMagnitude(totalForce, _forceClamp));
 
             rb.linearVelocity = FunctionLibraryF.ClampMagnitudeRange(rb.linearVelocity, _maxVelocity, 0f);
             rb.angularVelocity = Mathf.Clamp(rb.angularVelocity, 0f, _maxAngularVelocity);
         }    
+    }
+
+    public bool IsOnPlayer()
+    {
+        return isOnPlayer;
     }
 
     // ===[ IMagnetic Functions ]===========================

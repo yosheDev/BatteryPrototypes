@@ -8,6 +8,7 @@ public class ContactBomb : MonoBehaviour, IDamageable
     public bool explodeOnAnyHighVelocityContact = false;
     [SerializeField] private float explodeVelocityThreshold = 10f;
     private float lastFrameVelocity = 0f;
+    private Vector2 lastFramePos = Vector2.zero;
 
     [SerializeField] private Rigidbody2D rb;
 
@@ -21,6 +22,7 @@ public class ContactBomb : MonoBehaviour, IDamageable
 
     private void LateUpdate()
     {
+        lastFramePos = transform.position;
         lastFrameVelocity = rb.linearVelocity.magnitude;
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -31,7 +33,7 @@ public class ContactBomb : MonoBehaviour, IDamageable
         }
         else
         {
-            if (lastFrameVelocity >= explodeVelocityThreshold)
+            if (lastFrameVelocity >= explodeVelocityThreshold || ((Vector2)transform.position - lastFramePos).magnitude > explodeVelocityThreshold)
             {
                 Explode();
             }

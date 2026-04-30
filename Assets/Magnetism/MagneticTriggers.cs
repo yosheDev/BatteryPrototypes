@@ -22,10 +22,13 @@ public class MagneticTriggers : MonoBehaviour
             return;
         }
 
-        // If this trigger is for a player magnet and the other collision is set to not affect the player.
-        if (collision.gameObject != null && isOnPlayer && collision.gameObject.GetComponent<MagneticSurface>()._canAffectPlayer == false)
+        if (collision.gameObject.GetComponent<MagneticSurface>() != null)
         {
-            return;
+            // If this trigger is for a player magnet and the other collision is set to not affect the player.
+            if (collision.gameObject != null && isOnPlayer && collision.gameObject.GetComponent<MagneticSurface>()._canAffectPlayer == false)
+            {
+                return;
+            }
         }
 
         // If no magnetic trigger detected.
