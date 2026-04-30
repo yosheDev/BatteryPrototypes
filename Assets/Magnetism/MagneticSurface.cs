@@ -20,16 +20,23 @@ public class MagneticSurface : MagnetComponentBase
     [Tooltip("Multiplies with the attenuation in magData. Used for customizing feel of individual magnets. This applies only to the force given to those interacting with this magnet.")]
     public float _attenuationModifier = 1f;
 
-    [Header("Rigidbody Only Properties")]
-    private Rigidbody2D rb;
+    [Header("Player")]
     [Tooltip("Adjusts influence player magnets will have on this.")]
     public float _playerMagInfluence = 2f;
+    [Tooltip("Can this magnet push and pull the player rigidbody?")]
+    public bool _canAffectPlayer = true;
+    private bool isOnPlayer = false;    /// Is this magnet a player magnet?
+
+    private Rigidbody2D rb;
+    [Header("Rigidbody Only Properties")]
+
+    [Tooltip("Clamps any forces added by this maximum threshold.")]
+    public float _forceClamp = 2f;
     [Tooltip("The maximum velocity that this is allowed to move.")]
     public float _maxVelocity = 2f;
     [Tooltip("The maximum angular velocity that this is allowed to move.")]
     public float _maxAngularVelocity = 10f;
 
-    private bool isOnPlayer = false;
 
     // VFX
     [Header("VFX")]
@@ -127,7 +134,7 @@ public class MagneticSurface : MagnetComponentBase
             }
 
             Debug.DrawLine(transform.position, transform.position + (Vector3)(totalForce.normalized * 1f), Color.red, .1f);
-            rb.AddForce(totalForce);
+            rb.AddForce(Vector2.ClampMagnitude(totalForce, _forceClamp));
 
             rb.linearVelocity = FunctionLibraryF.ClampMagnitudeRange(rb.linearVelocity, _maxVelocity, 0f);
             rb.angularVelocity = Mathf.Clamp(rb.angularVelocity, 0f, _maxAngularVelocity);

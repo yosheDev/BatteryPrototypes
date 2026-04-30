@@ -159,7 +159,9 @@ MonoBehaviour:
   surfaceCol: {fileID: 2674387074433134939}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  _canAffectPlayer: 1
   _playerMagInfluence: 2
+  _forceClamp: 2
   _maxVelocity: 2
   _maxAngularVelocity: 10
   bakeToMagFieldSDF: 1
