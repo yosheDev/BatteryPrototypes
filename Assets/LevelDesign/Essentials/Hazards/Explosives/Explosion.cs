@@ -7,8 +7,8 @@ public class Explosion : MonoBehaviour
 {
     private ParticleSystem _particleSystem;
     private Collider2D hitbox;
-    private float hitboxDelay = .05f;
-    private float hitboxDuration = .2f;
+    [SerializeField] private float hitboxDelay = .01f;
+    [SerializeField] private float hitboxDuration = .1f;
 
     private void Start()
     {

@@ -72,6 +72,8 @@ public class SeekerDrone : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //transform.position += transform.up * .1f * Time.fixedDeltaTime;
+
         float velocity = ((Vector2)transform.position - lastFramePos).magnitude;
         List<MagnetComponentBase> magFields = magSurface.affectFields.ToList();
         for (int i = 0; i < magFields.Count; i++)
@@ -106,7 +108,7 @@ public class SeekerDrone : MonoBehaviour
                             Stagger();
                         }
                     }
-                }  
+                }
             }
 
             lastFramePos = transform.position;
