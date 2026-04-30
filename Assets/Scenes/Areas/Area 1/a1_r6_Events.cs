@@ -5,6 +5,7 @@ using Magnet;
 public class a1_r6_Events : MonoBehaviour
 {
     public List<GameObject> bombingRemoveObjs = new List<GameObject>();
+    public List<GameObject> returnAppearObjects = new List<GameObject>();
     public List<GameObject> ventsToOpen = new List<GameObject>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,6 +14,7 @@ public class a1_r6_Events : MonoBehaviour
         if (AreaManager.instance.checkpointRespawnCount > 0)
         {
             //Debug.Log("Room is blasted open!");
+
             foreach(GameObject obj in bombingRemoveObjs)
             {
                 Destroy(obj);
@@ -27,6 +29,10 @@ public class a1_r6_Events : MonoBehaviour
         else
         {
             //Debug.Log("This is the first time being in the room.");
+            foreach (GameObject obj in returnAppearObjects)
+            {
+                obj.SetActive(false);
+            }
         }
     }
 }

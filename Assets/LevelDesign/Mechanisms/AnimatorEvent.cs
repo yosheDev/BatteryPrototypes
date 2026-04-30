@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class AnimatorEvent : MonoBehaviour, IInterfaceEvent
 {
     [SerializeField] Animator animator;
+    [SerializeField] List<AudioSource> audioSources = new List<AudioSource>();
     [SerializeField] private bool disableAtStart = false;
     [SerializeField] private bool hideSpriteAtStart = false;
 
@@ -29,5 +30,13 @@ public class AnimatorEvent : MonoBehaviour, IInterfaceEvent
             }
         }
         animator.SetTrigger(name);
+    }
+
+    public void PlaySound(int ID = 0)
+    {
+        if (audioSources[ID] != null)
+        {
+            audioSources[ID].Play();
+        }
     }
 }

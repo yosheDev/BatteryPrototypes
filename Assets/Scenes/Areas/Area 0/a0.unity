@@ -355,6 +355,14 @@ PrefabInstance:
       propertyPath: orthographic size
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 2643066962996429256, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.4171505
+      objectReference: {fileID: 0}
+    - target: {fileID: 2643066962996429256, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -11.2774105
+      objectReference: {fileID: 0}
     - target: {fileID: 4589120818860438548, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: _currentCamera
       value: 
@@ -379,14 +387,6 @@ PrefabInstance:
       propertyPath: Targets.Array.data[0].Object
       value: 
       objectReference: {fileID: 1515492334}
-    - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -11.4171505
-      objectReference: {fileID: 0}
-    - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -11.2774105
-      objectReference: {fileID: 0}
     - target: {fileID: 6646184805457534860, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_Name
       value: CameraManager

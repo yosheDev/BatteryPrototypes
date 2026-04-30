@@ -27,8 +27,16 @@ public class AudioManager : MonoBehaviour
     #endregion
 
     #region Music
-    public void PlayMusicClip(AudioClip audioClip, float newVolume = -1f)
+    public void PlayMusicClip(AudioClip audioClip, float newVolume = -1f, bool forceRestartClip = false)
     {
+        // If this clip is already playing.
+        if (musicSource.clip == audioClip && musicSource.isPlaying)
+        {
+            if (!forceRestartClip)
+            {
+                return;
+            }
+        }
         musicSource.clip = audioClip;
         musicSource.Play();
         

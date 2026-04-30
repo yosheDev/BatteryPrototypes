@@ -340,6 +340,14 @@ PrefabInstance:
       propertyPath: m_Cameras.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2643066962996429256, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -26.85254
+      objectReference: {fileID: 0}
+    - target: {fileID: 2643066962996429256, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.6818701
+      objectReference: {fileID: 0}
     - target: {fileID: 6578456198219527783, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
       value: -26.85254
@@ -354,11 +362,11 @@ PrefabInstance:
       objectReference: {fileID: 1201116645}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -26.85254
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6635310884703080188, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.6818701
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6646184805457534860, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_Name
@@ -658,7 +666,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4587624203421380279, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_TranslationOffsets.Array.data[0].x
-      value: 0.11400223
+      value: 0.13500214
+      objectReference: {fileID: 0}
+    - target: {fileID: 4587624203421380279, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_TranslationOffsets.Array.data[0].y
+      value: -0.0009998381
       objectReference: {fileID: 0}
     - target: {fileID: 4981228276706610175, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_Parameters.m_EndRange

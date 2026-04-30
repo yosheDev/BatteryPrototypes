@@ -14,6 +14,7 @@ public class AudioControl : MonoBehaviour
 
     [Header("Control")]
     [SerializeField] private AudioControlMode controlMode;
+    [SerializeField] private bool forceRestartClip = false;
 
     [Header("Play Music")]
     [SerializeField] private AudioClip musicToPlay;
@@ -39,7 +40,7 @@ public class AudioControl : MonoBehaviour
                     AudioManager.instance.FadeOutMusic(2f);
                     break;
                 case AudioControlMode.PlayMusic:
-                    AudioManager.instance.PlayMusicClip(musicToPlay, musicVolume);
+                    AudioManager.instance.PlayMusicClip(musicToPlay, musicVolume, forceRestartClip);
                     break;
                 case AudioControlMode.FadeIn:
                     AudioManager.instance.FadeInMusic(2f);

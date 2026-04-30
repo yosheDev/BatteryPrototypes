@@ -21,6 +21,7 @@ public class a1_r5_Events : MonoBehaviour, IInterfaceEvent
             tabInteractObj.SetActive(false);
 
             // Force dialogue sequence.
+            AreaManager.instance.ReleasePlayer();
             tabulator.GetComponent<tabulator>().SetDialogueCSV("a1_c1_respawn");
             DialogueManager.instance.onDialogueEnded += SetFinalDialogue;
             tabulator.GetComponent<tabulator>().StartDialogueScene();

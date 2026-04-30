@@ -1562,7 +1562,21 @@ public class BatteryController : MonoBehaviour, IDamageable
         switch(GameInstance.instance.difficulty)
         {
             case GameInstance.GameDifficulty.Easy:
-                Restart();
+                if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r6")
+                {
+                    if (GameInstance.instance.playerLives <= 0)
+                    {
+                        AreaManager.instance.Respawn();
+                    }
+                    else
+                    {
+                        Restart();
+                    }
+                }
+                else
+                {
+                    Restart();
+                }  
                 break;
 
             case GameInstance.GameDifficulty.Normal:

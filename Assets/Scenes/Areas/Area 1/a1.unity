@@ -560,7 +560,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5932552633230210159, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
       propertyPath: difficulty
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7075104304031873723, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -629,7 +629,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[0].music
