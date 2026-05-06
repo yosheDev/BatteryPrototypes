@@ -533,11 +533,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                 #region Prevent Neutral Leap Combining With Magnet Forces
                 // Debug Circle in the forward direction of the magnets. If mag surface detected, prevent neutral movement later on with a null check.
-                Collider2D[] posForOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .5f), 1f, weldLayerMask);
-                Collider2D[] negForOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .5f), 1f, weldLayerMask);
+                Collider2D[] posForOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .25f), .5f, weldLayerMask);
+                Collider2D[] negForOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f), .5f, weldLayerMask);
                 #region Debug Circle
-                //Debug.DrawLine((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .5f) + ((Vector2)positiveMag.transform.up * -0.5f), (Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .5f) + ((Vector2)positiveMag.transform.up * 0.5f), Color.green, .5f);
-                //Debug.DrawLine((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .5f) + ((Vector2)positiveMag.transform.up * -0.5f), (Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .5f) + ((Vector2)positiveMag.transform.up * 0.5f), Color.green, .5f);
+                //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * -0.25f), Color.green, .5f);
+                //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * -0.25f), Color.green, .5f);
                 #endregion
 
                 // Positive
@@ -546,22 +546,25 @@ public class BatteryController : MonoBehaviour, IDamageable
                     foreach (Collider2D col in posForOverlap)
                     {
                         MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-                        RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
-                        bool isOccluded = false;
-                        foreach (RaycastHit2D hit in hits)
+                        if (curMag != null && curMag._magData.charge == 1)
                         {
-                            if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
                             {
-                                isOccluded = true;
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                magForwardSurface = curMag.gameObject.GetComponent<Collider2D>();
                                 break;
                             }
-                        }
-
-                        if (!isOccluded)
-                        {
-                            magForwardSurface = curMag.gameObject.GetComponent<Collider2D>();
-                            break;
-                        }
+                        }  
                     }
                 }
 
@@ -571,23 +574,25 @@ public class BatteryController : MonoBehaviour, IDamageable
                     foreach (Collider2D col in negForOverlap)
                     {
                         MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
-
-                        RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
-                        bool isOccluded = false;
-                        foreach (RaycastHit2D hit in hits)
+                        if (curMag != null && curMag._magData.charge == -1)
                         {
-                            if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            bool isOccluded = false;
+                            foreach (RaycastHit2D hit in hits)
                             {
-                                isOccluded = true;
+                                if (hit.collider != null && hit.collider.gameObject.GetComponent<FieldOccluder>())
+                                {
+                                    isOccluded = true;
+                                    break;
+                                }
+                            }
+
+                            if (!isOccluded)
+                            {
+                                magForwardSurface = curMag.gameObject.GetComponent<Collider2D>();
                                 break;
                             }
-                        }
-
-                        if (!isOccluded)
-                        {
-                            magForwardSurface = curMag.gameObject.GetComponent<Collider2D>();
-                            break;
-                        }
+                        }    
                     }
                 }
 
@@ -673,18 +678,10 @@ public class BatteryController : MonoBehaviour, IDamageable
             if (posPreventer.neutralDetected || negPreventer.neutralDetected || (evalAttractSurface != null && weldState == WeldState.None))
             {
                 rb.angularDamping = 80f;
-                if (abilityProgression > 0)
-                {
-                    // Change rot so that player cannot push against the magnets.
-                }
             }
             else
             {
                 rb.angularDamping = Mathf.SmoothDamp(rb.angularDamping, .01f, ref angularRotVelocity, .1f);
-                if (abilityProgression > 0)
-                {
-                    // Change rot so that player can push against the magnets.
-                }
             }
             #endregion
 
@@ -694,6 +691,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // If is NOT touching a magnet or like within range of magnet.
                 if ((evalAttractSurface == null && magForwardSurface == null)|| abilityProgression < 1)
                 {
+                    Debug.Log("Torque Rotation Method");
                     // Side Torque for stabilization
                     float currentAngle = rb.rotation;
                     float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
@@ -722,29 +720,24 @@ public class BatteryController : MonoBehaviour, IDamageable
                 else
                 {
                     // If player is close to magnets neutrally, prevent player from pushing off against them via rigidbody. This is for game feel and avoiding large leaps caused by combined forces with repel.
-                    if (magForwardSurface != null || evalAttractSurface != null && weldState == WeldState.None)
+                    if ((magForwardSurface != null || evalAttractSurface != null) && weldState == WeldState.None)
                     {
-                        if (evalAttractSurface != null)
-                        {
-                            Debug.Log(evalAttractSurface);
-                        }
-                        else
-                        {
-                            if (magForwardSurface != null)
-                            {
-                                Debug.Log("MagForwardSurf" + magForwardSurface);
-                            }
-                            else
-                            {
-                                Debug.Log("Null");
-                            }
-                        }
-
+                        Debug.Log("Modify Transform Rotation Method");
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                        //rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor));
                         intermediateRot = transform.rotation;
                     }
                     else
                     {
+                        if (magForwardSurface != null)
+                        {
+                            Debug.Log("Mag forward surface..");
+                        }
+                        if (evalAttractSurface != null)
+                        {
+                            Debug.Log("eval attact surface..");
+                        }
+                        Debug.Log("Welded Rotation Method?");
                         // If on a neutral surface, use rigidbody for foddian movement or walk around.
                         if (neutralDetector.neutralDetected)
                         {
