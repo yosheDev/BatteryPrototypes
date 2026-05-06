@@ -532,11 +532,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                 #region Prevent Neutral Leap Combining With Magnet Forces
                 // Debug Circle in the forward direction of the magnets. If mag surface detected, prevent neutral movement later on with a null check.
-                Collider2D[] posForOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .25f), .5f, weldLayerMask);
-                Collider2D[] negForOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f), .5f, weldLayerMask);
+                Collider2D[] posForOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .25f), .45f, weldLayerMask);
+                Collider2D[] negForOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f), .45f, weldLayerMask);
                 #region Debug Circle
-                Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * -0.25f), Color.green, .5f);
-                Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * -0.25f), Color.green, .5f);
+                //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * 0.225f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * -0.225f), Color.green, .5f);
+                //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * 0.225f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * -0.225f), Color.green, .5f);
                 #endregion
 
                 // Positive
@@ -676,13 +676,11 @@ public class BatteryController : MonoBehaviour, IDamageable
             #region Prevent Fast Rotation Into Floors
             if (posPreventer.neutralDetected || negPreventer.neutralDetected || (evalAttractSurface != null && weldState == WeldState.None))
             {
-                rb.angularDamping = 80f; // this stops firing and break the controller, does the else instead when shouldn't. Preventers detection fails. 
+                rb.angularDamping = 80f;
             }
             else
             {
                 rb.angularDamping = Mathf.SmoothDamp(rb.angularDamping, .01f, ref angularRotVelocity, .1f);
-                //Debug.Log("Pos Preventer: " + posPreventer.neutralDetected);
-                //Debug.Log("Neg Preventer: " + negPreventer.neutralDetected);
             }
             #endregion
 
