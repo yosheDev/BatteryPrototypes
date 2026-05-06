@@ -321,7 +321,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             #endregion
 
             Collider2D evalAttractSurface = null; /// Used for non-welding states to know if they are pressed against a magnet surface or not.
-            Collider2D magForwardSurface = null;
+            Collider2D magForwardSurface = null; /// Used for preventing torque rotation forces with repel magnet forces.
 
             #region Detect Magnets
             if (abilityProgression > 0) // Does player have magnetism unlocked?
@@ -442,7 +442,6 @@ public class BatteryController : MonoBehaviour, IDamageable
                 {
                     #region Reduce Gravity When Touching Mag Surface (Game Feel for Climbing / Sticking)
 
-
                     Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .05f), .5f, weldLayerMask);
                     Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .05f), .5f, weldLayerMask);
                     #region Debug Circle
@@ -536,8 +535,8 @@ public class BatteryController : MonoBehaviour, IDamageable
                 Collider2D[] posForOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position + ((Vector2)positiveMag.transform.up * .25f), .5f, weldLayerMask);
                 Collider2D[] negForOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f), .5f, weldLayerMask);
                 #region Debug Circle
-                //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * -0.25f), Color.green, .5f);
-                //Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * -0.25f), Color.green, .5f);
+                Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.up * -0.25f), Color.green, .5f);
+                Debug.DrawLine((Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * 0.25f), (Vector2)negativeMag.transform.position + ((Vector2)negativeMag.transform.up * .25f) + ((Vector2)negativeMag.transform.right * -0.25f), Color.green, .5f);
                 #endregion
 
                 // Positive
@@ -548,7 +547,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                         MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
                         if (curMag != null && curMag._magData.charge == 1)
                         {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .2f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(positiveMag.transform.position + (-positiveMag.transform.up * .1f), col.ClosestPoint(positiveMag.transform.position), Physics2D.DefaultRaycastLayers);
                             bool isOccluded = false;
                             foreach (RaycastHit2D hit in hits)
                             {
@@ -576,7 +575,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                         MagnetComponentBase curMag = col.gameObject.GetComponent<MagnetComponentBase>();
                         if (curMag != null && curMag._magData.charge == -1)
                         {
-                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .2f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
+                            RaycastHit2D[] hits = Physics2D.LinecastAll(negativeMag.transform.position + (-negativeMag.transform.up * .1f), col.ClosestPoint(negativeMag.transform.position), Physics2D.DefaultRaycastLayers);
                             bool isOccluded = false;
                             foreach (RaycastHit2D hit in hits)
                             {
@@ -677,11 +676,13 @@ public class BatteryController : MonoBehaviour, IDamageable
             #region Prevent Fast Rotation Into Floors
             if (posPreventer.neutralDetected || negPreventer.neutralDetected || (evalAttractSurface != null && weldState == WeldState.None))
             {
-                rb.angularDamping = 80f;
+                rb.angularDamping = 80f; // this stops firing and break the controller, does the else instead when shouldn't. Preventers detection fails. 
             }
             else
             {
                 rb.angularDamping = Mathf.SmoothDamp(rb.angularDamping, .01f, ref angularRotVelocity, .1f);
+                //Debug.Log("Pos Preventer: " + posPreventer.neutralDetected);
+                //Debug.Log("Neg Preventer: " + negPreventer.neutralDetected);
             }
             #endregion
 
@@ -689,7 +690,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             if (weldState == WeldState.None)
             {
                 // If is NOT touching a magnet or like within range of magnet.
-                if ((evalAttractSurface == null && magForwardSurface == null)|| abilityProgression < 1)
+                if ((evalAttractSurface == null && magForwardSurface == null) || abilityProgression < 1)
                 {
                     Debug.Log("Torque Rotation Method");
                     // Side Torque for stabilization
@@ -1659,7 +1660,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         switch(GameInstance.instance.difficulty)
         {
             case GameInstance.GameDifficulty.Easy:
-                if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r6")
+                if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r6")// respawn tutorial scene
                 {
                     if (GameInstance.instance.playerLives <= 0)
                     {

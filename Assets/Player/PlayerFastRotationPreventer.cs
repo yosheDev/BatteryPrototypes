@@ -53,7 +53,7 @@ public class PlayerFastRotationPreventer : MonoBehaviour
             }
             else
             {
-                neutralDetected = false;
+                //neutralDetected = false;
             }
             return;
         }
@@ -251,7 +251,6 @@ public class PlayerFastRotationPreventer : MonoBehaviour
                 float nearestDistanceToOccluder = 99999f;
                 // Trace for magents to update nearestDistanceToOccluder.
                 RaycastHit2D[] hits = Physics2D.LinecastAll(playerMagNearestSurface.position, magCol.ClosestPoint(playerMagNearestSurface.position));
-                //Debug.DrawLine(playerMagNearestNeutral.position, neutralCol.ClosestPoint(playerMagNearestNeutral.position), Color.red, .05f);
                 for (int i = 0; i < hits.Length; i++)
                 {
                     /// If should be ignored. Such as on the player or on the wrong layer.
@@ -310,7 +309,7 @@ public class PlayerFastRotationPreventer : MonoBehaviour
             return;
         }
 
-        if (collision.gameObject.layer != LayerMask.NameToLayer("MagnetSurface"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("MagnetSurface"))
         {
             // observe mag surface
             magnetOverlaps.Remove(collision.gameObject);
