@@ -146,6 +146,11 @@ MonoBehaviour:
   surfaceCol: {fileID: 0}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  _playerMagInfluence: 2
+  _canAffectPlayer: 1
+  _forceClamp: 2
+  _maxVelocity: 2
+  _maxAngularVelocity: 10
   bakeToMagFieldSDF: 0
 --- !u!114 &1905707077189402023
 MonoBehaviour:
@@ -458,6 +463,11 @@ MonoBehaviour:
   surfaceCol: {fileID: 0}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  _playerMagInfluence: 2
+  _canAffectPlayer: 1
+  _forceClamp: 2
+  _maxVelocity: 2
+  _maxAngularVelocity: 10
   bakeToMagFieldSDF: 0
 --- !u!114 &7749330453487282767
 MonoBehaviour:
@@ -1167,6 +1177,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   neutralDetected: 0
+  magDetected: 0
   charge: 0
 --- !u!1 &4556257301489368216
 GameObject:
@@ -2066,7 +2077,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3630706780392114562}
   - component: {fileID: 743935625478155525}
-  - component: {fileID: 6015378341251496490}
+  - component: {fileID: 4350049275393821890}
   - component: {fileID: 6563665004846503657}
   - component: {fileID: 7553798359228777383}
   - component: {fileID: 833065636794077562}
@@ -2173,8 +2184,8 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!61 &6015378341251496490
-BoxCollider2D:
+--- !u!60 &4350049275393821890
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2207,7 +2218,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.1159032}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -2217,8 +2228,43 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.32, y: 1.765}
-  m_EdgeRadius: 0.3
+  m_Points:
+    m_Paths:
+    - - {x: 0.23981632, y: 1.0166172}
+      - {x: 0.011490643, y: 1.0430908}
+      - {x: -0.23214394, y: 1.0141941}
+      - {x: -0.45120502, y: 0.92090464}
+      - {x: -0.4723549, y: 0.85831296}
+      - {x: -0.449826, y: 0.8024787}
+      - {x: -0.3200368, y: 0.6392174}
+      - {x: -0.21372381, y: 0.63884676}
+      - {x: -0.21075606, y: 0.25717056}
+      - {x: -0.31583413, y: 0.1564405}
+      - {x: -0.3171986, y: -0.3421421}
+      - {x: -0.20414338, y: -0.4034325}
+      - {x: -0.2040872, y: -0.85482156}
+      - {x: -0.32595164, y: -0.85423243}
+      - {x: -0.44707257, y: -1.0106157}
+      - {x: -0.46431565, y: -1.0591676}
+      - {x: -0.44793904, y: -1.1215901}
+      - {x: -0.23818186, y: -1.2265843}
+      - {x: 0.0006560646, y: -1.2489363}
+      - {x: 0.24028522, y: -1.2298174}
+      - {x: 0.47739667, y: -1.1279768}
+      - {x: 0.49290517, y: -1.0711725}
+      - {x: 0.47456706, y: -1.009413}
+      - {x: 0.3408363, y: -0.85284287}
+      - {x: 0.22483332, y: -0.8486789}
+      - {x: 0.21713807, y: -0.39652586}
+      - {x: 0.31511468, y: -0.3284868}
+      - {x: 0.32080546, y: 0.18662953}
+      - {x: 0.23299038, y: 0.26096904}
+      - {x: 0.24123353, y: 0.6382905}
+      - {x: 0.34780324, y: 0.63921714}
+      - {x: 0.4727781, y: 0.78558004}
+      - {x: 0.49848282, y: 0.8464068}
+      - {x: 0.47131443, y: 0.9151589}
+  m_UseDelaunayMesh: 1
 --- !u!50 &6563665004846503657
 Rigidbody2D:
   serializedVersion: 5
@@ -2519,8 +2565,8 @@ MonoBehaviour:
   posPreventer: {fileID: 330613524148996668}
   negPreventer: {fileID: 4683190839822738937}
   rotationFactor: 50
-  rotationTorqueFactor: 8
-  rotationTorqueDrag: 0.2
+  rotationTorqueFactor: 11
+  rotationTorqueDrag: 0.4
   inputMode: 3
   weldAngleClamp: 75
   weldLayerMask:
@@ -3466,6 +3512,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   neutralDetected: 0
+  magDetected: 0
   charge: 1
 --- !u!1 &7547158745546023232
 GameObject:

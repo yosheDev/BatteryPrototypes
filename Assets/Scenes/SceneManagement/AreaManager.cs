@@ -377,7 +377,7 @@ public class AreaManager : MonoBehaviour
         {
             case AreaTransitionState.Spawn:
 
-                playerController.GetComponent<BoxCollider2D>().enabled = true;
+                playerController.GetComponent<Collider2D>().enabled = true;
                 playerController.GetComponent<Battery>().enabled = true;
 
                 if (isRespawning)
