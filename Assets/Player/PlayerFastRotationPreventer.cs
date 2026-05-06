@@ -11,9 +11,12 @@ public class PlayerFastRotationPreventer : MonoBehaviour
     [SerializeField] private BatteryController batteryController;
     [SerializeField] private LayerMask mask;
     [HideInInspector] public bool neutralDetected = false;
+    [HideInInspector] public bool magDetected = false;
     [SerializeField] private bool charge = false;               /// This is just used so BatteryController knows whether this is the collider on the pos or the neg side of player.
     private HashSet<GameObject> neutralOverlaps = new HashSet<GameObject>();
+    private HashSet<GameObject> magnetOverlaps = new HashSet<GameObject>();
     private Coroutine observeRoutine;
+    private Coroutine magObserveRoutine;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,7 +42,19 @@ public class PlayerFastRotationPreventer : MonoBehaviour
 
         if (collision.gameObject.layer != LayerMask.NameToLayer("Default"))
         {
-            neutralDetected = false;
+            if (collision.gameObject.layer != LayerMask.NameToLayer("MagnetSurface"))
+            {
+                // observe mag surface
+                magnetOverlaps.Add(collision.gameObject);
+                if (magObserveRoutine == null)
+                {
+                    magObserveRoutine = StartCoroutine(MagOverlapObserve());
+                }
+            }
+            else
+            {
+                neutralDetected = false;
+            }
             return;
         }
 
@@ -164,6 +179,122 @@ public class PlayerFastRotationPreventer : MonoBehaviour
             yield return null;
         }
     }
+
+    private IEnumerator MagOverlapObserve()
+    {
+        List<GameObject> magOverlapsList = new List<GameObject>();
+        while (true)
+        {
+            magOverlapsList = magnetOverlaps.ToList();
+            foreach (GameObject overlapObj in magOverlapsList)
+            {
+                Collider2D magCol = overlapObj.GetComponent<Collider2D>();
+
+                // Get player magnet closest to neutral surface. This way so that it considers players traversal.
+                Transform playerMagNearestSurface;
+                playerMagNearestSurface = (Vector2.Distance(batteryController.positiveMag.transform.position, magCol.ClosestPoint(batteryController.transform.position)) > Vector2.Distance(batteryController.negativeMag.transform.position, magCol.ClosestPoint(batteryController.transform.position))) ? batteryController.negativeMag.transform : batteryController.positiveMag.transform;
+
+                #region Get Nearest Distance To Magnet
+
+                Transform playerMagNearestMagnet = null;
+                MagneticSurface nearestMagSurface = null;
+                List<MagnetComponentBase> positiveFields = batteryController.positiveMag.affectFields.ToList();
+                List<MagnetComponentBase> negativeFields = batteryController.negativeMag.affectFields.ToList();
+
+                float nearestMagDistance = 999999f;
+                foreach (MagnetComponentBase mag in positiveFields)
+                {
+                    if (mag is MagneticSurface magSurface)
+                    {
+                        Transform curMag = (Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.positiveMag.transform.position), batteryController.positiveMag.transform.position) > Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.negativeMag.transform.position), batteryController.negativeMag.transform.position)) ? batteryController.negativeMag.transform : batteryController.positiveMag.transform;
+                        if (Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.positiveMag.transform.position), batteryController.positiveMag.transform.position) < nearestMagDistance)
+                        {
+                            nearestMagDistance = Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.positiveMag.transform.position), batteryController.positiveMag.transform.position);
+                            playerMagNearestMagnet = batteryController.positiveMag.transform;
+                            nearestMagSurface = magSurface;
+                        }
+
+                        if (Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.negativeMag.transform.position), batteryController.negativeMag.transform.position) < nearestMagDistance)
+                        {
+                            nearestMagDistance = Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.negativeMag.transform.position), batteryController.negativeMag.transform.position);
+                            playerMagNearestMagnet = batteryController.negativeMag.transform;
+                            nearestMagSurface = magSurface;
+                        }
+                    }
+                }
+
+                foreach (MagnetComponentBase mag in negativeFields)
+                {
+                    if (mag is MagneticSurface magSurface)
+                    {
+                        Transform curMag = (Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.positiveMag.transform.position), batteryController.positiveMag.transform.position) > Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.negativeMag.transform.position), batteryController.negativeMag.transform.position)) ? batteryController.negativeMag.transform : batteryController.positiveMag.transform;
+                        if (Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.positiveMag.transform.position), batteryController.positiveMag.transform.position) < nearestMagDistance)
+                        {
+                            nearestMagDistance = Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.positiveMag.transform.position), batteryController.positiveMag.transform.position);
+                            playerMagNearestMagnet = batteryController.positiveMag.transform;
+                            nearestMagSurface = magSurface;
+                        }
+
+                        if (Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.negativeMag.transform.position), batteryController.negativeMag.transform.position) < nearestMagDistance)
+                        {
+                            nearestMagDistance = Vector2.Distance(magSurface.surfaceCol.ClosestPoint(batteryController.negativeMag.transform.position), batteryController.negativeMag.transform.position);
+                            playerMagNearestMagnet = batteryController.negativeMag.transform;
+                            nearestMagSurface = magSurface;
+                        }
+                    }
+                }
+
+                #endregion
+
+                #region Occlusion Tracing
+                float distanceToNearestNeutral = Vector2.Distance(magCol.ClosestPoint(playerMagNearestSurface.position), playerMagNearestSurface.position);
+                float nearestDistanceToOccluder = 99999f;
+                // Trace for magents to update nearestDistanceToOccluder.
+                RaycastHit2D[] hits = Physics2D.LinecastAll(playerMagNearestSurface.position, magCol.ClosestPoint(playerMagNearestSurface.position));
+                //Debug.DrawLine(playerMagNearestNeutral.position, neutralCol.ClosestPoint(playerMagNearestNeutral.position), Color.red, .05f);
+                for (int i = 0; i < hits.Length; i++)
+                {
+                    /// If should be ignored. Such as on the player or on the wrong layer.
+                    if (hits[i].collider.gameObject.GetComponentInParent<BatteryController>() || hits[i].collider.gameObject.GetComponentInChildren<BatteryController>() || LayerMask.LayerToName(hits[i].collider.gameObject.layer) == "MagneticField")
+                    {
+                        continue;
+                    }
+
+                    // If this is a neutral, update nearestDistanceToOccluder.
+                    if (LayerMask.LayerToName(hits[i].collider.gameObject.layer) == "Default")
+                    {
+                        float nearDistance = Vector2.Distance(hits[i].collider.ClosestPoint(playerMagNearestSurface.position), playerMagNearestSurface.position);
+                        nearestDistanceToOccluder = nearDistance <= nearestDistanceToOccluder ? nearDistance : nearestDistanceToOccluder;
+                        continue;
+                    }
+                }
+
+                // If occluded by something, stop execution.
+                if (distanceToNearestNeutral >= nearestDistanceToOccluder)
+                {
+                    magDetected = false;
+                    yield return null;
+                }
+
+                // Additionally, stop execution if any player magnet is closer to a mag surface than to a neutral surface.
+                if (playerMagNearestMagnet != null)
+                {
+                    if (Vector2.Distance(playerMagNearestMagnet.transform.position, nearestMagSurface.surfaceCol.ClosestPoint(playerMagNearestMagnet.transform.position)) < distanceToNearestNeutral)
+                    {
+                        magDetected = false;
+                        yield return null;
+                    }
+                }
+
+                #endregion
+            }
+
+            // If it has made it this far, then the player is on a neutral surface still.
+            magDetected = true;
+            yield return null;
+        }
+    }
+
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Interactable"))
@@ -179,14 +310,31 @@ public class PlayerFastRotationPreventer : MonoBehaviour
             return;
         }
 
-        neutralOverlaps.Remove(collision.gameObject);
-        if (neutralOverlaps.Count <= 0)
+        if (collision.gameObject.layer != LayerMask.NameToLayer("MagnetSurface"))
         {
-            neutralDetected = false;
-            if (observeRoutine != null)
+            // observe mag surface
+            magnetOverlaps.Remove(collision.gameObject);
+            if (magnetOverlaps.Count <= 0)
             {
-                StopCoroutine(observeRoutine);
-                observeRoutine = null;
+                magDetected = false;
+                if (magObserveRoutine != null)
+                {
+                    StopCoroutine(magObserveRoutine);
+                    magObserveRoutine = null;
+                }
+            }
+        }
+        else
+        {
+            neutralOverlaps.Remove(collision.gameObject);
+            if (neutralOverlaps.Count <= 0)
+            {
+                neutralDetected = false;
+                if (observeRoutine != null)
+                {
+                    StopCoroutine(observeRoutine);
+                    observeRoutine = null;
+                }
             }
         }
     }
