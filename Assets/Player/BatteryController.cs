@@ -690,7 +690,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // If is NOT touching a magnet or like within range of magnet.
                 if ((evalAttractSurface == null && magForwardSurface == null) || abilityProgression < 1)
                 {
-                    Debug.Log("Torque Rotation Method");
+                    //Debug.Log("Torque Rotation Method");
                     // Side Torque for stabilization
                     float currentAngle = rb.rotation;
                     float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
@@ -721,7 +721,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                     // If player is close to magnets neutrally, prevent player from pushing off against them via rigidbody. This is for game feel and avoiding large leaps caused by combined forces with repel.
                     if ((magForwardSurface != null || evalAttractSurface != null) && weldState == WeldState.None)
                     {
-                        Debug.Log("Modify Transform Rotation Method");
+                        //Debug.Log("Modify Transform Rotation Method");
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
                         //rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor));
                         intermediateRot = transform.rotation;
@@ -730,13 +730,13 @@ public class BatteryController : MonoBehaviour, IDamageable
                     {
                         if (magForwardSurface != null)
                         {
-                            Debug.Log("Mag forward surface..");
+                            //Debug.Log("Mag forward surface..");
                         }
                         if (evalAttractSurface != null)
                         {
-                            Debug.Log("eval attact surface..");
+                            //Debug.Log("eval attact surface..");
                         }
-                        Debug.Log("Welded Rotation Method?");
+                        //Debug.Log("Welded Rotation Method?");
                         // If on a neutral surface, use rigidbody for foddian movement or walk around.
                         if (neutralDetector.neutralDetected)
                         {
@@ -836,7 +836,7 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                     // Update player collider size and offset to be even smaller as they squish smaller. This prevents bugs with the rotation causing welding to force exit.
                     //gameObject.GetComponent<BoxCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
-                    gameObject.GetComponent<BoxCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
+                    gameObject.GetComponent<PolygonCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
 
                     weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                     weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
@@ -1444,7 +1444,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         {
             #region Handle Player Data
             // Reset Capsule Collider
-            gameObject.GetComponent<BoxCollider2D>().offset = playerColOffset;
+            gameObject.GetComponent<PolygonCollider2D>().offset = playerColOffset;
 
             // TO DO: Redo this to work with polygon collider.
             //gameObject.GetComponent<BoxCollider2D>().size = playerColSize;
@@ -1474,8 +1474,8 @@ public class BatteryController : MonoBehaviour, IDamageable
         {
             #region Handle Player Data
             // Reset Capsule Collider Offset
-            gameObject.GetComponent<BoxCollider2D>().offset = playerColOffset;
-            gameObject.GetComponent<BoxCollider2D>().size = playerColSize;
+            gameObject.GetComponent<PolygonCollider2D>().offset = playerColOffset;
+            //gameObject.GetComponent<PolygonCollider2D>().size = playerColSize;
 
             scalePivot.transform.localScale = Vector3.one;
             gameObject.transform.parent = scalePivot.transform.parent;
@@ -1516,8 +1516,8 @@ public class BatteryController : MonoBehaviour, IDamageable
                 gameObject.GetComponent<HingeJoint2D>().enabled = true;
 
                 // Adjust capsule collider.
-                gameObject.GetComponent<BoxCollider2D>().offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.15f : .15f));
-                gameObject.GetComponent<BoxCollider2D>().size = playerColOffset + new Vector2(playerColSize.x * .8f, playerColSize.y * .8f);
+                gameObject.GetComponent<PolygonCollider2D>().offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.15f : .15f));
+                //gameObject.GetComponent<PolygonCollider2D>().size = playerColOffset + new Vector2(playerColSize.x * .8f, playerColSize.y * .8f);
 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
@@ -1531,8 +1531,8 @@ public class BatteryController : MonoBehaviour, IDamageable
             case WeldState.LaunchAim:
 
                 // Adjust capsule collider.
-                gameObject.GetComponent<BoxCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
-                gameObject.GetComponent<BoxCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
+                gameObject.GetComponent<PolygonCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
+                //gameObject.GetComponent<PolygonCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
 
                 softwareCursor.LaunchAimStarted();
 
