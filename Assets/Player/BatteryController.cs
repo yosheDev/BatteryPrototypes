@@ -177,6 +177,9 @@ public class BatteryController : MonoBehaviour, IDamageable
         surfaceCol = GetComponent<PolygonCollider2D>();
         weldSurfaceCol = GetComponent<BoxCollider2D>();
         weldSurfaceCol.enabled = false;
+        playerColOffset = weldSurfaceCol.offset;
+        playerColSize = weldSurfaceCol.size;
+
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody2D>();
         playerGravity = rb.gravityScale;
@@ -184,8 +187,6 @@ public class BatteryController : MonoBehaviour, IDamageable
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
         projectilePool = GetComponent<FerroProjectilePool>();
 
-        playerColOffset = gameObject.GetComponent<Collider2D>().offset;
-        playerColSize = weldSurfaceCol.size;
         #endregion
     }
     void Start()
@@ -773,9 +774,9 @@ public class BatteryController : MonoBehaviour, IDamageable
                     clampVector = Vector3.Reflect(clampVector, (Vector3)weldSurfaceNormal);
                 }
 
-                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
-                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
-                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
 
                 float totalAngle;
                 float angle1;
@@ -815,6 +816,8 @@ public class BatteryController : MonoBehaviour, IDamageable
                 scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
                 scalePivot.transform.rotation = intermediateRot;
 
+                #region VFX
+                // Weld Blob VFX
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
 
@@ -823,33 +826,38 @@ public class BatteryController : MonoBehaviour, IDamageable
                 negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
                 posTractorBeamVFX.SetForceMagnitude(0f);
                 negTractorBeamVFX.SetForceMagnitude(0f);
+                #endregion
             }
             else if (weldState == WeldState.LaunchAim)
-                {
-                    Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-                    Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, (playerWeldMag == positiveMag ? -1f * weldAimDir : weldAimDir));
+            {
+                Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, (playerWeldMag == positiveMag ? -1f * weldAimDir : weldAimDir));
 
-                    ////Physics2D.SyncTransforms();
-                    intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
-                    rb.MoveRotation(intermediateRot);
+                ////Physics2D.SyncTransforms();
+                intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                rb.MoveRotation(intermediateRot);
 
-                    // Adjust scale pivot rotation and scale.
-                    scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                    scalePivot.transform.rotation = intermediateRot;
+                // Adjust scale pivot rotation and scale.
+                scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                scalePivot.transform.rotation = intermediateRot;
 
-                    // Update player collider size and offset to be even smaller as they squish smaller. This prevents bugs with the rotation causing welding to force exit.
-                    //gameObject.GetComponent<BoxCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
-                    gameObject.GetComponent<Collider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
+                // Update player collider size and offset to be even smaller as they squish smaller. This prevents bugs with the rotation causing welding to force exit.
+                weldSurfaceCol.size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .08f, playerColSize.x * .02f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .25f);
+                weldSurfaceCol.offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.7f, .35f, softwareCursor.GetLaunchAlpha())));
+                weldSurfaceCol.edgeRadius = FunctionLibraryF.MapRangeClamped(0.2f, 1f, .3f, .1f, softwareCursor.GetLaunchAlpha());
 
-                    weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
-                    weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
+                #region VFX
+                // Weld Blob VFX
+                weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
+                weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
 
-                    // Tractor Beam VFX
-                    posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
-                    negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
-                    posTractorBeamVFX.SetForceMagnitude(0f);
-                    negTractorBeamVFX.SetForceMagnitude(0f);
-                }
+                // Tractor Beam VFX
+                posTractorBeamVFX.SetEndPos(positiveMag.transform.position);
+                negTractorBeamVFX.SetEndPos(negativeMag.transform.position);
+                posTractorBeamVFX.SetForceMagnitude(0f);
+                negTractorBeamVFX.SetForceMagnitude(0f);
+                #endregion
+            }
             #endregion
 
             if (abilityProgression > 0) // Does player have magnetism unlocked?
@@ -1446,11 +1454,10 @@ public class BatteryController : MonoBehaviour, IDamageable
         if (weldState == WeldState.Welded)
         {
             #region Handle Player Data
-            // Reset Capsule Collider
-            gameObject.GetComponent<Collider2D>().offset = playerColOffset;
 
-            // TO DO: Redo this to work with polygon collider.
-            //gameObject.GetComponent<BoxCollider2D>().size = playerColSize;
+            // Reset Weld Collider
+            weldSurfaceCol.offset = playerColOffset;
+            weldSurfaceCol.size = playerColSize;
 
             // Unparent from scale pivot.
             scalePivot.transform.localScale = Vector3.one;
@@ -1477,8 +1484,9 @@ public class BatteryController : MonoBehaviour, IDamageable
         {
             #region Handle Player Data
             // Reset Capsule Collider Offset
-            gameObject.GetComponent<Collider2D>().offset = playerColOffset;
-            //gameObject.GetComponent<PolygonCollider2D>().size = playerColSize;
+            weldSurfaceCol.offset = playerColOffset;
+            weldSurfaceCol.size = playerColSize;
+            weldSurfaceCol.edgeRadius = .3f;
 
             scalePivot.transform.localScale = Vector3.one;
             gameObject.transform.parent = scalePivot.transform.parent;
@@ -1492,6 +1500,10 @@ public class BatteryController : MonoBehaviour, IDamageable
         switch (weldState)
         {
             case WeldState.None:
+                // Switch Collider to Standard Collider
+                surfaceCol.enabled = true;
+                weldSurfaceCol.enabled = false;
+
                 weldedSurface = null;
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(gameObject);
                 rotationFactor = 30f;
@@ -1499,8 +1511,13 @@ public class BatteryController : MonoBehaviour, IDamageable
                 gameObject.GetComponent<HingeJoint2D>().enabled = false;
                 gameObject.GetComponent<HingeJoint2D>().enabled = false;
                 weldBlob.SetActive(false);
+                
                 break;
-            case WeldState.Welded:
+            case WeldState.Welded: 
+                // Switch Collider to Welding Collider
+                weldSurfaceCol.enabled = true;
+                surfaceCol.enabled = false;
+                
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(playerWeldMag.gameObject);
                 Vector2 adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
                 float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, -playerWeldMag.transform.up, Vector3.forward);
@@ -1518,10 +1535,11 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // Set anchor data for the hingejoint
                 gameObject.GetComponent<HingeJoint2D>().enabled = true;
 
-                // Adjust capsule collider.
-                gameObject.GetComponent<Collider2D>().offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.15f : .15f));
-                //gameObject.GetComponent<PolygonCollider2D>().size = playerColOffset + new Vector2(playerColSize.x * .8f, playerColSize.y * .8f);
+                // Adjust Weld Collider to prevent clip bugs.
+                weldSurfaceCol.offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.35f : .35f));
+                weldSurfaceCol.size = new Vector2(playerColSize.x * .08f, playerColSize.y * .28f);  
 
+                // Weld Blob VFX
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                 weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
                 weldBlob.SetActive(true);
@@ -1529,14 +1547,19 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // Update camera follow target.
                 CameraManager.instance.AddFollowTarget(playerWeldMag.transform, 0.5f);
                 CameraManager.instance.RemoveFollowTarget(gameObject.transform, 0.5f);
-
                 break;
             case WeldState.LaunchAim:
 
                 // Adjust capsule collider.
-                gameObject.GetComponent<Collider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
-                //gameObject.GetComponent<PolygonCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
+                weldSurfaceCol.offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .35f, softwareCursor.GetLaunchAlpha())));
+                weldSurfaceCol.size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .05f, playerColSize.x * .1f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .3f);
+                weldSurfaceCol.edgeRadius = FunctionLibraryF.MapRangeClamped(0.2f, 1f, .3f, .1f, softwareCursor.GetLaunchAlpha());
 
+                // from weld, using as refernce for above delete after set and done.
+                //weldSurfaceCol.offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.35f : .35f));
+                //weldSurfaceCol.size = new Vector2(playerColSize.x * .1f, playerColSize.y * .3f);
+
+                // Software Cursor
                 softwareCursor.LaunchAimStarted();
 
                 // Parent player to squash stretch pivot.
@@ -1545,7 +1568,6 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                 rb.gravityScale = playerGravity;
                 rb.linearDamping = .01f;
-
                 break;
             default:
                 rotationFactor = 30f;
