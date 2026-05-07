@@ -836,7 +836,7 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                     // Update player collider size and offset to be even smaller as they squish smaller. This prevents bugs with the rotation causing welding to force exit.
                     //gameObject.GetComponent<BoxCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
-                    gameObject.GetComponent<PolygonCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
+                    gameObject.GetComponent<Collider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
 
                     weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
                     weldBlob.transform.rotation = Quaternion.LookRotation(weldBlob.transform.forward, weldSurfaceNormal);
@@ -1444,7 +1444,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         {
             #region Handle Player Data
             // Reset Capsule Collider
-            gameObject.GetComponent<PolygonCollider2D>().offset = playerColOffset;
+            gameObject.GetComponent<Collider2D>().offset = playerColOffset;
 
             // TO DO: Redo this to work with polygon collider.
             //gameObject.GetComponent<BoxCollider2D>().size = playerColSize;
@@ -1474,7 +1474,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         {
             #region Handle Player Data
             // Reset Capsule Collider Offset
-            gameObject.GetComponent<PolygonCollider2D>().offset = playerColOffset;
+            gameObject.GetComponent<Collider2D>().offset = playerColOffset;
             //gameObject.GetComponent<PolygonCollider2D>().size = playerColSize;
 
             scalePivot.transform.localScale = Vector3.one;
@@ -1516,7 +1516,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 gameObject.GetComponent<HingeJoint2D>().enabled = true;
 
                 // Adjust capsule collider.
-                gameObject.GetComponent<PolygonCollider2D>().offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.15f : .15f));
+                gameObject.GetComponent<Collider2D>().offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.15f : .15f));
                 //gameObject.GetComponent<PolygonCollider2D>().size = playerColOffset + new Vector2(playerColSize.x * .8f, playerColSize.y * .8f);
 
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
@@ -1531,7 +1531,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             case WeldState.LaunchAim:
 
                 // Adjust capsule collider.
-                gameObject.GetComponent<PolygonCollider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
+                gameObject.GetComponent<Collider2D>().offset = new Vector2(playerColOffset.x, ((playerWeldMag == positiveMag) ? -1f : 1f) * (playerColOffset.y + FunctionLibraryF.MapRangeClamped(0.2f, 1f, 0.2f, .22f, softwareCursor.GetLaunchAlpha())));
                 //gameObject.GetComponent<PolygonCollider2D>().size = new Vector2(FunctionLibraryF.MapRangeClamped(0.2f, 1f, playerColSize.x * .8f, playerColSize.x * .25f, softwareCursor.GetLaunchAlpha()), playerColSize.y * .8f);
 
                 softwareCursor.LaunchAimStarted();
