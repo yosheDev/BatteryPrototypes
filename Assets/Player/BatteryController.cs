@@ -20,7 +20,8 @@ public class BatteryController : MonoBehaviour, IDamageable
     [SerializeField] private GameObject scoutTarget;
     private Camera mainCam;
     private Rigidbody2D rb;
-    private Collider2D surfaceCol;
+    private Collider2D surfaceCol;          // Player collision (PolygonCollider2D)
+    private BoxCollider2D weldSurfaceCol;   // The player collision to be activated when in Weld state.
     private PlayerInput playerInput;
     private PlayerNeutralDetector neutralDetector;  
     private GameObject cursorObj;
@@ -173,7 +174,9 @@ public class BatteryController : MonoBehaviour, IDamageable
 
         // Other References
         mainCam = Camera.main;
-        surfaceCol = GetComponent<BoxCollider2D>();
+        surfaceCol = GetComponent<PolygonCollider2D>();
+        weldSurfaceCol = GetComponent<BoxCollider2D>();
+        weldSurfaceCol.enabled = false;
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody2D>();
         playerGravity = rb.gravityScale;
@@ -182,7 +185,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         projectilePool = GetComponent<FerroProjectilePool>();
 
         playerColOffset = gameObject.GetComponent<Collider2D>().offset;
-        //playerColSize = gameObject.GetComponent<BoxCollider2D>().size;
+        playerColSize = weldSurfaceCol.size;
         #endregion
     }
     void Start()
