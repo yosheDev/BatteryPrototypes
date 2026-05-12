@@ -29,6 +29,7 @@ public class AreaManager : MonoBehaviour
     [Header("References")]
     public BatteryController playerController;
     private Rigidbody2D playerRB;
+    private PlayerHUD playerHud;
     [HideInInspector] public float playerBaseGravity = 1f;
     private Vector3 endPlayerPosTarget;
     private Vector3 endPlayerVel = new Vector3(0f, 0f, 0f);
@@ -87,6 +88,7 @@ public class AreaManager : MonoBehaviour
         // Automatically assign references to player.
         playerController = GameObject.FindAnyObjectByType<BatteryController>();
         playerRB = playerController.gameObject.GetComponent<Rigidbody2D>();
+        playerHud = playerController.GetComponent<PlayerHUD>();
         playerBaseGravity = playerRB.gravityScale;
 
         // Override player lives if value < 255.
@@ -310,6 +312,7 @@ public class AreaManager : MonoBehaviour
             }
         }
     }
+
     #region Checkpoint
     /// <summary>
     /// Update the checkpoint room and respawn position. Automatically resets respawn counter if this is a newly registered checkpoint room.
@@ -441,6 +444,8 @@ public class AreaManager : MonoBehaviour
             case AreaTransitionState.Loading:
                 break;
 
+            case AreaTransitionState.AwaitingStart:
+                break;
             default:
                 break;
         }
@@ -452,12 +457,15 @@ public class AreaManager : MonoBehaviour
         switch (state)
         {
             case AreaTransitionState.Spawn:
+                playerHud.SetDisplaySpawnText(true);
                 break;
             case AreaTransitionState.None:
                 break;
             case AreaTransitionState.ObjectiveReached:
                 break;
             case AreaTransitionState.Loading:
+                break;
+            case AreaTransitionState.AwaitingStart:
                 break;
             default:
                 break;
@@ -469,6 +477,7 @@ public class AreaManager : MonoBehaviour
     {
         try
         {
+            playerHud.SetDisplaySpawnText(false);
             roomManager.spawnMechanism.Release();
         }
         catch

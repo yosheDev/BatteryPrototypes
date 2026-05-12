@@ -8,6 +8,7 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Battery playerBattery;
     [SerializeField] private TextMeshProUGUI playerLivesText;
     [SerializeField] private TextMeshProUGUI abilityProgressText;
+    [SerializeField] private TextMeshProUGUI spawnHintText;
 
     private void Awake()
     {
@@ -45,5 +46,10 @@ public class PlayerHUD : MonoBehaviour
     {
         StringBuilder newText = new StringBuilder("Ability Progress: " + GameInstance.instance.playerAbilityProgression.ToString(), 21);
         abilityProgressText.text = newText.ToString();
+    }
+
+    public void SetDisplaySpawnText(bool visible)
+    {
+        spawnHintText.gameObject.SetActive(visible);
     }
 }
