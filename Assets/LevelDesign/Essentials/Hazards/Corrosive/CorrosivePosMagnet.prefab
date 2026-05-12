@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6013147037883761802}
   - component: {fileID: 302819834278993567}
   - component: {fileID: 8642308501978355510}
+  - component: {fileID: 1908040579493420392}
   m_Layer: 8
   m_Name: MagnetSurface
   m_TagString: Untagged
@@ -55,6 +56,11 @@ MonoBehaviour:
   surfaceCol: {fileID: 302819834278993567}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  _playerMagInfluence: 2
+  _canAffectPlayer: 1
+  _forceClamp: 2
+  _maxVelocity: 2
+  _maxAngularVelocity: 10
   bakeToMagFieldSDF: 1
 --- !u!61 &302819834278993567
 BoxCollider2D:
@@ -104,6 +110,7 @@ BoxCollider2D:
   m_EdgeRadius: 0
 --- !u!212 &8642308501978355510
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -127,7 +134,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 1d3bbfb9cd96cfb4c99943acd636379e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -149,8 +156,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0.7137255, g: 0.2636737, b: 0.2627451, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -158,8 +166,19 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1908040579493420392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119018780437962094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 151d86b4213786d4fbcd7ebbe7b5afc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Corrosion
 --- !u!1 &3775830391796846964
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +327,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   doOcclusionCheck: 1
-  debugOcclusionTrace: 0
 --- !u!33 &7139631911868960946
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -364,6 +382,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5959409161971075182
 GameObject:
