@@ -1035,27 +1035,6 @@ public class BatteryController : MonoBehaviour, IDamageable
                 #endregion
             }
 
-            #region Scouting
-            if (scoutState == ScoutState.Scouting)
-            {
-                scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.ClampMagnitude(scoutPosOffset + (scoutInput * 9999999f * Time.fixedDeltaTime), scoutDistance), ref scoutVelocity, .3f);
-            }
-            else if (scoutState == ScoutState.Returning)
-            {
-                scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.zero, ref scoutVelocity, .2f);
-                //Debug.Log(scoutPosOffset);
-                if (FunctionLibraryF.VectorsApproximatelyEqual(scoutPosOffset, Vector2.zero))
-                {
-                    scoutState = ScoutState.None;
-                    scoutTarget.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                    CameraManager.instance.RemoveFollowTarget(scoutTarget.transform);
-                    scoutPosOffset = Vector2.zero;
-                }
-            }
-
-            scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
-            #endregion
-
             #region Grappling
             if (isGrappling)
             {
@@ -1080,6 +1059,27 @@ public class BatteryController : MonoBehaviour, IDamageable
             //transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
             //intermediateRot = transform.rotation;
         }
+
+        #region Scouting
+        if (scoutState == ScoutState.Scouting)
+        {
+            scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.ClampMagnitude(scoutPosOffset + (scoutInput * 9999999f * Time.fixedDeltaTime), AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None) ? scoutDistance : scoutDistance * 1.5f), ref scoutVelocity, .3f);
+        }
+        else if (scoutState == ScoutState.Returning)
+        {
+            scoutPosOffset = Vector2.SmoothDamp(scoutPosOffset, Vector2.zero, ref scoutVelocity, .2f);
+            //Debug.Log(scoutPosOffset);
+            if (FunctionLibraryF.VectorsApproximatelyEqual(scoutPosOffset, Vector2.zero))
+            {
+                scoutState = ScoutState.None;
+                scoutTarget.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                CameraManager.instance.RemoveFollowTarget(scoutTarget.transform);
+                scoutPosOffset = Vector2.zero;
+            }
+        }
+
+        scoutTarget.transform.position = gameObject.transform.position + (Vector3)scoutPosOffset;
+        #endregion
 
         #region Update Global Shader Values
         // TO DO: Look into using VectorArrays so that other objects can also affect the magnetic field (not just the two player magnets)

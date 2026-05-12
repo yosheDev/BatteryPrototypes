@@ -188,6 +188,11 @@ public class PlayerFastRotationPreventer : MonoBehaviour
             magOverlapsList = magnetOverlaps.ToList();
             foreach (GameObject overlapObj in magOverlapsList)
             {
+                if (overlapObj == null)
+                {
+                    continue;
+                }
+
                 Collider2D magCol = overlapObj.GetComponent<Collider2D>();
 
                 // Get player magnet closest to neutral surface. This way so that it considers players traversal.

@@ -57,6 +57,11 @@ public class PlayerNeutralDetector : MonoBehaviour
             neutralOverlapsList = neutralOverlaps.ToList();
             foreach (GameObject overlapObj in neutralOverlapsList)
             {
+                if (overlapObj == null)
+                {
+                    continue;
+                }
+
                 Collider2D neutralCol = overlapObj.GetComponent<Collider2D>();
 
                 // Get player magnet closest to neutral surface. This way so that it considers players traversal.
