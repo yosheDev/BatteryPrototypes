@@ -483,14 +483,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraManager
       objectReference: {fileID: 0}
-    - target: {fileID: 7661599812192423692, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
-      propertyPath: Composition.DeadZone.Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7661599812192423692, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
-      propertyPath: Composition.HardLimits.Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8441960843190492278, guid: caf69a6a11a291a4fa4f6ecc63e230fe, type: 3}
       propertyPath: m_CameraType
       value: 1
