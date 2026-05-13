@@ -1286,7 +1286,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 battery.SubtractPercent(shotBatteryDrain);
                 if (rb.linearVelocity.magnitude - startVelMag < 5f)
                 {
-                    projectilePool.ShootProjectile(negativeMag.transform.position, negativeMag.transform.rotation, new Vector3(.25f, .5f, .5f));
+                    projectilePool.ShootProjectile(negativeMag.transform.position + (negativeMag.transform.up * .05f), negativeMag.transform.rotation, new Vector3(.25f, .5f, .5f));
                     rb.AddForce(softwareCursor.GetAimDir() * forceAmounts[shotCount]);
                     sfxFerroProjectile.Play();
                 }
