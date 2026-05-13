@@ -1685,7 +1685,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         switch(GameInstance.instance.difficulty)
         {
             case GameInstance.GameDifficulty.Easy:
-                if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r10")// respawn tutorial scene
+                if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r11")// respawn tutorial scene
                 {
                     if (GameInstance.instance.playerLives <= 0)
                     {
