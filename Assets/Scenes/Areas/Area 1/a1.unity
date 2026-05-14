@@ -747,13 +747,25 @@ PrefabInstance:
       propertyPath: m_Distance
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1078443486574855940, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_Size.x
+      value: 20.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 1078443486574855940, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_Size.y
+      value: 20.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 1078443486574855940, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1078443486574855940, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: visObjTest
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1335001544383662639, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
-      propertyPath: launchAimControlMethod
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1338685819644237730, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: m_Name
