@@ -1,5 +1,6 @@
 using FunctionLibrary;
 using Magnet;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -221,6 +222,25 @@ public class BatteryController : MonoBehaviour, IDamageable
         #endregion
     }
 
+    private void OnDrawGizmos()
+    {
+        Matrix4x4 originalMatrix = Gizmos.matrix;
+
+        #region Positive Mag Side Box Overlap
+        Gizmos.color = Color.red;
+        Gizmos.matrix = Matrix4x4.TRS(positiveMag.transform.position + (positiveMag.transform.up * -.2f), Quaternion.Euler(0, 0, positiveMag.transform.eulerAngles.z), Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, new Vector2(1.2f, .1f));
+        Gizmos.matrix = originalMatrix;
+        #endregion
+
+        #region Negative Mag Side Box Overlap
+        Gizmos.color = Color.blue;
+        Gizmos.matrix = Matrix4x4.TRS(negativeMag.transform.position + (negativeMag.transform.up * -.2f), Quaternion.Euler(0, 0, negativeMag.transform.eulerAngles.z), Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, new Vector2(1.2f, .1f));
+        Gizmos.matrix = originalMatrix;
+        #endregion
+    }
+
     private void FixedUpdate()
     {
         var dt = Time.fixedDeltaTime;
@@ -354,11 +374,30 @@ public class BatteryController : MonoBehaviour, IDamageable
                     Collider2D evalWeldSurface = null; /// Surface of the magnet to cling to.
                     bool magCharge = false;            /// The charge of the players magnet that is clinging.
 
-                    #region Get Cling Magnet Surface
-                    Collider2D[] positiveOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
-                    Collider2D[] negativeOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+                    #region Get Weld Magnet Surface
+
+                    #region Prepare Overlap Arrays
+                    // Radius around magnet
+                    Collider2D[] positiveRadiusOverlap = Physics2D.OverlapCircleAll((Vector2)positiveMag.transform.position, .3f, weldLayerMask);
+                    Collider2D[] negativeRadiusOverlap = Physics2D.OverlapCircleAll((Vector2)negativeMag.transform.position, .3f, weldLayerMask);
+
+                    // Trace sides of magnet
+                    Collider2D[] positiveLateralOverlap = Physics2D.OverlapBoxAll((Vector2)(positiveMag.transform.position + (positiveMag.transform.up * -.2f)), new Vector2(1.2f, .1f), positiveMag.transform.eulerAngles.z);
+                    Collider2D[] negativeLateralOverlap = Physics2D.OverlapBoxAll((Vector2)(negativeMag.transform.position + (negativeMag.transform.up * -.2f)), new Vector2(1.2f, .1f), negativeMag.transform.eulerAngles.z);
+
+                    Collider2D[] positiveOverlap = new Collider2D[positiveRadiusOverlap.Length + positiveLateralOverlap.Length];
+                    Collider2D[] negativeOverlap = new Collider2D[negativeRadiusOverlap.Length + negativeLateralOverlap.Length];
+
+                    // Append Arrays
+                    System.Array.Copy(positiveRadiusOverlap, 0, positiveOverlap, 0, positiveRadiusOverlap.Length);
+                    System.Array.Copy(positiveLateralOverlap, 0, positiveOverlap, positiveRadiusOverlap.Length, positiveLateralOverlap.Length);
+
+                    System.Array.Copy(negativeRadiusOverlap, 0, negativeOverlap, 0, negativeRadiusOverlap.Length);
+                    System.Array.Copy(negativeLateralOverlap, 0, negativeOverlap, negativeRadiusOverlap.Length, negativeLateralOverlap.Length);
+                    #endregion
+
                     //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (negativeMag.transform.up * .3f), Color.yellow, .5f);
-                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (-negativeMag.transform.up * .3f), Color.yellow, .5f); Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (negativeMag.transform.up * .3f), Color.yellow, .5f);
+                    //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (-negativeMag.transform.up * .3f), Color.yellow, .5f);
                     //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (negativeMag.transform.right * .3f), Color.yellow, .5f);
                     //Debug.DrawLine(negativeMag.transform.position, negativeMag.transform.position + (-negativeMag.transform.right * .3f), Color.yellow, .5f);
 
@@ -425,15 +464,14 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                     if (evalWeldSurface != null)
                     {
-                        // Update Weld Vectors to match.
-                        /// (Somewhat expensive, but can't be avoided as this needs done every frame to account for rotating/translating parent surfaces as well as sudden changes to level state.)
+                        // Update Weld Data
+                        /// (Can't be avoided as this needs done every frame to account for rotating/translating parent surfaces as well as sudden changes to level state.)
                         weldedSurface = evalWeldSurface;
                         playerWeldMag = (magCharge ? positiveMag : negativeMag);
                         Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
-                        // Apply Custom Force
                         Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f))).normalized;
                         //Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldedSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
-                        Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
+                        //Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
                         //rb.AddForceAtPosition(weldAimDir * 1000f, playerWeldMag.transform.position);
 
                         // Raycast to the point, get normal back.
@@ -448,6 +486,7 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                         if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
                         {
+                            Debug.Log("Entering Weld State");
                             ChangeWeldState(WeldState.Welded);
                         }
 
@@ -615,14 +654,14 @@ public class BatteryController : MonoBehaviour, IDamageable
                     }
                 }
 
-                if (magForwardSurface != null)
-                {
-                    Debug.Log("MagForwardSurf is " + magForwardSurface);
-                }
-                else
-                {
-                    Debug.Log("MagForwardSurf is null");
-                }
+                //if (magForwardSurface != null)
+                //{
+                //    Debug.Log("MagForwardSurf is " + magForwardSurface);
+                //}
+                //else
+                //{
+                //    Debug.Log("MagForwardSurf is null");
+                //}
                 
                 #endregion
             }
@@ -787,40 +826,46 @@ public class BatteryController : MonoBehaviour, IDamageable
             }
             else if (weldState == WeldState.Welded)
             {
+                /// Weld aim direction, angles from normal, clamping vectors.
+                #region Weld Vector Data
+                /// Welding aim direction as a Vector and as a Quaternion.
                 Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
-
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
+                /// The signed angle that the players direction is from the normal of the magnet surface.
                 float angleFromNormal = Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)weldSurfaceNormal, Vector3.forward);
-     
+                
+                /// The nearest clamp angle(according to weldAngleClamp) as a vector. Player can not rotate past this.
                 Vector3 clampVector = Quaternion.AngleAxis(weldAngleClamp * -1f * Mathf.Sign(angleFromNormal), Vector3.forward) * (Vector3)weldSurfaceNormal;
 
+                /// Reflect the clampVector if the current welding magnet is NOT the leading magnet.
                 if (playerWeldMag == positiveMag)
                 {
                     clampVector = Vector3.Reflect(clampVector, (Vector3)weldSurfaceNormal);
                 }
+                #endregion
 
                 //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
                 //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
                 //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
 
-                float totalAngle;
+                #region Calculate Half Angles
                 float angle1;
                 float angle2;
+
                 if (playerWeldMag == negativeMag)
                 {
-                    totalAngle = Vector3.Angle(weldSurfaceNormal, clampVector);
                     angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
                     angle2 = Vector3.Angle(weldAimDir, clampVector);
                 }
                 else
                 {
-                    totalAngle = Vector3.Angle(-weldSurfaceNormal, clampVector);
                     angle1 = Vector3.Angle(weldAimDir, -weldSurfaceNormal);
                     angle2 = Vector3.Angle(weldAimDir, clampVector);
                 }
+                #endregion
 
-                if (Mathf.Abs(angle1 + angle2) - Mathf.Abs(totalAngle) < .01f)
+                if (Mathf.Abs(angle1 + angle2) - weldAngleClamp < .01f)
                 {
                     Debug.Log("I am at an appropriate welding angle.");
                     intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
@@ -831,7 +876,7 @@ public class BatteryController : MonoBehaviour, IDamageable
 
 
                     Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
-                    Debug.Log(angle1 + " " + angle2 + " " + totalAngle);
+                    Debug.Log(angle1 + " " + angle2 + " " + weldAngleClamp);
 
                     //rb.MoveRotation(Quaternion.Euler(0, 0, rb.rotation) * Quaternion.AngleAxis(Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)clampVector, Vector3.forward), Vector3.forward));
                     //intermediateRot = Quaternion.Euler(0, 0, rb.rotation);
@@ -1551,6 +1596,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // If weld is outside of constraint range, start coroutine to correct it.
                 if (Mathf.Abs(angleFromSurfNormal) > weldAngleClamp || Mathf.Abs(angleFromSurfNormal) < -weldAngleClamp)
                 {
+                    Debug.Log("Started a weld from outside of its constraint range. Starting correction coroutine.");
                     StartCoroutine(softwareCursor.WeldJustStarted(.1f));
                 }
                     
