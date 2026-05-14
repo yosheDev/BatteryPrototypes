@@ -867,19 +867,21 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                 if (Mathf.Abs(angle1 + angle2) - weldAngleClamp < .01f)
                 {
-                    Debug.Log("I am at an appropriate welding angle.");
+                    //Debug.Log("I am at an appropriate welding angle.");
                     intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
                 }
                 else
                 {
-
-
                     Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
                     Debug.Log(angle1 + " " + angle2 + " " + weldAngleClamp);
 
-                    //rb.MoveRotation(Quaternion.Euler(0, 0, rb.rotation) * Quaternion.AngleAxis(Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)clampVector, Vector3.forward), Vector3.forward));
-                    //intermediateRot = Quaternion.Euler(0, 0, rb.rotation);
+                    // Rotate automatically until within range. (also rotate the software cursor too!??)
+
+                    /// get correct vector to interp to
+                    intermediateRot = Quaternion.Slerp(intermediateRot, Quaternion.LookRotation(Vector3.forward, clampVector), Time.deltaTime * rotationFactor);
+                    rb.MoveRotation(intermediateRot);
+                    softwareCursor.SetLocalPos(-clampVector * 3f);
 
                     //softwareCursor.SetLocalPos(clampVector * 10f);
                 }
@@ -1584,11 +1586,20 @@ public class BatteryController : MonoBehaviour, IDamageable
                 weldBlob.SetActive(false);
                 
                 break;
-            case WeldState.Welded: 
+            case WeldState.Welded:
+
+                #region Handle Colliders
+
                 // Switch Collider to Welding Collider
                 weldSurfaceCol.enabled = true;
                 surfaceCol.enabled = false;
-                
+
+                // Adjust Weld Collider to prevent clip bugs.
+                weldSurfaceCol.offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.35f : .35f));
+                weldSurfaceCol.size = new Vector2(playerColSize.x * .08f, playerColSize.y * .28f);
+
+                #endregion
+
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(playerWeldMag.gameObject);
                 Vector2 adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
                 float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, -playerWeldMag.transform.up, Vector3.forward);
@@ -1596,8 +1607,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // If weld is outside of constraint range, start coroutine to correct it.
                 if (Mathf.Abs(angleFromSurfNormal) > weldAngleClamp || Mathf.Abs(angleFromSurfNormal) < -weldAngleClamp)
                 {
-                    Debug.Log("Started a weld from outside of its constraint range. Starting correction coroutine.");
-                    StartCoroutine(softwareCursor.WeldJustStarted(.1f));
+                    //StartCoroutine(softwareCursor.CorrectWeldAngle(.1f));
                 }
                     
                 rotationFactor = 15f;
@@ -1606,10 +1616,6 @@ public class BatteryController : MonoBehaviour, IDamageable
                 gameObject.transform.parent = scalePivot.transform;
                 // Set anchor data for the hingejoint
                 gameObject.GetComponent<HingeJoint2D>().enabled = true;
-
-                // Adjust Weld Collider to prevent clip bugs.
-                weldSurfaceCol.offset = playerColOffset + new Vector2(0f, ((playerWeldMag == positiveMag) ? -.35f : .35f));
-                weldSurfaceCol.size = new Vector2(playerColSize.x * .08f, playerColSize.y * .28f);  
 
                 // Weld Blob VFX
                 weldBlob.transform.position = playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * -.1f);
@@ -1620,6 +1626,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 CameraManager.instance.AddFollowTarget(playerWeldMag.transform, 0.5f);
                 CameraManager.instance.RemoveFollowTarget(gameObject.transform, 0.5f);
                 break;
+
             case WeldState.LaunchAim:
 
                 // Adjust capsule collider.

@@ -241,7 +241,7 @@ public class SoftwareCursor : MonoBehaviour
     }
 
     #region State Entry
-    public IEnumerator WeldJustStarted(float duration)
+    public IEnumerator CorrectWeldAngle(float duration)
     {
         // Get initial quat.
         weldInitialQuat = Quaternion.FromToRotation(-(Vector3)batteryController.weldSurfaceNormal, parentForPos.transform.up);
@@ -255,9 +255,9 @@ public class SoftwareCursor : MonoBehaviour
         float posAngleDif = Vector2.Angle(posClampAngle, -parentForPos.transform.up);
         float negAngleDif = Vector2.Angle(negClampAngle, -parentForPos.transform.up);
 
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
-        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * 2f), Color.yellow, 2f);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
+        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * 2f), Color.yellow, 2f);
 
         //Debug.Log("Pos Dif: " + posAngleDif + " | " + "Neg Dif: " + negAngleDif);
         // Higher value == correct angle to use.
