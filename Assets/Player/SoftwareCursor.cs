@@ -316,8 +316,10 @@ public class SoftwareCursor : MonoBehaviour
         {
             minCursorDistanceFactor = defaultMinCursorDistanceFactor;
         }
-
-        minCursorDistanceFactor = newMinBase;
+        else
+        {
+            minCursorDistanceFactor = newMinBase;
+        }  
     }
 
     #endregion

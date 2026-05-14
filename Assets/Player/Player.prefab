@@ -2611,30 +2611,32 @@ MonoBehaviour:
   spriteManager: {fileID: 7672027892262536964}
   posPreventer: {fileID: 330613524148996668}
   negPreventer: {fileID: 4683190839822738937}
+  battery: {fileID: 381572488973111425}
   rotationFactor: 50
   rotationTorqueFactor: 11
   rotationTorqueDrag: 0.4
   inputMode: 3
+  playerGravity: 0
+  velocity: 0
+  angularVelocity: 0
+  cursorPosWS: {x: 0, y: 0}
+  mouseDelta: {x: 0, y: 0}
+  scoutDistance: 10
   weldAngleClamp: 75
   weldLayerMask:
     serializedVersion: 2
     m_Bits: 256
+  weldState: 0
   weldSurfaceNormal: {x: 0, y: 0}
   playerWeldMag: {fileID: 0}
-  weldState: 0
   launchMaxExponent: 1.13
   launchBaseConstant: 500
+  launchBatteryDrain: 20
   grappleRange: 8
-  battery: {fileID: 381572488973111425}
-  playerGravity: 0
   sfxSurfaceGeneric: {fileID: 238116842634995736}
   sfxSurfaceMagnet: {fileID: 6690378576019444788}
   sfxMagneticBeam: {fileID: 322359499541593061}
   sfxFerroProjectile: {fileID: 7552396332889286236}
-  cursorPosWS: {x: 0, y: 0}
-  mouseDelta: {x: 0, y: 0}
-  velocity: 0
-  angularVelocity: 0
 --- !u!114 &381572488973111425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2666,6 +2668,7 @@ MonoBehaviour:
   playerBattery: {fileID: 381572488973111425}
   playerLivesText: {fileID: 0}
   abilityProgressText: {fileID: 0}
+  spawnHintText: {fileID: 0}
 --- !u!82 &238116842634995736
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3363,10 +3366,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fab91f706c072d47966d9c127c233ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CursorConstraint
-  batteryController: {fileID: 8047242034082428540}
-  cursorDistanceTweak: 0
   launchAimControlMethod: 1
+  batteryController: {fileID: 8047242034082428540}
   parentForPos: {fileID: 5159612945940311858}
+  playerSpriteLength: 1
+  cursorDistanceTweak: 0
+  minCursorDistanceFactor: 0.5
 --- !u!1 &6195558018165382177
 GameObject:
   m_ObjectHideFlags: 0
