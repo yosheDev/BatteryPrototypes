@@ -135,6 +135,7 @@ public class BatteryController : MonoBehaviour, IDamageable
     [HideInInspector] public MagneticSurface playerWeldMag;         /// Which magnet player is using for cling.
     private Collider2D weldedSurface;                               /// Surface player is welded to. Used mostly to get the gameObject.
     private Vector3 adjustedWeldAimDir;                             /// Weld aim dir that properly accounts for whether is leading magnet or not.
+    private Vector3 nearestWeldPoint;                               /// The point along the weld magnets surface that is closest to player magnet.
 
     #endregion
 
@@ -468,7 +469,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                         /// (Can't be avoided as this needs done every frame to account for rotating/translating parent surfaces as well as sudden changes to level state.)
                         weldedSurface = evalWeldSurface;
                         playerWeldMag = (magCharge ? positiveMag : negativeMag);
-                        Vector3 nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
+                        nearestWeldPoint = weldedSurface.ClosestPoint(playerWeldMag.transform.position);
                         Vector2 weldAimDir = ((Vector2)nearestWeldPoint - (Vector2)(playerWeldMag.transform.position + (-playerWeldMag.transform.up * .5f))).normalized;
                         //Vector2 adjustedWeldAimDir = (playerWeldMag._magData.charge * weldedSurface.gameObject.GetComponent<MagnetComponentBase>()._magData.charge == -1 ? weldAimDir : -weldAimDir);
                         //Quaternion targetWeldAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
@@ -486,7 +487,6 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                         if (weldState != WeldState.Welded && weldState != WeldState.LaunchAim)
                         {
-                            Debug.Log("Entering Weld State");
                             ChangeWeldState(WeldState.Welded);
                         }
 
@@ -865,26 +865,21 @@ public class BatteryController : MonoBehaviour, IDamageable
                 }
                 #endregion
 
+                #region Weld Rotation
+                // Within appropriate welding angle.
                 if (Mathf.Abs(angle1 + angle2) - weldAngleClamp < .01f)
                 {
-                    //Debug.Log("I am at an appropriate welding angle.");
                     intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
                 }
-                else
+                else // Not within appropriate welding angle.
                 {
-                    Debug.Log("I am NOT at an appropriate welding angle. Correcting.");
-                    Debug.Log(angle1 + " " + angle2 + " " + weldAngleClamp);
-
-                    // Rotate automatically until within range. (also rotate the software cursor too!??)
-
-                    /// get correct vector to interp to
+                    // Rotates to be within range automatically.
                     intermediateRot = Quaternion.Slerp(intermediateRot, Quaternion.LookRotation(Vector3.forward, clampVector), Time.deltaTime * rotationFactor);
                     rb.MoveRotation(intermediateRot);
                     softwareCursor.SetLocalPos(-clampVector * 3f);
-
-                    //softwareCursor.SetLocalPos(clampVector * 10f);
                 }
+                #endregion
 
                 scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
                 scalePivot.transform.rotation = intermediateRot;
@@ -1600,15 +1595,14 @@ public class BatteryController : MonoBehaviour, IDamageable
 
                 #endregion
 
+                #region Correct Player Position
+                Vector2 offset = (nearestWeldPoint + ((Vector3)weldSurfaceNormal * .2f)) - playerWeldMag.transform.position;
+                transform.position += (Vector3)offset;
+                #endregion
+
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(playerWeldMag.gameObject);
                 Vector2 adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
                 float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, -playerWeldMag.transform.up, Vector3.forward);
-
-                // If weld is outside of constraint range, start coroutine to correct it.
-                if (Mathf.Abs(angleFromSurfNormal) > weldAngleClamp || Mathf.Abs(angleFromSurfNormal) < -weldAngleClamp)
-                {
-                    //StartCoroutine(softwareCursor.CorrectWeldAngle(.1f));
-                }
                     
                 rotationFactor = 15f;
                 rb.constraints = RigidbodyConstraints2D.FreezeRotation;

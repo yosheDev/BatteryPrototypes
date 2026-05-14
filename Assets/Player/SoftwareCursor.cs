@@ -241,49 +241,6 @@ public class SoftwareCursor : MonoBehaviour
     }
 
     #region State Entry
-    public IEnumerator CorrectWeldAngle(float duration)
-    {
-        // Get initial quat.
-        weldInitialQuat = Quaternion.FromToRotation(-(Vector3)batteryController.weldSurfaceNormal, parentForPos.transform.up);
-
-        // Get correct angle to target
-        Quaternion negClampQuat = Quaternion.AngleAxis((-batteryController.weldAngleClamp * Mathf.Rad2Deg) + 1f, Vector3.forward);
-        Quaternion posClampQuat = Quaternion.AngleAxis((batteryController.weldAngleClamp * Mathf.Rad2Deg) - 1f, Vector3.forward);
-        Vector2 negClampAngle = negClampQuat * -batteryController.weldSurfaceNormal;
-        Vector2 posClampAngle = posClampQuat * -batteryController.weldSurfaceNormal;
-
-        float posAngleDif = Vector2.Angle(posClampAngle, -parentForPos.transform.up);
-        float negAngleDif = Vector2.Angle(negClampAngle, -parentForPos.transform.up);
-
-        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)posClampAngle * 1f), Color.red, 2f);
-        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)negClampAngle * 1f), Color.blue, 2f);
-        Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (parentForPos.transform.up * 2f), Color.yellow, 2f);
-
-        //Debug.Log("Pos Dif: " + posAngleDif + " | " + "Neg Dif: " + negAngleDif);
-        // Higher value == correct angle to use.
-        if (posAngleDif > negAngleDif)
-        {
-            // Negative is target
-            targetQuat = Quaternion.FromToRotation((Vector3)negClampAngle, -batteryController.weldSurfaceNormal);
-        }
-        else
-        {
-            // Positive is target
-            targetQuat = Quaternion.FromToRotation((Vector3)posClampAngle, -batteryController.weldSurfaceNormal);
-        }
-
-        // Begin timer.
-        correctWeldAlpha = 0f;
-        justWelded = true;
-        for (int i = 0; i < 10; i++)
-        {
-            correctWeldAlpha += (1f / 10f);
-            yield return new WaitForSeconds(duration / 10f);
-        }
-        justWelded = false;
-        yield break;
-    }
-
     public void LaunchAimStarted()
     {
         if (launchAimControlMethod == LaunchAimControlMethods.FreeRange)

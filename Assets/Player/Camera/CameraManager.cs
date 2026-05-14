@@ -155,7 +155,7 @@ public class CameraManager : MonoBehaviour
                 // Start coroutine, and add it to the Dictionary so it can be cancelled later if it needs to be.
                 Coroutine removeTargetCoroutine = CameraManager.instance.StartCoroutine(BlendOutFollowTarget(target, removeDuration));
                 removeTargetCoroutines.Add(target, removeTargetCoroutine);
-                Debug.Log("New remove target routine for " + target);
+                //Debug.Log("New remove target routine for " + target);
             }
             else
             {
