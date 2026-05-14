@@ -32,6 +32,7 @@ public class BatteryController : MonoBehaviour, IDamageable
     public MagneticSurface negativeMag;
     public TractorBeamVFX negTractorBeamVFX;
     private FerroProjectilePool projectilePool;
+    private PlayerAudio playerAudio;
     [SerializeField] private SpringJoint2D grappleJoint;
     [SerializeField] private GrappleRendererVFX grappleRenderer;
     [SerializeField] private PlayerSpriteManager spriteManager;
@@ -169,15 +170,6 @@ public class BatteryController : MonoBehaviour, IDamageable
     #endregion
 
     #endregion
-
-    #region Audio
-    [Header("Audio")]
-    // TO DO: Make a player audio component or script to handle all these references.
-    [SerializeField] private AudioSource sfxSurfaceGeneric;
-    [SerializeField] private AudioSource sfxSurfaceMagnet;
-    [SerializeField] private AudioSource sfxMagneticBeam;
-    [SerializeField] private AudioSource sfxFerroProjectile;
-    #endregion
     // =============================================================================================================================
     #endregion
 
@@ -204,6 +196,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         battery = GetComponent<Battery>();
         neutralDetector = GetComponentInChildren<PlayerNeutralDetector>();
         projectilePool = GetComponent<FerroProjectilePool>();
+        playerAudio = transform.parent.GetComponentInChildren<PlayerAudio>();
 
         #endregion
     }
@@ -1087,16 +1080,16 @@ public class BatteryController : MonoBehaviour, IDamageable
                     #region Beam SFX
                     if (negativeFields.Count + positiveFields.Count > 0)
                     {
-                        if (!sfxMagneticBeam.isPlaying)
+                        if (!playerAudio.sfxMagneticBeam.isPlaying)
                         {
-                            sfxMagneticBeam.Play();
+                            playerAudio.sfxMagneticBeam.Play();
                         }
 
-                        sfxMagneticBeam.volume = FunctionLibraryF.MapRangeClamped(0f, 30f, 0f, 1f, (combinedNegativeForces + combinedPositiveForces).magnitude) * FunctionLibraryF.MapRangeClamped(0f, 2f, .2f, 1f, velocity);
+                        playerAudio.sfxMagneticBeam.volume = FunctionLibraryF.MapRangeClamped(0f, 30f, 0f, 1f, (combinedNegativeForces + combinedPositiveForces).magnitude) * FunctionLibraryF.MapRangeClamped(0f, 2f, .2f, 1f, velocity);
                     }
                     else
                     {
-                        sfxMagneticBeam.Stop();
+                        playerAudio.sfxMagneticBeam.Stop();
                     }
                     #endregion
                 }
@@ -1356,7 +1349,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 {
                     projectilePool.ShootProjectile(negativeMag.transform.position + (negativeMag.transform.up * .05f), negativeMag.transform.rotation, new Vector3(.25f, .5f, .5f));
                     rb.AddForce(softwareCursor.GetAimDir() * forceAmounts[shotCount]);
-                    sfxFerroProjectile.Play();
+                    playerAudio.sfxFerroProjectile.Play();
                 }
                 yield return new WaitForSeconds(.15f);
                 shotCount++;
@@ -1545,6 +1538,8 @@ public class BatteryController : MonoBehaviour, IDamageable
             // Update camera follow targets.
             CameraManager.instance.AddFollowTarget(gameObject.transform, 0.5f);
             CameraManager.instance.RemoveFollowTarget(playerWeldMag.transform, 0.5f);
+
+            playerAudio.sfxWeldRelease.Play();
         }
 
         // When leaving Launch Aim, unparent player from the squash/stretch pivot.
@@ -1619,6 +1614,8 @@ public class BatteryController : MonoBehaviour, IDamageable
                 // Update camera follow target.
                 CameraManager.instance.AddFollowTarget(playerWeldMag.transform, 0.5f);
                 CameraManager.instance.RemoveFollowTarget(gameObject.transform, 0.5f);
+
+                playerAudio.sfxWeldStart.Play();
                 break;
 
             case WeldState.LaunchAim:
@@ -1807,13 +1804,13 @@ public class BatteryController : MonoBehaviour, IDamageable
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("MagnetSurface"))
         {
-            sfxSurfaceMagnet.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
-            sfxSurfaceMagnet.Play();
+            playerAudio.sfxSurfaceMagnet.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
+            playerAudio.sfxSurfaceMagnet.Play();
         }
         else
         {
-            sfxSurfaceGeneric.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
-            sfxSurfaceGeneric.Play();
+            playerAudio.sfxSurfaceGeneric.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
+            playerAudio.sfxSurfaceGeneric.Play();
         } 
     }
 
