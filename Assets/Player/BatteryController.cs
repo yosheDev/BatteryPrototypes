@@ -12,7 +12,7 @@ using static UnityEngine.UI.Image;
 
 public class BatteryController : MonoBehaviour, IDamageable
 {
-    #region Properties
+    #region Members/Variables
     #region References
     [Header("References")]
     [SerializeField] private GameObject scalePivot;
@@ -36,33 +36,88 @@ public class BatteryController : MonoBehaviour, IDamageable
     [SerializeField] private PlayerSpriteManager spriteManager;
     [SerializeField] private PlayerFastRotationPreventer posPreventer;
     [SerializeField] private PlayerFastRotationPreventer negPreventer;
+    [HideInInspector] public Battery battery;
+    [HideInInspector] public IInteractable interactObj;
     #endregion
 
     [Header("Control Settings")]
-    [SerializeField] private float rotationFactor;              /// Is this deprecated now? Or still used for magnetic surfaces movement.
-    [SerializeField] private float rotationTorqueFactor = 8f;
-    [SerializeField] private float rotationTorqueDrag = .2f;
+    [SerializeField] private float rotationFactor;              /// Rotation speed that applies when not using torque rotation.
+    [SerializeField] private float rotationTorqueFactor = 8f;   /// Rotation speed that applies when using torque rotation.
+    [SerializeField] private float rotationTorqueDrag = .2f;    /// Helps damped torque rotation, tweak to prevent oscillation.
     private float angularRotVelocity; // Used for smooth damp.
     [HideInInspector] private bool isGrounded = false;
+
     public enum PlayerInputMode
     {
-        Disabled,
-        UIOnly,
-        Scene,
-        Enabled
+        Disabled,   /// No player input goes through this script at all.
+        UIOnly,     /// Input only allowed for things like dialogue.
+        Scene,      /// Input only allowed for cutscenes? Unsure about this one look back into it.
+        Enabled     /// Input fully enabled
     }
-
     public PlayerInputMode inputMode = PlayerInputMode.Enabled;
+    // Input System
+
+    #region Misc Variables
 
     private bool isDead = false;
+    [HideInInspector] public float playerGravity;       /// At start, sets to the base gravity scale of the player rigidbody.
+
+    private Vector2 playerColOffset;
+    private Vector2 playerColSize;
+
+    // Intermediary
+    [HideInInspector] public float velocity;
+    [HideInInspector] public float angularVelocity;
+    private Quaternion previousRotation; /// Used for calculating angular velocity.
+    private Vector3 previousWeldUp;     /// Used for determining input rotation direction.
+    private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
+
+    private Vector3 startPos;           /// Stores restart position data.
+
+    #region Surface Parent
+
+    private GameObject surfaceParent;
+    private Quaternion parentLastRot;
+    private Vector3 parentLastPos;
+    private Vector3 surfaceParentVelocity;
+
+    #endregion
+
+    #region Cursor
+
+    [HideInInspector] public Vector2 cursorPosWS;
+    [HideInInspector] public Vector2 mouseDelta;
+
+    #endregion
+
+    #endregion
+
+    #region Scouting
+
+    [Header("Scouting")]
+    [SerializeField] float scoutDistance = 10f;
+    public enum ScoutState
+    {
+        None,
+        Scouting,
+        Returning
+    }
+    private ScoutState scoutState;
+
+    private Vector2 scoutInput;
+    private Vector2 scoutPosOffset = Vector2.zero;
+    Vector2 scoutVelocity = Vector2.zero;
+
+    #endregion Scouting
 
     #region Abilities
 
     private byte abilityProgression = 0;    /// Since ability progression is linear, using a byte to store what player has.
 
-
     #region Welding
     // TO DO: Put this into its own component or serializable class.
+
+    [Header("Welding")]
     public float weldAngleClamp = 75f;
     [SerializeField] private LayerMask weldLayerMask;
     public enum WeldState
@@ -71,42 +126,48 @@ public class BatteryController : MonoBehaviour, IDamageable
         Welded,
         LaunchAim,
     }
+    [HideInInspector] public WeldState weldState = WeldState.None;  /// Current weld state.
+    private bool lockWeldState = false;                             /// Prevents changing the weld state when true.
+    private bool weldInput;                                         /// Current weld input state.
 
-    [HideInInspector] public Vector2 weldSurfaceNormal; /// Stores normal information to constrain pivot rotation.
-    [HideInInspector] public MagneticSurface playerWeldMag;     /// Which magnet player is using for cling.
-    private Collider2D weldedSurface;                           /// Surface player is welded to. Used mostly to get the gameObject.
-    private Vector3 adjustedWeldAimDir;
-    [HideInInspector] public WeldState weldState = WeldState.None;
-    private bool lockWeldState = false;
+    [HideInInspector] public Vector2 weldSurfaceNormal;             /// Stores normal information to constrain pivot rotation.
+    [HideInInspector] public MagneticSurface playerWeldMag;         /// Which magnet player is using for cling.
+    private Collider2D weldedSurface;                               /// Surface player is welded to. Used mostly to get the gameObject.
+    private Vector3 adjustedWeldAimDir;                             /// Weld aim dir that properly accounts for whether is leading magnet or not.
 
     #endregion
 
     #region Launching
     // TO DO: Put this into its own component or serializable class.
+
+    [Header("Launching")]
     [SerializeField] private float launchMaxExponent = 1.13f;
     [SerializeField] private float launchBaseConstant = 500f;
-    private float launchBatteryDrain = 20;
+    [SerializeField] private float launchBatteryDrain = 20;
+
+    private bool launchInput;               /// Current launch input state.
+
     #endregion Launching
 
     #region Projectile
     // TO DO: Put this into its own component or serializable class.
+
     private bool isShootDisabled = false;
     private byte shotBatteryDrain = 5;
+
     #endregion
 
     #region Grappling
+
+    [Header("Grappling")]
     [SerializeField] private float grappleRange = 8f;
     private bool isGrappling = false;
     private Transform grapplePoint;
-    #endregion
 
     #endregion
 
-    // Battery
-    [HideInInspector] public Battery battery;
+    #endregion
 
-    [HideInInspector] public float playerGravity;
-    
     #region Audio
     [Header("Audio")]
     // TO DO: Make a player audio component or script to handle all these references.
@@ -114,51 +175,6 @@ public class BatteryController : MonoBehaviour, IDamageable
     [SerializeField] private AudioSource sfxSurfaceMagnet;
     [SerializeField] private AudioSource sfxMagneticBeam;
     [SerializeField] private AudioSource sfxFerroProjectile;
-    #endregion
-    //==============================================================================================================================
-    #region Private
-    // Surface Parent
-    private GameObject surfaceParent;
-    private Quaternion parentLastRot;
-    private Vector3 parentLastPos;
-    private Vector3 surfaceParentVelocity;
-
-    // Cursor
-    [HideInInspector] public Vector2 cursorPosWS;
-    [HideInInspector] public Vector2 mouseDelta;
-    
-    private Vector2 playerColOffset;
-    private Vector2 playerColSize;
-
-    // Intermediary
-    [HideInInspector] public float velocity;
-    [HideInInspector] public float angularVelocity;
-    private Quaternion previousRotation; /// Used for calculating angular velocity.
-    private Vector3 previousWeldUp;    /// Used for determining input rotation direction.
-    private Quaternion intermediateRot; /// Used for interpolating the rigidbody rotation of the player.
-
-    // Scouting
-    private Vector2 scoutInput;
-    private Vector2 scoutPosOffset = Vector2.zero;
-    Vector2 scoutVelocity = Vector2.zero;
-    float scoutDistance = 10f;
-
-    // Interaction
-    [HideInInspector] public IInteractable interactObj;
-
-    private enum ScoutState
-    {
-        None,
-        Scouting,
-        Returning
-    }
-    private ScoutState scoutState;
-
-    // Input System
-    private bool weldInput;
-    private bool launchInput;
-
-    private Vector3 startPos; /// Used for current restart. REMOVE THIS LATER when restart is tied into AreaManager/PlayerStart stuff.
     #endregion
     // =============================================================================================================================
     #endregion
@@ -718,7 +734,8 @@ public class BatteryController : MonoBehaviour, IDamageable
                     // Continue updating intermediateRot so other move modes can transition well.
                     intermediateRot = transform.rotation;
 
-                    //Debug.Log("Preventing fast rotation into floors 2");
+                    // Set min allowed distance of software cursor back to default.
+                    softwareCursor.SetCursorMinDistance(-1f);
                 }
                 else
                 {
@@ -729,22 +746,30 @@ public class BatteryController : MonoBehaviour, IDamageable
                         transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
                         //rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor));
                         intermediateRot = transform.rotation;
+
+                        // Extend min allowed distance of software cursor.
+                        softwareCursor.SetCursorMinDistance(1.25f);
                     }
                     else
                     {
-                        if (magForwardSurface != null)
-                        {
-                            //Debug.Log("Mag forward surface..");
-                        }
-                        if (evalAttractSurface != null)
-                        {
-                            //Debug.Log("eval attact surface..");
-                        }
+                        #region Debug
+                        //if (magForwardSurface != null)
+                        //{
+                        //    //Debug.Log("Mag forward surface..");
+                        //}
+                        //if (evalAttractSurface != null)
+                        //{
+                        //    //Debug.Log("eval attact surface..");
+                        //}
                         //Debug.Log("Welded Rotation Method?");
+                        #endregion 
+
+                        // Set min allowed distance of software cursor back to default.
+                        softwareCursor.SetCursorMinDistance(-1f);
+
                         // If on a neutral surface, use rigidbody for foddian movement or walk around.
                         if (neutralDetector.neutralDetected)
                         {
-                            //Debug.Log("Neutral is detected!");
                             intermediateRot = Quaternion.Slerp(intermediateRot, targetAimQuat, Time.deltaTime * rotationFactor);
                             rb.MoveRotation(intermediateRot);
                         }
@@ -752,9 +777,10 @@ public class BatteryController : MonoBehaviour, IDamageable
                         {
                             // Manually Update Transforms to face software cursor.
                             transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
+                            intermediateRot = transform.rotation;
+
                             //intermediateRot = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
                             //rb.MoveRotation(intermediateRot);
-                            intermediateRot = transform.rotation;
                         }
                     } 
                 }

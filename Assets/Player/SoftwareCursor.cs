@@ -4,34 +4,57 @@ using System.Collections;
 
 public class SoftwareCursor : MonoBehaviour
 {
-    public enum LaunchAimControlMethods
+    #region Members/Variables
+    public enum LaunchAimControlMethods // Different control methods for the Launch Aim. Switching enum changes how it controls. Currently FreeRange is standard.
     {
         SingleAxis,
         FreeRange
     }
-    [SerializeField] private BatteryController batteryController;
-    [SerializeField] private float cursorDistanceTweak = 1f;
     public LaunchAimControlMethods launchAimControlMethod = LaunchAimControlMethods.FreeRange;
+
+    #region References
+
+    [Header("References")]
+    [SerializeField] private BatteryController batteryController;
+    public GameObject parentForPos;
+
+    #endregion
+
+    [Header("Parameters")]
+    [SerializeField] private float playerSpriteLength = 1f;     /// Approximate length of player sprite used for offset calculations.
+    [SerializeField] private float cursorDistanceTweak = 1f;    /// Globally changes cursor distance.
+    [SerializeField] private float minCursorDistanceFactor = .5f; /// Min cursor distance when not weld or launch. Sprite Length and cursorDistanceTweak added to it situationally.
+    private float defaultMinCursorDistanceFactor;
+
+    // Cursor Position Data
     private Vector2 localPos;
     private Vector3 worldPos = new Vector3(0f, 0f, 0f);
     private Vector2 lastFramePos = new Vector2(0f, 0f);
     //[HideInInspector] public float velocity = 0f;
-    public GameObject parentForPos;
+    private Vector2 aimDir;
+
+    // Parent Data
     private Vector3 parentLastPos;
     private Quaternion parentLastRot = Quaternion.identity;
     private float parentRotAngle;
-    private Vector2 aimDir;
-    private Vector3 launchControlMin;
-    private Vector3 launchControlMax;
-    private float launchControlAlpha;
-    private float playerSpriteLength = 1f;
+
+    // Weld Data
     private bool justWelded = false;
     private Quaternion weldInitialQuat;
     private Quaternion targetQuat;
     private float correctWeldAlpha = 0f;
     bool isReleasing = false;
 
-    [SerializeField] private float minCursorDistanceFactor = .5f;    /// This is used as base for cursor distance. Sprite Length and cursorDistanceTweak added to it situationally.
+    // Launch Control
+    private Vector3 launchControlMin;
+    private Vector3 launchControlMax;
+    private float launchControlAlpha;
+    #endregion
+
+    private void Awake()
+    {
+        defaultMinCursorDistanceFactor = minCursorDistanceFactor;
+    }
 
     void Update()
     {
@@ -217,70 +240,7 @@ public class SoftwareCursor : MonoBehaviour
         parentLastPos = parentForPos.transform.position;
     }
 
-    // Custom ClampMagnitude that includes min and max both.
-    public Vector2 ClampMagnitudeRange(Vector2 v, float max, float min)
-    {
-        double sm = v.sqrMagnitude;
-        if (sm > (double)max * (double)max) return v.normalized * max;
-        else if (sm < (double)min * (double)min) return v.normalized * min;
-        return v;
-    }
-    private float DeltaMagSpringFormula(float deltaMag, float springAlpha, bool isReleasing = false)
-    {
-        // Releasing : Winding Up
-        float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
-
-        return deltaMag * mult;
-    }
-
-    private float CursorMagSpringFormula(float springAlpha, bool isReleasing = false)
-    {
-        float sideInputAlpha = FunctionLibraryF.MapRangeClamped(.25f, 1f, 1f, 0f, Mathf.Abs(0f - Vector2.Dot(batteryController.mouseDelta.normalized, aimDir)));
-
-        // Releasing : Winding Up
-        float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
-
-        return Mathf.Lerp(mult, (parentForPos == batteryController.positiveMag) ? .6f : .5f, sideInputAlpha); /// Positive mag has more because its further out, thus moves slower when at same speed.
-    }
-
-    public float GetLaunchAlpha()
-    {
-        return launchControlAlpha;
-    }
-
-    public Vector2 GetLocalPos()
-    {
-        return localPos;
-    }
-
-    public void SetLocalPos(Vector2 inLocalPos)
-    {
-        // Debug.Log("Software Cursor Local: " + localPos);
-        localPos = inLocalPos;
-        localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
-        transform.position = (Vector2)parentForPos.transform.position + localPos;
-    }
-
-    public float GetDesiredCursorDistance(float posMagValue = 1f, float negMagValue = 1f)
-    {
-        if (parentForPos != null)
-        {
-            return GetCameraZoomCursorDistanceMultiplier() * (parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak);
-        }
-
-        return GetCameraZoomCursorDistanceMultiplier() * posMagValue;
-    }
-
-    public float GetCameraZoomCursorDistanceMultiplier()
-    {
-        return FunctionLibraryF.MapRangeClamped(CameraManager.instance._currentCamera.GetComponent<DollyVelocity>().GetZoomRange().x, CameraManager.instance._currentCamera.GetComponent<DollyVelocity>().GetZoomRange().y, 1f, 1.75f, CameraManager.instance.GetPositionComposer().CameraDistance);
-    }
-
-    public void SetNewPosParent(GameObject parent)
-    {
-        parentForPos = parent;
-        parentLastPos = parentForPos.transform.position;
-    }
+    #region State Entry
     public IEnumerator WeldJustStarted(float duration)
     {
         // Get initial quat.
@@ -324,17 +284,6 @@ public class SoftwareCursor : MonoBehaviour
         yield break;
     }
 
-    public void SetParentLastTransforms(Vector2 position, Quaternion rotation)
-    {
-        parentLastPos = position;
-        parentLastRot = rotation;
-    }
-
-    public void InvertLocalPos()
-    {
-        localPos *= -1f;
-        transform.position = (Vector2)parentForPos.transform.position + localPos;
-    }
     public void LaunchAimStarted()
     {
         if (launchAimControlMethod == LaunchAimControlMethods.FreeRange)
@@ -348,8 +297,114 @@ public class SoftwareCursor : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Utility
+
+    #region Functions
+    public Vector2 ClampMagnitudeRange(Vector2 v, float max, float min)
+    {
+        // Custom ClampMagnitude that includes min and max both.
+        double sm = v.sqrMagnitude;
+        if (sm > (double)max * (double)max) return v.normalized * max;
+        else if (sm < (double)min * (double)min) return v.normalized * min;
+        return v;
+    }
+
+    private float DeltaMagSpringFormula(float deltaMag, float springAlpha, bool isReleasing = false)
+    {
+        // Releasing : Winding Up
+        float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
+
+        return deltaMag * mult;
+    }
+
+    private float CursorMagSpringFormula(float springAlpha, bool isReleasing = false)
+    {
+        float sideInputAlpha = FunctionLibraryF.MapRangeClamped(.25f, 1f, 1f, 0f, Mathf.Abs(0f - Vector2.Dot(batteryController.mouseDelta.normalized, aimDir)));
+
+        // Releasing : Winding Up
+        float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
+
+        return Mathf.Lerp(mult, (parentForPos == batteryController.positiveMag) ? .6f : .5f, sideInputAlpha); /// Positive mag has more because its further out, thus moves slower when at same speed.
+    }
+
+    public void InvertLocalPos()
+    {
+        localPos *= -1f;
+        transform.position = (Vector2)parentForPos.transform.position + localPos;
+    }
+
+    #endregion
+
+    #region Cursor Distance
+    public float GetDesiredCursorDistance(float posMagValue = 1f, float negMagValue = 1f)
+    {
+        if (parentForPos != null)
+        {
+            return GetCameraZoomCursorDistanceMultiplier() * (parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak);
+        }
+
+        return GetCameraZoomCursorDistanceMultiplier() * posMagValue;
+    }
+
+    public float GetCameraZoomCursorDistanceMultiplier()
+    {
+        return FunctionLibraryF.MapRangeClamped(CameraManager.instance._currentCamera.GetComponent<DollyVelocity>().GetZoomRange().x, CameraManager.instance._currentCamera.GetComponent<DollyVelocity>().GetZoomRange().y, 1f, 1.75f, CameraManager.instance.GetPositionComposer().CameraDistance);
+    }
+    public void SetCursorMinDistance(float newMinBase = .5f)
+    {
+        // Reset to default.
+        if (newMinBase < 0f)
+        {
+            minCursorDistanceFactor = defaultMinCursorDistanceFactor;
+        }
+
+        minCursorDistanceFactor = newMinBase;
+    }
+
+    #endregion
+
+    #region Pos Parent
+    public void SetNewPosParent(GameObject parent)
+    {
+        parentForPos = parent;
+        parentLastPos = parentForPos.transform.position;
+    }
+
+    public void SetParentLastTransforms(Vector2 position, Quaternion rotation)
+    {
+        parentLastPos = position;
+        parentLastRot = rotation;
+    }
+    #endregion
+
+    #region LocalPos
+    public Vector2 GetLocalPos()
+    {
+        return localPos;
+    }
+
+    public void SetLocalPos(Vector2 inLocalPos)
+    {
+        // Debug.Log("Software Cursor Local: " + localPos);
+        localPos = inLocalPos;
+        localPos = batteryController.weldState == BatteryController.WeldState.Welded ? ClampMagnitudeRange(localPos, 3f, 2.95f) : Vector2.ClampMagnitude(localPos, 2f);
+        transform.position = (Vector2)parentForPos.transform.position + localPos;
+    }
+    #endregion
+
+    #region Misc
     public Vector2 GetAimDir()
     {
         return aimDir;
     }
+
+    public float GetLaunchAlpha()
+    {
+        return launchControlAlpha;
+    }
+    #endregion
+
+    #endregion
 }
