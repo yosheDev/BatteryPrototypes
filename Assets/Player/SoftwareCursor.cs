@@ -31,6 +31,8 @@ public class SoftwareCursor : MonoBehaviour
     private float correctWeldAlpha = 0f;
     bool isReleasing = false;
 
+    [SerializeField] private float minCursorDistanceFactor = .5f;    /// This is used as base for cursor distance. Sprite Length and cursorDistanceTweak added to it situationally.
+
     void Update()
     {
         //velocity = ((Vector2)transform.position - lastFramePos).magnitude / Time.deltaTime;
@@ -132,7 +134,7 @@ public class SoftwareCursor : MonoBehaviour
         #endregion
 
         // ================================================================================================================================================
-        #region Local Software Cursor (Non-Launching)
+        #region Non-Launching Controls
 
         // Update Local Pos (maybe make this its own function later if launch aim rework agrees with it. Also the aimDir set below? The clamping is different in Free LaunchAim so maybe not?)
         if (!justWelded)
@@ -205,7 +207,7 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
-                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos == batteryController.positiveMag.gameObject ? .5f + playerSpriteLength + cursorDistanceTweak : .5f + cursorDistanceTweak));
+                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos == batteryController.positiveMag.gameObject ? minCursorDistanceFactor + playerSpriteLength + cursorDistanceTweak : minCursorDistanceFactor + cursorDistanceTweak));
                 worldPos = (Vector2)parentForPos.transform.position + localPos;
                 transform.position = worldPos;
             }
