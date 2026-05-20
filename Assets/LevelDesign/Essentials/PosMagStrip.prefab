@@ -56,6 +56,11 @@ MonoBehaviour:
   surfaceCol: {fileID: 5468667380994807146}
   _fieldAttractDistance: 2
   _attenuationModifier: 1
+  _playerMagInfluence: 2
+  _canAffectPlayer: 1
+  _forceClamp: 2
+  _maxVelocity: 2
+  _maxAngularVelocity: 10
   bakeToMagFieldSDF: 1
 --- !u!1971053207 &4551056893045932019
 SpriteShapeRenderer:
