@@ -642,7 +642,7 @@ PlayableDirector:
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 991b8061d43f08e49961a760cfaf262c, type: 2}
   m_InitialState: 0
-  m_WrapMode: 2
+  m_WrapMode: 0
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
@@ -1090,6 +1090,10 @@ PrefabInstance:
       propertyPath: resolution
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 6239690848335973314, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
+      propertyPath: exitTransition
+      value: 
+      objectReference: {fileID: 11400000, guid: 97fbd29cb88501f418dba224df37fe8b, type: 2}
     - target: {fileID: 6239690848335973314, guid: 5d0205c16e83cda4782bf4dcfd0913a6, type: 3}
       propertyPath: spawnMechanism
       value: 
