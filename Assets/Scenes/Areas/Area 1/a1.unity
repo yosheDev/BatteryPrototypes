@@ -351,6 +351,11 @@ MonoBehaviour:
   machineParts: []
   machineOnEvents: []
   machineOffEvents: []
+--- !u!223 &724768953 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 5555671623910700655, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 194574934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &785512078
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -775,6 +780,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
+      propertyPath: hudCanvas
+      value: 
+      objectReference: {fileID: 724768953}
     - target: {fileID: 1550937807734155731, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
       propertyPath: batterySlider
       value: 

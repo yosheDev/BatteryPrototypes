@@ -19,6 +19,7 @@ public class SpawningMechanism : MonoBehaviour
             AreaManager.instance.playerController.SetVisibility(false);
             AreaManager.instance.playerController.softwareCursor.SetVisibility(false);
             AreaManager.instance.playerController.GetComponent<PlayerHUD>().SetDisplaySpawnText(false);
+            AreaManager.instance.playerController.GetComponent<PlayerHUD>().FadeHUD(0f, 0f);
         }
     }
 
@@ -61,6 +62,7 @@ public class SpawningMechanism : MonoBehaviour
         AreaManager.instance.playerController.SetVisibility(true);
         AreaManager.instance.playerController.softwareCursor.SetVisibility(true);
         AreaManager.instance.playerController.GetComponent<PlayerHUD>().SetDisplaySpawnText(false);
+        AreaManager.instance.playerController.GetComponent<PlayerHUD>().FadeHUD(1f, .5f);
         yield return new WaitForSeconds(1f);
         // Player regains control
         Release();
