@@ -17,6 +17,7 @@ public class SoftwareCursor : MonoBehaviour
     [Header("References")]
     [SerializeField] private BatteryController batteryController;
     public GameObject parentForPos;
+    public SpriteRenderer cursorSprite;
 
     #endregion
 
@@ -54,6 +55,7 @@ public class SoftwareCursor : MonoBehaviour
     private void Awake()
     {
         defaultMinCursorDistanceFactor = minCursorDistanceFactor;
+        cursorSprite = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -362,6 +364,11 @@ public class SoftwareCursor : MonoBehaviour
     public float GetLaunchAlpha()
     {
         return launchControlAlpha;
+    }
+
+    public void SetVisibility(bool visible)
+    {
+        cursorSprite.enabled = visible;
     }
     #endregion
 

@@ -650,6 +650,8 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: -2867016867060487349, guid: 991b8061d43f08e49961a760cfaf262c, type: 2}
     value: {fileID: 1815531738}
+  - key: {fileID: 41342423046627330, guid: 991b8061d43f08e49961a760cfaf262c, type: 2}
+    value: {fileID: 1709881898}
   m_ExposedReferences:
     m_References:
     - 78c8fd7b73941f8479c6f9e919ad3a84: {fileID: 1815531737}
@@ -1061,7 +1063,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8047732664335575945, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
   m_PrefabInstance: {fileID: 1826935615}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1709881897}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a768a0d2283192849ad0846a10f57b0e, type: 3}
@@ -3719,6 +3721,41 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 30b7d93171db4d149b22e48d1fbcd930, type: 3}
+--- !u!1 &1709881897 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3896297229666810574, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+  m_PrefabInstance: {fileID: 1826935615}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1709881898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1709881897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Timeline::UnityEngine.Timeline.SignalReceiver
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 6f0081926a850b2419a430a1c079dfa9, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 823014194}
+          m_TargetAssemblyTypeName: SpawningMechanism, Assembly-CSharp
+          m_MethodName: BirthPlayer
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!4 &1713043258 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1096612667706407265, guid: 410e4d3d41092eb41b267c93fa8453f7, type: 3}
@@ -4444,13 +4481,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8047732664335575945, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      propertyPath: _spawnType
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1713043258}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3896297229666810574, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1709881898}
   m_SourcePrefab: {fileID: 100100000, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
 --- !u!1 &1889043966
 GameObject:

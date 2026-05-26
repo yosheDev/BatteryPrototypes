@@ -21,4 +21,10 @@ public class PlayerSpriteManager : MonoBehaviour
                 break;
         }
     }
+
+    public void SetVisibility(bool visible)
+    {
+        bodySpriteRenderer.enabled = visible;
+        faceSpriteRenderer.enabled = visible;
+    }
 }

@@ -457,7 +457,10 @@ public class AreaManager : MonoBehaviour
         switch (state)
         {
             case AreaTransitionState.Spawn:
-                playerHud.SetDisplaySpawnText(true);
+                if (roomManager.spawnMechanism._spawnType != SpawnMechanismType.Cinematic)
+                {
+                    playerHud.SetDisplaySpawnText(true);
+                }
                 break;
             case AreaTransitionState.None:
                 break;
@@ -474,7 +477,7 @@ public class AreaManager : MonoBehaviour
     }
 
     public void ReleasePlayer()
-    {
+    {   
         try
         {
             playerHud.SetDisplaySpawnText(false);

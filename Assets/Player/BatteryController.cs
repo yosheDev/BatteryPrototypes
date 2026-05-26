@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor.EditorTools;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,7 +27,7 @@ public class BatteryController : MonoBehaviour, IDamageable
     private PlayerInput playerInput;
     private PlayerNeutralDetector neutralDetector;  
     private GameObject cursorObj;
-    private SoftwareCursor softwareCursor;
+    [HideInInspector] public SoftwareCursor softwareCursor;
     public MagneticSurface positiveMag;
     public TractorBeamVFX posTractorBeamVFX;
     public MagneticSurface negativeMag;
@@ -199,6 +200,8 @@ public class BatteryController : MonoBehaviour, IDamageable
         playerAudio = transform.parent.GetComponentInChildren<PlayerAudio>();
 
         #endregion
+
+        gameObject.GetComponent<HingeJoint2D>().enabled = false;
     }
     void Start()
     {
@@ -1204,9 +1207,17 @@ public class BatteryController : MonoBehaviour, IDamageable
         // Break out of spawn mechanism.
         if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.Spawn))
         {
-            AreaManager.instance.ReleasePlayer();
-            ChangeWeldState(WeldState.None);
-            weldInput = false;
+            // When player tries to free themselves, reject that control if their spawn type is set to cinematic.
+            if (AreaManager.instance.roomManager.spawnMechanism._spawnType == SpawnMechanismType.Cinematic)
+            {
+                return;
+            }
+            else
+            {
+                AreaManager.instance.ReleasePlayer();
+                ChangeWeldState(WeldState.None);
+                weldInput = false;
+            }   
         }
 
         else
@@ -1833,6 +1844,13 @@ public class BatteryController : MonoBehaviour, IDamageable
         }
 
         surfaceParent = null;
+    }
+    #endregion
+
+    #region Utility
+    public void SetVisibility(bool visible)
+    {
+        spriteManager.SetVisibility(visible);
     }
     #endregion
 
