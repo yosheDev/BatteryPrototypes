@@ -1,4 +1,5 @@
 #nullable enable
+using PixeLadder.EasyTransition;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
@@ -47,8 +48,16 @@ public static class SceneManagement
         {
             roomSceneName = GetSceneFormattedName(level);
         }
-        
-        SceneManager.LoadScene(roomSceneName, loadSceneMode);
+
+        //SceneManager.LoadScene(roomSceneName, loadSceneMode);
+        try
+        {
+            SceneTransitioner.Instance.LoadScene(roomSceneName, AreaManager.instance.roomManager.exitTransition, loadSceneMode);
+        }
+        catch
+        {
+            SceneTransitioner.Instance.LoadScene(roomSceneName, SceneTransitioner.Instance.GetDefaultTransition(), loadSceneMode);
+        }
     }
 
     public static void LoadScene(string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)

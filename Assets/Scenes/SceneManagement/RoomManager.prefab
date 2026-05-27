@@ -46,8 +46,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
   isCheckpointRoom: 0
+  doesResetFullyReloadLevel: 1
   Notes: Respawn Pos will be set to location of this object!
   respawnPos: {x: 0, y: 0}
+  spawnMechanism: {fileID: 0}
+  exitTransition: {fileID: 11400000, guid: 97fbd29cb88501f418dba224df37fe8b, type: 2}
 --- !u!114 &4548066643633600967
 MonoBehaviour:
   m_ObjectHideFlags: 0

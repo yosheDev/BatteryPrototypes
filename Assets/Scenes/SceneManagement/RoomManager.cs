@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Magnet;
+using PixeLadder.EasyTransition;
 
 public class RoomManager : MonoBehaviour, IInterfaceEvent
 {
@@ -15,6 +16,7 @@ public class RoomManager : MonoBehaviour, IInterfaceEvent
 
     [SerializeField] private Vector2 respawnPos; // This should be different than PlayerStart position is most cases. Think "metroid save room" where checkpoint device is not where player enters the room.
     public SpawningMechanism spawnMechanism;
+    public TransitionEffect exitTransition;
 
     private void Start()
     {
