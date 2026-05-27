@@ -435,6 +435,7 @@ public class AreaManager : MonoBehaviour
                 playerRB.gravityScale = 0f;
                 playerController.GetComponent<Collider2D>().enabled = false;
                 playerController.GetComponent<Battery>().enabled = false;
+                playerController.SetVisibility(false);
                 endPlayerPosTarget = reachedObjective.transform.position;
                 endPlayerPosTarget.z = playerController.gameObject.transform.position.z;
 
