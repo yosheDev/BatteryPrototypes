@@ -12,6 +12,8 @@ public class AreaSelection : MonoBehaviour
 
     void Awake()
     {
+        GameInstance.instance.initialEditorLoad = false;
+
         for (int i = 0; i < areas.Count; i++)
         {
             Areas buttonArea = (Areas)i; /// This is pretty wonky and will need redone later. Basically using i to get the correct Area enum. Relies on the order of build indexes being correct in the properties panel.
@@ -24,5 +26,10 @@ public class AreaSelection : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+    public void UnloadAreaSelect(Scene scene, LoadSceneMode mode)
+    {
+        SceneManagement.UnloadSceneAsync("AreaSelection");
+        SceneManager.sceneLoaded -= UnloadAreaSelect;
     }
 }

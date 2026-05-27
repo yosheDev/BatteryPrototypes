@@ -17,8 +17,10 @@ public class AreaSelectButton : MonoBehaviour
 
     public void EnterArea()
     {
+        GameInstance.instance.loadingIntoArea = true;
+
         // Bind delegate when area scene is loaded. Has to be done this way because the area select is not unloading until another scene is loaded.
-        SceneManager.sceneLoaded += UnloadAreaSelect;
+        //SceneManager.sceneLoaded += UnloadAreaSelect;
 
         Level newArea = new Level(area, -1);
         if (SceneManagement.DoesSceneExist(newArea))
@@ -29,11 +31,5 @@ public class AreaSelectButton : MonoBehaviour
         {
             Debug.LogError("Level " + SceneManagement.GetSceneFormattedName(newArea) + "(" + newArea.area + " " + newArea.room + ") does not exist. Unable to load from AreaSelectButton.cs");
         }
-    }
-
-    private void UnloadAreaSelect(Scene scene, LoadSceneMode mode)
-    {
-        SceneManagement.UnloadSceneAsync("AreaSelection");
-        SceneManager.sceneLoaded -= UnloadAreaSelect;
     }
 }

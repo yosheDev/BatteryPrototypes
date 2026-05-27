@@ -7,20 +7,21 @@ using static UnityEngine.GUILayout;
 
 public class AreaManager : MonoBehaviour
 {
+    #region Members
     [Header("Level Data")]
     public Areas area;
     private int roomNum = 1;
+    public byte overrideStartLives = 255; /// Upon first load of this area, override GameInstance live counter and set lives to be this.
 
     [Header("Transition Data")]
     private float endPlayerMoveDur = .5f;      /// Duration of the move animation.
-    //private float endPlayerMoveUpdateInterval = .01f; /// Update interval length. Controls "smoothness" of the animation.
-    //private float endPlayerMoveSteps = 20f;     /// Number of iterations to the move animation.
     private GameObject reachedObjective = null; /// The roomObjective object that has been reached.
+
     public enum AreaTransitionState
     {
         None,               /// Player is actively in a room during normal gameplay.
-        ObjectiveReached,   /// Objective reached, playing transition animations.
-        Loading,            /// Game is loading between scenes.
+        ObjectiveReached,   /// Objective reached, playing VFX before scene transitioning.
+        Loading,            /// Scene transitioning.
         Spawn,              /// Just loaded level, playing spawn animations.
         AwaitingStart,      /// Spawn animations complete, awaiting player input to release and begin the play.
     }
@@ -39,11 +40,10 @@ public class AreaManager : MonoBehaviour
     [HideInInspector] public Level checkpointLevel;
     [HideInInspector] public Vector2 checkpointRespawnPos = new Vector2(0f, 0f);
     public uint checkpointRespawnCount = 0;
-    private bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
-
-    private bool isResetting = false;  /// Is true when player is resetting to beginning of the current room.
-
-    public byte overrideStartLives = 255; /// Upon first load of this area, override GameInstance live counter and set lives to be this.
+    public bool isRespawning = false; /// Is true when player has lost all lives, and is being sent back to checkpoint room and needs to spawn at the checkpoint location.
+    public bool isResetting = false;  /// Is true when player is resetting to beginning of the current room.
+    public bool unloadingArea = false; /// Is true when unloading an area.
+    public bool firstLoad = true; /// When loading r1 for first time this is true. 
 
     [System.Serializable]
     public class RoomMusic
@@ -56,6 +56,7 @@ public class AreaManager : MonoBehaviour
     [Header("Music")]
     [Tooltip("If not null, this music will play upon initial loading of this room.")]
     [SerializeField] private List<RoomMusic> roomMusicList;
+    #endregion
 
     #region Singleton
     public static AreaManager instance;
@@ -68,6 +69,8 @@ public class AreaManager : MonoBehaviour
             // Set the static instance to this instance
             instance = this;
             Debug.Log("Area Manager is created.");
+
+            
         }
         else
         {
@@ -76,20 +79,24 @@ public class AreaManager : MonoBehaviour
             // Ensure delegates are unbinded before destroying.
             SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
             SceneManager.sceneLoaded -= instance.OnRoomLoaded;
-            SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+            //SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
             SceneManager.sceneUnloaded -= instance.OnAreaUnloaded;
 
             Destroy(gameObject);
         }
+
     }
     #endregion
+
     void Start()
     {
+        #region Assign References
         // Automatically assign references to player.
         playerController = GameObject.FindAnyObjectByType<BatteryController>();
         playerRB = playerController.gameObject.GetComponent<Rigidbody2D>();
         playerHud = playerController.GetComponent<PlayerHUD>();
         playerBaseGravity = playerRB.gravityScale;
+        #endregion
 
         // Override player lives if value < 255.
         if (overrideStartLives < 255)
@@ -99,21 +106,13 @@ public class AreaManager : MonoBehaviour
 
         roomNum = 1;
 
-        // Bind delegates. (do these need to be bound at end of start instead of anytime in start?)
-        SceneManager.sceneLoaded += instance.OnRoomLoaded;
-        SceneManager.sceneUnloaded += instance.OnRoomUnloaded;
-
+        #region EDITOR ONLY - Allow Play Start From Any Room
         // Check if another scene is already open (for editor use only)
-        if (Application.isEditor)
+        if (Application.isEditor && GameInstance.instance.initialEditorLoad)
         {
+            GameInstance.instance.initialEditorLoad = false;
             if (SceneManager.sceneCount > 1)
             {
-                /// Was going to make it so if no area scene is loaded, it will load a default one.
-                //for (int i = 0; i < SceneManager.sceneCount; i++)
-                //{
-                //    if (SceneManager.GetSceneByName)
-                //}
-                
                 // Update room number to be correct here.
                 string curScene = SceneManager.GetActiveScene().name;
                 string[] splitSceneName = curScene.Split("_r");
@@ -121,8 +120,8 @@ public class AreaManager : MonoBehaviour
                 {
                     roomNum = int.Parse(splitSceneName[1]);
                 }
-                catch 
-                { 
+                catch
+                {
                     Debug.LogError("The room NEEDS to be the active scene when loading into a specific room in the editor, or else AreaManager.roomNum will not parse correctly. Right click and select Set Active Scene.");
                 }
 
@@ -135,54 +134,52 @@ public class AreaManager : MonoBehaviour
             }
 
         }
+        #endregion
 
         // Set checkpoint level default to the first room.
         checkpointLevel = new Level(area, 1);
 
-        // Officially start the level.
+        // Officially start the level. Instantly load as there is already a transition playing.
         Level startLevel = new Level(area, 1);
+        SceneManager.sceneLoaded += OnRoomLoaded;
         SceneManagement.LoadScene(startLevel);
+        
     }
 
     #region Loading/Unloading Rooms
+    public AsyncOperation GetUnloadCurrentRoomOperation()
+    {
+        Level curRoom = new Level(area, roomNum);
+        return SceneManagement.GetUnloadSceneAsyncOperation(curRoom);
+    }
+
     public void UnloadCurrentRoom()
     {
-        //Debug.Log("Unload Current Room");
-        // Unload current room.
         Level curRoom = new Level(area, roomNum);
-        SceneManagement.UnloadSceneAsync(curRoom);
+        //SceneManagement.UnloadSceneAsync(curRoom);
+        SceneManagement.LoadScene(curRoom);
     }
-    void OnRoomUnloaded(Scene scene)
-    {
-        //Debug.Log("On Room Unloaded.");
 
-        if (!isRespawning)
-        {
-            if (isResetting && roomManager.doesResetFullyReloadLevel)
-            {
-                // Reload current room upon reset.
-                Level curLevel = new Level(area, roomNum);
-                SceneManagement.LoadScene(curLevel);
-                isResetting = false;
-            }
-            else
-            {
-                LoadNextRoom(); /// If there is no next room, this function instead will unload area / return to area selection screen.
-            }
-        }
-        else
-        {
-            
-           RespawnAtCheckpoint();  
-        }
+    /// <summary>
+    /// This is called when player restarts the room and the roomManager is set to fully reload the room (default).
+    /// </summary>
+    public void ReloadCurrentRoom()
+    {
+        isResetting = true;
+        UnloadCurrentRoom();
     }
+
+    public void TransitionToNextRoom()
+    {
+        LoadNextRoom(); /// This method calls SceneManagement.LoadScene() which first loads the transition, then unloads current room, and then loads next room.
+    }
+
     public void LoadNextRoom()
     {
         Level nextRoom = new Level(area, roomNum + 1);
 
         if (SceneManagement.DoesSceneExist(nextRoom))
         {
-            roomNum++;
             //Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
             transitionState = AreaTransitionState.Loading;
             GameInstance.instance.roomStartBattery = playerController.battery.percent;
@@ -191,52 +188,64 @@ public class AreaManager : MonoBehaviour
         else
         {
             //Debug.Log("No next room was found. Assuming area is complete and begin Unloading Area instead.");
-            BeginUnloadAreaSequence();
+            UnloadArea();
         }
     }
-
-    void OnRoomLoaded(Scene scene, LoadSceneMode mode)
+    public void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
         //Debug.Log("On Room Loaded.");
         SceneManager.SetActiveScene(scene);
+
+        // If player is not resetting their current room.
+        if (!isResetting && !firstLoad)
+        {
+            roomNum++;
+        }
+
+        firstLoad = false;
+        isResetting = false;
+        
+        // Unbind AreaManager event to sceneLoaded delegate.
+        SceneManager.sceneLoaded -= AreaManager.instance.OnRoomLoaded;
+        SceneManager.sceneLoaded -= OnRoomLoaded; /// This one is only binded when first loading into an area. (r1).
+
         CameraManager.instance.UpdateConfinedBounds();
         CameraManager.instance.WarpCamera();
+
         SetTransitionState(AreaTransitionState.Spawn);
         playerController.battery.percent = GameInstance.instance.roomStartBattery;
+        playerController.ClearProjectilePool();
 
         CheckForMusicChange();
     }
-
-    public void ReloadCurrentRoom()
-    {
-        Debug.Log("Reloading current room!");
-        isResetting = true;
-        UnloadCurrentRoom();
-    }
-
     #endregion
 
     #region Load / Unload Areas
-    public void BeginUnloadAreaSequence()
-    {
-        /// This event begins the SEQUENCE for unloading an area. The sequence is...
-        /// 1. Unload Current Room (if any) 
-        /// 2. Load Area Selection Scene
-        /// 3. Unload Area Scene
-    
+    public void UnloadArea()
+    {    
         // Unbind delegates and replace with more specific ones for handling entire areas rather than rooms.
-        SceneManager.sceneLoaded -= instance.OnRoomLoaded;
-        SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+        //SceneManager.sceneLoaded -= instance.OnRoomLoaded;
+        //SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
 
-        SceneManager.sceneLoaded += instance.OnAreaSelectLoaded;
+        //SceneManager.sceneLoaded += instance.OnAreaSelectLoaded;
         //Debug.Log("Binded OnAreaSelectLoaded.");
 
-        //Debug.Log("Area cleared! Loading area selection screen. Next message should be OnAreaSelectLoaded. Something wrong if not probably.");
+        unloadingArea = true;
         SceneManagement.LoadScene("AreaSelection");
         // Once Area Selection is done loading, OnRoomLoaded() will delete cameraManager, and unload area scene. When area scene is unloaded, this gameObject is destroyed.
     }
+    public void OnAreaUnloaded(Scene scene)
+    {
+        // Ensure delegates are unbinded before destroying.
+        SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
+        SceneManager.sceneLoaded -= instance.OnRoomLoaded;
+        //SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+        SceneManager.sceneUnloaded -= instance.OnAreaUnloaded;
 
-    void OnAreaSelectLoaded(Scene scene, LoadSceneMode mode)
+        Destroy(instance);
+    }
+
+    public void OnAreaSelectLoaded(Scene scene, LoadSceneMode mode)
     {
         //Debug.Log("OnAreaSelectLoaded! Loaded: " + scene.name + ". The AreaSelectScene should be open by now.");
         // Destroy camera manager.
@@ -244,31 +253,20 @@ public class AreaManager : MonoBehaviour
 
         SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
         SceneManager.sceneLoaded -= instance.OnRoomLoaded;
-        SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
+        //SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
         SceneManager.sceneUnloaded += instance.OnAreaUnloaded;
 
-        //Debug.Log("Binded OnAreaUnloaded. Going to attempt to unload the area in 1 frame.");
-        //AreaManager.instance.StartCoroutine(UnloadCurrentArea()); /// Uses a coroutine so it can wait a frame.
         Level areaScene = new Level(area, -1);
         SceneManagement.UnloadSceneAsync(areaScene);
     }
 
-    void OnAreaUnloaded(Scene scene)
-    {
-        //Debug.Log("OnAreaUnloaded! The area has been unloaded.");
-        
-        //Debug.Log("Unbinded OnAreaUnloaded.");
-
-        // Ensure delegates are unbinded before destroying.
-        SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
-        SceneManager.sceneLoaded -= instance.OnRoomLoaded;
-        SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
-        SceneManager.sceneUnloaded -= instance.OnAreaUnloaded;
-
-        Destroy(instance);
-    }
-
     #endregion
+
+    /// <summary>
+    /// When loading into an area from the area selection, the area selection must be unloaded AFTER area has loaded due to it being the only active scene.
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
 
     private void FixedUpdate()
     {
@@ -281,13 +279,17 @@ public class AreaManager : MonoBehaviour
     private IEnumerator EndRoomTransition()
     {
         yield return new WaitForSeconds(endPlayerMoveDur);
+        playerController.SetVisibility(false);
         yield return new WaitForSeconds(1f);
+        
         Debug.Log("End Room Transition is over.");
         reachedObjective = null;
 
-        UnloadCurrentRoom();
+        //UnloadCurrentRoom(); /// Pre-transiton animations method to call.
         /// Load next room is binded to unload delegate with OnRoomUnloaded() in this class.
-        
+
+        TransitionToNextRoom();
+
         yield break;
     }
     public void ReachedObjective(GameObject obj)
@@ -435,7 +437,6 @@ public class AreaManager : MonoBehaviour
                 playerRB.gravityScale = 0f;
                 playerController.GetComponent<Collider2D>().enabled = false;
                 playerController.GetComponent<Battery>().enabled = false;
-                playerController.SetVisibility(false);
                 endPlayerPosTarget = reachedObjective.transform.position;
                 endPlayerPosTarget.z = playerController.gameObject.transform.position.z;
 
@@ -461,6 +462,7 @@ public class AreaManager : MonoBehaviour
                 if (roomManager.spawnMechanism._spawnType != SpawnMechanismType.Cinematic)
                 {
                     playerHud.SetDisplaySpawnText(true);
+                    playerController.SetVisibility(true);
                 }
                 break;
             case AreaTransitionState.None:

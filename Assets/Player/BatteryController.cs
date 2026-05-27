@@ -1726,6 +1726,11 @@ public class BatteryController : MonoBehaviour, IDamageable
     public void Restart()
     {
         projectilePool.ClearPool();
+        //if (AreaManager.instance.roomManager == null)
+        //{
+        //    AreaManager.instance.roomManager = GameObject.FindAnyObjectByType<RoomManager>();
+        //}
+
         if (AreaManager.instance.roomManager.doesResetFullyReloadLevel)
         {
             AreaManager.instance.ReloadCurrentRoom();
@@ -1851,6 +1856,10 @@ public class BatteryController : MonoBehaviour, IDamageable
     public void SetVisibility(bool visible)
     {
         spriteManager.SetVisibility(visible);
+    }
+    public void ClearProjectilePool()
+    {
+        projectilePool.ClearPool();
     }
     #endregion
 

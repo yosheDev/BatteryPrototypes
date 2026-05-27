@@ -1,10 +1,10 @@
 namespace PixeLadder.EasyTransition
 {
     using System.Collections;
-    using Unity.VectorGraphics;
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
+    using System.Linq;
 
     /// <summary>
     /// A singleton manager that controls the entire scene transition process.
@@ -29,6 +29,8 @@ namespace PixeLadder.EasyTransition
         private static readonly int RectSizeID = Shader.PropertyToID("_RectSize");
 
         public static event System.Action OnSceneLoaded;
+        public delegate void OnSceneLoadedEvent(string sceneName, LoadSceneMode mode);
+        public event OnSceneLoadedEvent onSceneLoadedEvent;
 
         public TransitionEffect GetDefaultTransition()
         {
@@ -73,6 +75,12 @@ namespace PixeLadder.EasyTransition
             transitionImageInstance.gameObject.SetActive(false);
         }
 
+        private void InstantLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+        {
+            onSceneLoadedEvent -= InstantLoadScene;
+            SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+        }
+
         /// <summary>
         /// The main public method to start a scene transition.
         /// </summary>
@@ -83,6 +91,11 @@ namespace PixeLadder.EasyTransition
             if (isTransitioning)
             {
                 Debug.LogWarning("SceneTransitioner: Transition already in progress.");
+                // Instantly load.
+                // Bind this to OnSceneLoaded
+
+                //onSceneLoadedEvent += InstantLoadScene;
+                SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
                 return;
             }
 
@@ -101,27 +114,72 @@ namespace PixeLadder.EasyTransition
             isTransitioning = true;
             transitionImageInstance.gameObject.SetActive(true);
 
-            // 1. Create a fresh instance of the material for this specific transition
+            // Create a new instance of the material for this specific transition
             Material materialInstance = new Material(effect.transitionMaterial);
 
-            // 2. CRITICAL FIX: Pass the RectSize (Aspect Ratio) to the shader immediately
+            // Pass the RectSize (Aspect Ratio) to the shader immediately
             Rect rect = transitionImageInstance.rectTransform.rect;
             materialInstance.SetVector(RectSizeID, new Vector4(rect.width, rect.height, 0, 0));
 
-            // 3. Apply custom effect properties
+            // Apply custom effect properties
             effect.SetEffectProperties(materialInstance);
 
-            // 4. Assign the material to the image
+            // Assign the material to the image
             transitionImageInstance.material = materialInstance;
 
             // Run the fade-out animation
             yield return effect.AnimateOut(transitionImageInstance);
+
+            #region Unload Scene
+            if (!GameInstance.instance.loadingIntoArea)
+            {
+                if (AreaManager.instance.unloadingArea)
+                {
+                    // Bind AreaManager UnloadArea event to sceneLoaded delegate.
+                    SceneManager.sceneUnloaded += AreaManager.instance.OnAreaUnloaded;
+                }
+
+                // Unload the current room when at the halfway point of the transition. Halts execution of coroutine until scene is unloaded.
+                AsyncOperation unloadOp = AreaManager.instance.GetUnloadCurrentRoomOperation();
+                yield return unloadOp;
+            }
+            else
+            {
+                // Since AreaSelection is the only scene loaded at this time, unload would fail. Unload AreaSelection AFTER new scene is loaded instead.
+                SceneManager.sceneLoaded += GameObject.FindAnyObjectByType<AreaSelection>().UnloadAreaSelect; // Area manager does not exist yet, cannot store it there.
+                GameInstance.instance.loadingIntoArea = false;
+            }
+            #endregion
+
+            #region Load Scene
+            try
+            {
+                // Area Manager exists.
+
+                if (!AreaManager.instance.unloadingArea)
+                {
+                    // Bind AreaManager UnloadRoom event to sceneLoaded delegate.
+                    SceneManager.sceneLoaded += AreaManager.instance.OnRoomLoaded;
+                }
+                else
+                {
+                    SceneManager.sceneLoaded += AreaManager.instance.OnAreaSelectLoaded;
+                }
+            }
+            catch
+            {
+                // Area Manager does not exist.
+
+
+            }
 
             // Load the new scene
             yield return SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
 
             // Fire event
             OnSceneLoaded?.Invoke();
+            onSceneLoadedEvent?.Invoke(sceneName, loadSceneMode);
+            #endregion
 
             // Run the fade-in animation
             yield return effect.AnimateIn(transitionImageInstance);

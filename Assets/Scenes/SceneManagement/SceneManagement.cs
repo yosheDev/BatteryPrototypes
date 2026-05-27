@@ -68,6 +68,33 @@ public static class SceneManagement
     }
 
     /// <summary>
+    /// Unloads a scene but also returns the AsyncOperation involved with it. Useful for unloading scenes in a Coroutine.
+    /// </summary>
+    public static AsyncOperation GetUnloadSceneAsyncOperation(Level level, string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
+    {
+        string roomSceneName;
+
+        if (overrideString != null)
+        {
+            roomSceneName = overrideString;
+        }
+        else
+        {
+            roomSceneName = GetSceneFormattedName(level);
+        }
+        Debug.Log("Unloading: " + roomSceneName);
+        try
+        {
+            return SceneManager.UnloadSceneAsync(roomSceneName);
+        }
+        catch
+        {
+            Debug.LogError("Unable to unload " + roomSceneName + " as it was invalid. Has this scene already been unloaded? Is this the only currently loaded scene? " + SceneManager.sceneCount);
+            return null;
+        }
+    }
+
+    /// <summary>
     /// Unload a scene based on the Level struct passed in. If an override string is passed, unload that scene instead.
     /// </summary>
     public static void UnloadSceneAsync(Level level, string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)

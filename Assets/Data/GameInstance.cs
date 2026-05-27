@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class GameInstance : MonoBehaviour
 {
+    public bool initialEditorLoad = true;
+    public bool loadingIntoArea = false;
     public enum GameDifficulty
     {
         Easy,
@@ -54,12 +56,13 @@ public class GameInstance : MonoBehaviour
         {
             // Set the static instance to this instance
             instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
-    }
+}
 
     public void ResetPlayerLives()
     {
