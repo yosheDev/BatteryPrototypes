@@ -1,4 +1,5 @@
 using FunctionLibrary;
+using PixeLadder.EasyTransition;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class AreaManager : MonoBehaviour
     #region Members
     [Header("Level Data")]
     public Areas area;
-    private int roomNum = 1;
+    public int roomNum = 1;
     public byte overrideStartLives = 255; /// Upon first load of this area, override GameInstance live counter and set lives to be this.
 
     [Header("Transition Data")]
@@ -141,32 +142,41 @@ public class AreaManager : MonoBehaviour
 
         // Officially start the level. Instantly load as there is already a transition playing.
         Level startLevel = new Level(area, 1);
-        SceneManager.sceneLoaded += OnRoomLoaded;
-        SceneManagement.LoadScene(startLevel);
+        //SceneManager.sceneLoaded += OnRoomLoaded;
+        //SceneManagement.LoadScene(startLevel);
         
     }
 
     #region Loading/Unloading Rooms
-    public AsyncOperation GetUnloadCurrentRoomOperation()
-    {
-        Level curRoom = new Level(area, roomNum);
-        return SceneManagement.GetUnloadSceneAsyncOperation(curRoom);
-    }
-
-    public void UnloadCurrentRoom()
-    {
-        Level curRoom = new Level(area, roomNum);
-        //SceneManagement.UnloadSceneAsync(curRoom);
-        SceneManagement.LoadScene(curRoom);
-    }
 
     /// <summary>
     /// This is called when player restarts the room and the roomManager is set to fully reload the room (default).
     /// </summary>
     public void ReloadCurrentRoom()
     {
+        Debug.Log("ReloadCurrentRoom() is called.");
         isResetting = true;
-        UnloadCurrentRoom();
+
+        #region Setup Scene Load Arrays
+        Level curRoom = new Level(area, roomNum);
+
+        Level[] unloadRooms = new Level[] { curRoom };
+        Level[] loadRooms = new Level[] { curRoom };
+        #endregion
+
+        transitionState = AreaTransitionState.Loading;
+        GameInstance.instance.roomStartBattery = playerController.battery.percent;
+
+        SceneManager.sceneLoaded += ResetResetValues;
+        SceneManagement.LoadScene(SceneTransitioner.SceneTransitionOrder.UnloadLoad, unloadRooms, loadRooms);
+
+        // undo reset on delegate callback
+    }
+
+    public void ResetResetValues(Scene scene, LoadSceneMode mode)
+    {
+        isResetting = false;
+        SceneManager.sceneLoaded -= ResetResetValues;
     }
 
     public void TransitionToNextRoom()
@@ -176,14 +186,23 @@ public class AreaManager : MonoBehaviour
 
     public void LoadNextRoom()
     {
+        Debug.Log("LoadNextRoom() is called.");
+        #region Setup Scene Load Arrays
+        Level curRoom = new Level(area, roomNum);
         Level nextRoom = new Level(area, roomNum + 1);
+
+        Level[] unloadRooms = new Level[] { curRoom };
+        Level[] loadRooms = new Level[] { nextRoom };
+        #endregion
+
+        roomNum++;
 
         if (SceneManagement.DoesSceneExist(nextRoom))
         {
-            //Debug.Log("Loading Next Room: " + nextRoom.area + " " + nextRoom.room);
             transitionState = AreaTransitionState.Loading;
             GameInstance.instance.roomStartBattery = playerController.battery.percent;
-            SceneManagement.LoadScene(nextRoom);
+
+            SceneManagement.LoadScene(SceneTransitioner.SceneTransitionOrder.UnloadLoad, unloadRooms, loadRooms);
         }
         else
         {
@@ -193,14 +212,8 @@ public class AreaManager : MonoBehaviour
     }
     public void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
-        //Debug.Log("On Room Loaded.");
+        Debug.Log("On Room Loaded ACTUALLY did happen.");
         SceneManager.SetActiveScene(scene);
-
-        // If player is not resetting their current room.
-        if (!isResetting && !firstLoad)
-        {
-            roomNum++;
-        }
 
         firstLoad = false;
         isResetting = false;
@@ -222,7 +235,8 @@ public class AreaManager : MonoBehaviour
 
     #region Load / Unload Areas
     public void UnloadArea()
-    {    
+    {
+        Debug.Log("Unload Area is called, but not yet implemented.");
         // Unbind delegates and replace with more specific ones for handling entire areas rather than rooms.
         //SceneManager.sceneLoaded -= instance.OnRoomLoaded;
         //SceneManager.sceneUnloaded -= instance.OnRoomUnloaded;
@@ -231,11 +245,12 @@ public class AreaManager : MonoBehaviour
         //Debug.Log("Binded OnAreaSelectLoaded.");
 
         unloadingArea = true;
-        SceneManagement.LoadScene("AreaSelection");
+        //SceneManagement.LoadScene("AreaSelection");
         // Once Area Selection is done loading, OnRoomLoaded() will delete cameraManager, and unload area scene. When area scene is unloaded, this gameObject is destroyed.
     }
     public void OnAreaUnloaded(Scene scene)
     {
+        Debug.Log("OnAreaUnloaded() is called.");
         // Ensure delegates are unbinded before destroying.
         SceneManager.sceneLoaded -= instance.OnAreaSelectLoaded;
         SceneManager.sceneLoaded -= instance.OnRoomLoaded;
@@ -247,7 +262,7 @@ public class AreaManager : MonoBehaviour
 
     public void OnAreaSelectLoaded(Scene scene, LoadSceneMode mode)
     {
-        //Debug.Log("OnAreaSelectLoaded! Loaded: " + scene.name + ". The AreaSelectScene should be open by now.");
+        Debug.Log("OnAreaSelectLoaded! Loaded: " + scene.name + ". The AreaSelectScene should be open by now.");
         // Destroy camera manager.
         Destroy(CameraManager.instance.gameObject);
 
@@ -335,7 +350,7 @@ public class AreaManager : MonoBehaviour
     {
         // Respawn is for when player has died and is returning to load checkpoint.
         isRespawning = true;
-        UnloadCurrentRoom();
+        //UnloadCurrentRoom();
         // RespawnAtCheckpoint is called via OnRoomUnloaded delegate, as it should not be loaded until previous room is unloaded.
     }
     public void RespawnAtCheckpoint()
@@ -350,7 +365,7 @@ public class AreaManager : MonoBehaviour
             Debug.Log("Respawning at Checkpoint: " + checkpointLevel.area + " " + checkpointLevel.room);
             
             transitionState = AreaTransitionState.Loading;
-            SceneManagement.LoadScene(checkpointLevel);
+            //SceneManagement.LoadScene(checkpointLevel);
         }
         else
         {
@@ -358,7 +373,7 @@ public class AreaManager : MonoBehaviour
             checkpointLevel.area = area;
             checkpointLevel.room = 1;
             transitionState = AreaTransitionState.Loading;
-            SceneManagement.LoadScene(checkpointLevel);
+            //SceneManagement.LoadScene(checkpointLevel);
         }
     }
 

@@ -36,63 +36,124 @@ public static class SceneManagement
     /// <summary>
     /// Load a scene based on the Level struct passed in. If an override string is passed, load that scene instead.
     /// </summary>
-    public static void LoadScene(Level level, string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    public static void LoadScene(SceneTransitioner.SceneTransitionOrder order, Level[]? unloadLevels, Level[]? loadLevels, string[]? unloadAdditionalStrings = null, string[]? loadAdditionalStrings = null,  LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
     {
-        string roomSceneName;
+        string[] loadSceneNames = new string[(loadLevels == null ? 0 : loadLevels.Length) + (loadAdditionalStrings == null ? 0 : loadAdditionalStrings.Length)];
+        string[] unloadSceneNames = new string[(unloadLevels == null ? 0 : unloadLevels.Length) + (unloadAdditionalStrings == null ? 0 : unloadAdditionalStrings.Length)];
 
-        if (overrideString != null)
+        #region Create loadSceneNames Array
+        for (int i = 0; i < loadSceneNames.Length; i++)
         {
-            roomSceneName = overrideString;
+            // If i is outside bounds of array.
+            if (loadLevels != null)
+            {
+                if (i > loadLevels.Length - 1)
+                {
+                    if (loadAdditionalStrings != null)
+                    {
+                        if ((i - loadLevels.Length) > loadAdditionalStrings.Length - 1)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            loadSceneNames[i] = loadAdditionalStrings[i];
+                        }
+                    }
+                }
+                else
+                {
+                    loadSceneNames[i] = GetSceneFormattedName(loadLevels[i]);
+                }
+            }
+            else
+            {
+                if (loadAdditionalStrings != null)
+                {
+                    if (i > loadAdditionalStrings.Length - 1)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        loadSceneNames[i] = loadAdditionalStrings[i];
+                    }
+                }
+            }     
         }
-        else
+        #endregion
+
+        #region Create unloadSceneNames Array
+        for (int i = 0; i < unloadSceneNames.Length; i++)
         {
-            roomSceneName = GetSceneFormattedName(level);
+            // If i is outside bounds of array.
+            if (unloadLevels != null)
+            {
+                if (i > unloadLevels.Length - 1)
+                {
+                    if (unloadAdditionalStrings != null)
+                    {
+                        if ((i - unloadLevels.Length) > unloadAdditionalStrings.Length - 1)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            unloadSceneNames[i] = unloadAdditionalStrings[i];
+                        }
+                    }
+                }
+                else
+                {
+                    unloadSceneNames[i] = GetSceneFormattedName(unloadLevels[i]);
+                }
+            }
+            else
+            {
+                if (unloadAdditionalStrings != null)
+                {
+                    if (i > unloadAdditionalStrings.Length - 1)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        unloadSceneNames[i] = unloadAdditionalStrings[i];
+                    }
+                }
+            }
+        }
+        #endregion
+
+        foreach(string name in unloadSceneNames)
+        {
+            Debug.Log("Going to unload " + name);
+        }
+        foreach (string name in loadSceneNames)
+        {
+            Debug.Log("Going to load " + name);
         }
 
-        //SceneManager.LoadScene(roomSceneName, loadSceneMode);
         try
         {
-            SceneTransitioner.Instance.LoadScene(roomSceneName, AreaManager.instance.roomManager.exitTransition, loadSceneMode);
+            SceneTransitioner.Instance.LoadScene(order, unloadSceneNames, loadSceneNames, AreaManager.instance.roomManager.exitTransition, loadSceneMode);
         }
         catch
         {
-            SceneTransitioner.Instance.LoadScene(roomSceneName, SceneTransitioner.Instance.GetDefaultTransition(), loadSceneMode);
+            SceneTransitioner.Instance.LoadScene(order, unloadSceneNames, loadSceneNames, SceneTransitioner.Instance.GetDefaultTransition(), loadSceneMode);
         }
     }
 
-    public static void LoadScene(string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
-    {
-        /// This function forwards to the main LoadScene function with a dummy Level struct. For when loading scene with just the string for the name.
-        Level dummyLevel = new Level(0, -1);
-        SceneManagement.LoadScene(dummyLevel, overrideString, loadSceneMode);
-    }
+    //public static void LoadScene(string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    //{
+    //    /// This function forwards to the main LoadScene function with a dummy Level struct. For when loading scene with just the string for the name.
+    //    Level dummyLevel = new Level(0, -1);
+    //    SceneManagement.LoadScene(dummyLevel, overrideString, loadSceneMode);
+    //}
 
     /// <summary>
     /// Unloads a scene but also returns the AsyncOperation involved with it. Useful for unloading scenes in a Coroutine.
     /// </summary>
-    public static AsyncOperation GetUnloadSceneAsyncOperation(Level level, string? overrideString = null, UnloadSceneOptions unloadSceneOptions = UnloadSceneOptions.None)
-    {
-        string roomSceneName;
-
-        if (overrideString != null)
-        {
-            roomSceneName = overrideString;
-        }
-        else
-        {
-            roomSceneName = GetSceneFormattedName(level);
-        }
-        Debug.Log("Unloading: " + roomSceneName);
-        try
-        {
-            return SceneManager.UnloadSceneAsync(roomSceneName);
-        }
-        catch
-        {
-            Debug.LogError("Unable to unload " + roomSceneName + " as it was invalid. Has this scene already been unloaded? Is this the only currently loaded scene? " + SceneManager.sceneCount);
-            return null;
-        }
-    }
 
     /// <summary>
     /// Unload a scene based on the Level struct passed in. If an override string is passed, unload that scene instead.

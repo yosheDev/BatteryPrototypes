@@ -1,3 +1,4 @@
+using PixeLadder.EasyTransition;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -23,9 +24,13 @@ public class AreaSelectButton : MonoBehaviour
         //SceneManager.sceneLoaded += UnloadAreaSelect;
 
         Level newArea = new Level(area, -1);
+        Level newAreaFirstRoom = new Level(area, 1);
+        Level[] loadScenes = new Level[] { newArea, newAreaFirstRoom};
+        string[] unloadSceneStrings = new string[] { "AreaSelection" };
+
         if (SceneManagement.DoesSceneExist(newArea))
         {
-            SceneManagement.LoadScene(newArea);
+            SceneManagement.LoadScene(SceneTransitioner.SceneTransitionOrder.LoadUnload, null, loadScenes, unloadSceneStrings);
         }
         else
         {

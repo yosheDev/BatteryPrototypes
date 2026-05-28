@@ -1,10 +1,12 @@
 namespace PixeLadder.EasyTransition
 {
     using System.Collections;
+    using System.Linq;
+    using Unity.VectorGraphics;
+    using UnityEditor.SearchService;
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
-    using System.Linq;
 
     /// <summary>
     /// A singleton manager that controls the entire scene transition process.
@@ -12,6 +14,13 @@ namespace PixeLadder.EasyTransition
     [DisallowMultipleComponent]
     public class SceneTransitioner : MonoBehaviour
     {
+        public enum SceneTransitionOrder
+        {
+            UnloadLoad,
+
+            LoadUnload
+        }
+
         public static SceneTransitioner Instance;
 
         [Header("Configuration")]
@@ -86,16 +95,21 @@ namespace PixeLadder.EasyTransition
         /// </summary>
         /// <param name="sceneName">The name of the scene to load.</param>
         /// <param name="effect">The TransitionEffect ScriptableObject defining the visuals.</param>
-        public void LoadScene(string sceneName, TransitionEffect effect = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+        public void LoadScene(SceneTransitionOrder order, string[] unloadSceneNames, string[] loadSceneNames, TransitionEffect effect= null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
         {
             if (isTransitioning)
             {
                 Debug.LogWarning("SceneTransitioner: Transition already in progress.");
+
                 // Instantly load.
                 // Bind this to OnSceneLoaded
 
                 //onSceneLoadedEvent += InstantLoadScene;
-                SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+                //for (int i = 0; i < sceneNames.Length; i++)
+                //{
+                //    SceneManager.LoadSceneAsync(sceneNames[i], loadSceneMode);
+                //}
+                
                 return;
             }
 
@@ -106,10 +120,10 @@ namespace PixeLadder.EasyTransition
                 return;
             }
 
-            StartCoroutine(TransitionRoutine(sceneName, effectToUse, loadSceneMode));
+            StartCoroutine(TransitionRoutine(order, unloadSceneNames, loadSceneNames, effectToUse, loadSceneMode));
         }
 
-        private IEnumerator TransitionRoutine(string sceneName, TransitionEffect effect, LoadSceneMode loadSceneMode)
+        private IEnumerator TransitionRoutine(SceneTransitionOrder order, string[] unloadSceneNames, string[] loadSceneNames, TransitionEffect effect, LoadSceneMode loadSceneMode)
         {
             isTransitioning = true;
             transitionImageInstance.gameObject.SetActive(true);
@@ -130,32 +144,48 @@ namespace PixeLadder.EasyTransition
             // Run the fade-out animation
             yield return effect.AnimateOut(transitionImageInstance);
 
-            #region Unload Scene
-            if (!GameInstance.instance.loadingIntoArea)
+            if (order == SceneTransitionOrder.UnloadLoad)
             {
-                if (AreaManager.instance.unloadingArea)
-                {
-                    // Bind AreaManager UnloadArea event to sceneLoaded delegate.
-                    SceneManager.sceneUnloaded += AreaManager.instance.OnAreaUnloaded;
-                }
+                // Unload the current room scene.
+                yield return StartCoroutine(UnloadRoutine(unloadSceneNames, effect, loadSceneMode));
 
-                // Unload the current room when at the halfway point of the transition. Halts execution of coroutine until scene is unloaded.
-                AsyncOperation unloadOp = AreaManager.instance.GetUnloadCurrentRoomOperation();
-                yield return unloadOp;
+                // Load the next scene.
+                yield return StartCoroutine(LoadRoutine(loadSceneNames, effect, loadSceneMode));
             }
             else
             {
-                // Since AreaSelection is the only scene loaded at this time, unload would fail. Unload AreaSelection AFTER new scene is loaded instead.
-                SceneManager.sceneLoaded += GameObject.FindAnyObjectByType<AreaSelection>().UnloadAreaSelect; // Area manager does not exist yet, cannot store it there.
-                GameInstance.instance.loadingIntoArea = false;
-            }
-            #endregion
+                // Load the next scene.
+                yield return StartCoroutine(LoadRoutine(loadSceneNames, effect, loadSceneMode));
 
-            #region Load Scene
+                // Unload the current room scene.
+                yield return StartCoroutine(UnloadRoutine(unloadSceneNames, effect, loadSceneMode));
+            }
+
+            // Run the fade-in animation
+            yield return effect.AnimateIn(transitionImageInstance);
+
+            // Cleanup
+            transitionImageInstance.gameObject.SetActive(false);
+            Destroy(materialInstance); // Clean up the material instance to prevent leaks
+            isTransitioning = false;
+        }
+
+        private IEnumerator UnloadRoutine(string[] unloadSceneNames, TransitionEffect effect, LoadSceneMode loadSceneMode)
+        {
+            for (int i = 0; i < unloadSceneNames.Length; i++)
+            {
+                AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(unloadSceneNames[i]);
+                yield return unloadOp;
+            }
+
+            yield break;
+        }
+
+        private IEnumerator LoadRoutine(string[] loadSceneNames, TransitionEffect effect, LoadSceneMode loadSceneMode)
+        {
             try
             {
                 // Area Manager exists.
-
                 if (!AreaManager.instance.unloadingArea)
                 {
                     // Bind AreaManager UnloadRoom event to sceneLoaded delegate.
@@ -170,24 +200,42 @@ namespace PixeLadder.EasyTransition
             {
                 // Area Manager does not exist.
 
-
             }
 
             // Load the new scene
-            yield return SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            for (int i = 0; i < loadSceneNames.Length; i++)
+            {
+                // Specifically make is so that OnRoomLoaded is called when the ROOM loads when loading into an Area from AreaSelect.
+                if (i == loadSceneNames.Length - 1 && GameInstance.instance.loadingIntoArea == true)
+                {
+                    try
+                    {
+                        SceneManager.sceneLoaded += AreaManager.instance.OnRoomLoaded;
+                    }
+                    catch
+                    {
+                        Debug.LogError("Area Manager does not exist yet, cannot bind AreaManager.instance.OnRoomLoaded to SceneManager.sceneLoaded.");
+                    }
+                }
 
-            // Fire event
+                yield return SceneManager.LoadSceneAsync(loadSceneNames[i], loadSceneMode);
+                onSceneLoadedEvent?.Invoke(loadSceneNames[i], loadSceneMode);
+
+                // Cleanup specific delegate listen.
+                if (i == loadSceneNames.Length - 1 && GameInstance.instance.loadingIntoArea == true)
+                {
+                    try
+                    {
+                        SceneManager.sceneLoaded -= AreaManager.instance.OnRoomLoaded;
+
+                        GameInstance.instance.loadingIntoArea = false;
+                    }
+                    catch { }
+                }
+            }
+
+            // Fire all loaded event
             OnSceneLoaded?.Invoke();
-            onSceneLoadedEvent?.Invoke(sceneName, loadSceneMode);
-            #endregion
-
-            // Run the fade-in animation
-            yield return effect.AnimateIn(transitionImageInstance);
-
-            // Cleanup
-            transitionImageInstance.gameObject.SetActive(false);
-            Destroy(materialInstance); // Clean up the material instance to prevent leaks
-            isTransitioning = false;
-        }
+        }      
     }
 }
