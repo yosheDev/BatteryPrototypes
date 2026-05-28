@@ -16,7 +16,7 @@ public class Battery : MonoBehaviour
     public delegate void OnPercentChanged();
     public event OnPercentChanged onPercentChanged;
 
-    public delegate void OnCorrode();
+    public delegate void OnCorrode(DamageTypes type);
     public event OnCorrode onCorrode;
 
     private void Awake()
@@ -91,7 +91,7 @@ public class Battery : MonoBehaviour
     #endregion
     public void Corrode()
     {
-        onCorrode?.Invoke();
+        onCorrode?.Invoke(DamageTypes.Corrosion);
     }
 
     public void BeginRegeneration()

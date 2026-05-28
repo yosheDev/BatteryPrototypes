@@ -141,7 +141,7 @@ public class AreaManager : MonoBehaviour
         checkpointLevel = new Level(area, 1);
 
         // Officially start the level. Instantly load as there is already a transition playing.
-        Level startLevel = new Level(area, 1);
+        //Level startLevel = new Level(area, 1);
         //SceneManager.sceneLoaded += OnRoomLoaded;
         //SceneManagement.LoadScene(startLevel);
         
@@ -350,31 +350,47 @@ public class AreaManager : MonoBehaviour
     {
         // Respawn is for when player has died and is returning to load checkpoint.
         isRespawning = true;
-        //UnloadCurrentRoom();
-        // RespawnAtCheckpoint is called via OnRoomUnloaded delegate, as it should not be loaded until previous room is unloaded.
-    }
-    public void RespawnAtCheckpoint()
-    {
-        /// This function is called from OnRoomUnloaded.
-        checkpointRespawnCount++;
-        GameInstance.instance.ResetPlayerLives();
 
-        roomNum = checkpointLevel.room;
+        #region Setup Scene Load Arrays
+        Level curRoom = new Level(area, roomNum);
+
+        Level[] unloadRooms = new Level[] { curRoom };
+
+        Level[] loadRooms;
         if (SceneManagement.DoesSceneExist(checkpointLevel))
         {
-            Debug.Log("Respawning at Checkpoint: " + checkpointLevel.area + " " + checkpointLevel.room);
-            
-            transitionState = AreaTransitionState.Loading;
-            //SceneManagement.LoadScene(checkpointLevel);
+            loadRooms = new Level[] { checkpointLevel };
+
+            roomNum = checkpointLevel.room;
         }
         else
         {
             Debug.LogError("No checkpoint was found. Defaulting to first room of the current area.");
-            checkpointLevel.area = area;
-            checkpointLevel.room = 1;
-            transitionState = AreaTransitionState.Loading;
-            //SceneManagement.LoadScene(checkpointLevel);
-        }
+            Level firstRoom = new Level(area, 1);
+            loadRooms = new Level[] { firstRoom };
+
+            roomNum = 1;
+        }  
+        #endregion
+
+        transitionState = AreaTransitionState.Loading;
+        GameInstance.instance.roomStartBattery = 100;
+
+        SceneManager.sceneLoaded += RespawnAtCheckpoint;
+        SceneManagement.LoadScene(SceneTransitioner.SceneTransitionOrder.UnloadLoad, unloadRooms, loadRooms);
+
+        // undo reset on delegate callback
+        // RespawnAtCheckpoint is called via OnRoomUnloaded delegate, as it should not be loaded until previous room is unloaded.
+    }
+    public void RespawnAtCheckpoint(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Respawn at Checkpoint");
+        SceneManager.sceneLoaded -= RespawnAtCheckpoint;
+
+        checkpointRespawnCount++;
+        GameInstance.instance.ResetPlayerLives();
+
+        // Should  player teleport to correct respawn location logic go here?
     }
 
     #endregion
@@ -412,6 +428,7 @@ public class AreaManager : MonoBehaviour
                         }
                     }
 
+                    Debug.Log("Should respawn at the correct respawn point.");
                     isRespawning = false; // Set respawn value back to false when respawning in a room.
                     playerController.ResetUponNewRoom(checkpointRespawnPos);
                 }

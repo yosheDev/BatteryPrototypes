@@ -215,7 +215,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         #endregion
 
         #region Bind Delegates
-        battery.onCorrode += Death;
+        battery.onCorrode += BeginDeath;
         #endregion
     }
 
@@ -1708,6 +1708,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         gameObject.transform.position = startPos;
         rb.linearVelocity = new Vector2(0f, 0f);
         rb.gravityScale = 0f;
+        isDead = false;
         rb.WakeUp();
     }
 
@@ -1726,10 +1727,6 @@ public class BatteryController : MonoBehaviour, IDamageable
     public void Restart()
     {
         projectilePool.ClearPool();
-        //if (AreaManager.instance.roomManager == null)
-        //{
-        //    AreaManager.instance.roomManager = GameObject.FindAnyObjectByType<RoomManager>();
-        //}
 
         if (AreaManager.instance.roomManager.doesResetFullyReloadLevel)
         {
@@ -1767,7 +1764,6 @@ public class BatteryController : MonoBehaviour, IDamageable
         // TO DO: Ensure reset room state when respawning in the same room.
         // TO DO: Reset battery percentage to be what is was upon entering the room.
         // TO DO: Checkpoint logic
-        isDead = false;
         switch(GameInstance.instance.difficulty)
         {
             case GameInstance.GameDifficulty.Easy:
