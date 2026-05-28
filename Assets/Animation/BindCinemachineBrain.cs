@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 using System.Collections.Generic;
+using System.Collections;
 
 public class BindCinemachineBrain : MonoBehaviour
 {
@@ -17,6 +18,13 @@ public class BindCinemachineBrain : MonoBehaviour
         cineCameras.Add(CameraManager.instance._currentCamera);
         cineCameraBindings.Add("PlayerMainCam");
 
+        // Remaining execution must be delayed as Camera.main.tranform.parent is null at this moment.
+        StartCoroutine(DelayStart());
+    }
+
+    public IEnumerator DelayStart()
+    {
+        yield return null;
         BindBrain(director, Camera.main.transform.parent.GetComponent<CinemachineBrain>());
     }
 
