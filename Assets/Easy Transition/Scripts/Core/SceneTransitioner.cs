@@ -84,12 +84,6 @@ namespace PixeLadder.EasyTransition
             transitionImageInstance.gameObject.SetActive(false);
         }
 
-        private void InstantLoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
-        {
-            onSceneLoadedEvent -= InstantLoadScene;
-            SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
-        }
-
         /// <summary>
         /// The main public method to start a scene transition.
         /// </summary>
@@ -100,16 +94,6 @@ namespace PixeLadder.EasyTransition
             if (isTransitioning)
             {
                 Debug.LogWarning("SceneTransitioner: Transition already in progress.");
-
-                // Instantly load.
-                // Bind this to OnSceneLoaded
-
-                //onSceneLoadedEvent += InstantLoadScene;
-                //for (int i = 0; i < sceneNames.Length; i++)
-                //{
-                //    SceneManager.LoadSceneAsync(sceneNames[i], loadSceneMode);
-                //}
-                
                 return;
             }
 

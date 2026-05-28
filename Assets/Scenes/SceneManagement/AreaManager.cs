@@ -154,7 +154,7 @@ public class AreaManager : MonoBehaviour
     /// </summary>
     public void ReloadCurrentRoom()
     {
-        Debug.Log("ReloadCurrentRoom() is called.");
+        //Debug.Log("ReloadCurrentRoom() is called.");
         isResetting = true;
 
         #region Setup Scene Load Arrays
@@ -170,18 +170,13 @@ public class AreaManager : MonoBehaviour
         SceneManager.sceneLoaded += ResetResetValues;
         SceneManagement.LoadScene(SceneTransitioner.SceneTransitionOrder.UnloadLoad, unloadRooms, loadRooms);
 
-        // undo reset on delegate callback
+        // undo reset on delegate callback through ResetResetValues
     }
 
     public void ResetResetValues(Scene scene, LoadSceneMode mode)
     {
         isResetting = false;
         SceneManager.sceneLoaded -= ResetResetValues;
-    }
-
-    public void TransitionToNextRoom()
-    {
-        LoadNextRoom(); /// This method calls SceneManagement.LoadScene() which first loads the transition, then unloads current room, and then loads next room.
     }
 
     public void LoadNextRoom()
@@ -212,7 +207,7 @@ public class AreaManager : MonoBehaviour
     }
     public void OnRoomLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log("On Room Loaded ACTUALLY did happen.");
+        //Debug.Log("On Room Loaded ACTUALLY did happen.");
         SceneManager.SetActiveScene(scene);
 
         firstLoad = false;
@@ -300,10 +295,7 @@ public class AreaManager : MonoBehaviour
         Debug.Log("End Room Transition is over.");
         reachedObjective = null;
 
-        //UnloadCurrentRoom(); /// Pre-transiton animations method to call.
-        /// Load next room is binded to unload delegate with OnRoomUnloaded() in this class.
-
-        TransitionToNextRoom();
+        LoadNextRoom();
 
         yield break;
     }

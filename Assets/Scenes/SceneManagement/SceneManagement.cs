@@ -125,14 +125,14 @@ public static class SceneManagement
         }
         #endregion
 
-        foreach(string name in unloadSceneNames)
-        {
-            Debug.Log("Going to unload " + name);
-        }
-        foreach (string name in loadSceneNames)
-        {
-            Debug.Log("Going to load " + name);
-        }
+        //foreach(string name in unloadSceneNames)
+        //{
+        //    Debug.Log("Going to unload " + name);
+        //}
+        //foreach (string name in loadSceneNames)
+        //{
+        //    Debug.Log("Going to load " + name);
+        //}
 
         try
         {
@@ -143,17 +143,6 @@ public static class SceneManagement
             SceneTransitioner.Instance.LoadScene(order, unloadSceneNames, loadSceneNames, SceneTransitioner.Instance.GetDefaultTransition(), loadSceneMode);
         }
     }
-
-    //public static void LoadScene(string? overrideString = null, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
-    //{
-    //    /// This function forwards to the main LoadScene function with a dummy Level struct. For when loading scene with just the string for the name.
-    //    Level dummyLevel = new Level(0, -1);
-    //    SceneManagement.LoadScene(dummyLevel, overrideString, loadSceneMode);
-    //}
-
-    /// <summary>
-    /// Unloads a scene but also returns the AsyncOperation involved with it. Useful for unloading scenes in a Coroutine.
-    /// </summary>
 
     /// <summary>
     /// Unload a scene based on the Level struct passed in. If an override string is passed, unload that scene instead.
