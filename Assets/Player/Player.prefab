@@ -3237,6 +3237,7 @@ MonoBehaviour:
   scalePivot: {fileID: 1054502265016936750}
   weldBlob: {fileID: 4644490251549961983}
   scoutTarget: {fileID: 8436947447776955484}
+  softwareCursor: {fileID: 0}
   positiveMag: {fileID: 7244895146233200180}
   posTractorBeamVFX: {fileID: 5323207232177294541}
   negativeMag: {fileID: 2989805380013838047}
@@ -3295,6 +3296,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f38b70f799be1a04e95318ddda898afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHUD
+  hudCanvas: {fileID: 0}
+  hudGroup: {fileID: 0}
   batterySlider: {fileID: 0}
   playerBattery: {fileID: 381572488973111425}
   playerLivesText: {fileID: 0}
@@ -3612,6 +3615,7 @@ MonoBehaviour:
   launchAimControlMethod: 1
   batteryController: {fileID: 8047242034082428540}
   parentForPos: {fileID: 5159612945940311858}
+  cursorSprite: {fileID: 0}
   playerSpriteLength: 1
   cursorDistanceTweak: 0
   minCursorDistanceFactor: 0.5

@@ -731,7 +731,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             #region Prevent Fast Rotation Into Floors
             if (posPreventer.neutralDetected || negPreventer.neutralDetected || (evalAttractSurface != null && weldState == WeldState.None))
             {
-                rb.angularDamping = 70f;
+                rb.angularDamping = 60f;
             }
             else
             {
@@ -1159,7 +1159,7 @@ public class BatteryController : MonoBehaviour, IDamageable
     {
         if (inputMode == PlayerInputMode.Enabled)
         {
-            mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
+            mouseDelta = GameInstance.instance.mouseSensitivity * context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
         }
         else
         {

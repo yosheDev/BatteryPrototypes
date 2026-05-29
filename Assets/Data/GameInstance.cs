@@ -19,6 +19,9 @@ public class GameInstance : MonoBehaviour
     [Header("Game Data")]
     public GameDifficulty difficulty;
 
+    [Header("Settings Data")]
+    public float mouseSensitivity = 1f;
+
     [Header("Player Data")]
     public byte playerLives = 5;
     public byte maxPlayerLives = 5;

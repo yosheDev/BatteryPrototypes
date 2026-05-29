@@ -225,6 +225,9 @@
     "m_Guid": {
         "m_GuidSerialized": "c20f12a7-d7ba-46bd-bf19-b1d06da04b0c"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "PlayerNegMag",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "PlayerNegMag",
@@ -323,6 +326,9 @@
     "m_Guid": {
         "m_GuidSerialized": "4690ffe1-7925-4bf9-b79c-b060e772e9f6"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "MagnetSDFMaxBounds",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "MagnetSDFMaxBounds",
@@ -358,7 +364,8 @@
     "m_StageCapability": 2,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
-    "m_Labels": []
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -368,6 +375,9 @@
     "m_Guid": {
         "m_GuidSerialized": "2022222e-0e58-423c-a695-debb39d84403"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "PlayerPosMag",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "PlayerPosMag",
@@ -403,7 +413,8 @@
     "m_StageCapability": 2,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
-    "m_Labels": []
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -562,6 +573,7 @@
     "m_CastShadows": true,
     "m_ReceiveShadows": true,
     "m_DisableTint": false,
+    "m_Sort3DAs2DCompatible": false,
     "m_AdditionalMotionVectorMode": 0,
     "m_AlembicMotionVectors": false,
     "m_SupportsLODCrossFade": false,
@@ -658,7 +670,8 @@
     "m_StageCapability": 3,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
-    "m_Labels": []
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -723,7 +736,8 @@
     "m_StageCapability": 2,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
-    "m_Labels": []
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -791,6 +805,9 @@
     "m_Guid": {
         "m_GuidSerialized": "2741f26d-6f56-4849-a046-e9133c2a6f66"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "MagnetSDFMinBounds",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "MagnetSDFMinBounds",
@@ -898,6 +915,9 @@
     "m_Guid": {
         "m_GuidSerialized": "59438e6c-67ca-487e-9a47-4d236c327402"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "Banding",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Banding",
@@ -915,6 +935,7 @@
     "m_customAttributes": [],
     "m_Value": 3000.0,
     "m_FloatType": 0,
+    "m_LiteralFloatMode": false,
     "m_RangeValues": {
         "x": 0.0,
         "y": 1.0
@@ -943,7 +964,8 @@
     "m_StageCapability": 3,
     "m_Value": 0.0,
     "m_DefaultValue": 0.0,
-    "m_Labels": []
+    "m_Labels": [],
+    "m_LiteralMode": false
 }
 
 {
@@ -989,6 +1011,9 @@
     "m_Guid": {
         "m_GuidSerialized": "d9a04e2e-1e93-4726-b256-7df36b30c8b9"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "Speed",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Speed",
@@ -1006,6 +1031,7 @@
     "m_customAttributes": [],
     "m_Value": -13.0,
     "m_FloatType": 0,
+    "m_LiteralFloatMode": false,
     "m_RangeValues": {
         "x": 0.0,
         "y": 1.0
@@ -1051,15 +1077,18 @@
     "m_ObjectId": "eb4a5c8970824b30a830ff28f93ca109",
     "m_Title": "Sample SDF",
     "m_Position": {
-        "x": -1059.2001953125,
-        "y": 128.00001525878907
+        "x": -1059.2000732421875,
+        "y": 127.99999237060547
     }
 }
 
 {
     "m_SGVersion": 2,
     "m_Type": "UnityEditor.Rendering.Universal.ShaderGraph.UniversalUnlitSubTarget",
-    "m_ObjectId": "f1e5f66586084967a6669d7bad72357b"
+    "m_ObjectId": "f1e5f66586084967a6669d7bad72357b",
+    "m_KeepLightingVariants": false,
+    "m_DefaultDecalBlending": true,
+    "m_DefaultSSAO": true
 }
 
 {
@@ -1203,6 +1232,9 @@
     "m_Guid": {
         "m_GuidSerialized": "56c63372-6eaa-4bd1-86e0-193d505ce165"
     },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
     "m_Name": "MagnetSDF",
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "MagnetSDF",
