@@ -7,7 +7,6 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class MagneticFieldVisibility : MonoBehaviour
 {
