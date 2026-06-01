@@ -144,7 +144,8 @@ public class AreaManager : MonoBehaviour
         //Level startLevel = new Level(area, 1);
         //SceneManager.sceneLoaded += OnRoomLoaded;
         //SceneManagement.LoadScene(startLevel);
-        
+
+        StartCoroutine(DelayStart());
     }
 
     #region Loading/Unloading Rooms
@@ -530,4 +531,17 @@ public class AreaManager : MonoBehaviour
         return roomNum;
     }
     #endregion
+
+    private IEnumerator DelayStart()
+    {
+        yield return new WaitForSeconds(1f);
+
+        // Load the pause menu if pause menu scene is not already loaded. Has to be here as to not break Start() Cinemachine Bind references for some reason.
+        if (PauseMenu.instance == null)
+        {
+            SceneManager.LoadSceneAsync("PauseMenu", LoadSceneMode.Additive);
+        }
+
+        yield break;
+    }
 }
