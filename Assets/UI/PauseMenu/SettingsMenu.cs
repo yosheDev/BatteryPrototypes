@@ -44,7 +44,6 @@ public class SettingsMenu : MonoBehaviour
 
     public void ApplySettings()
     {
-        Debug.Log("Apply Settings");
         SaveLoadManager.instance.currentSettings = newSettings;
 
         SaveLoadManager.instance.SaveSettings();

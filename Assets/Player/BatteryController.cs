@@ -1168,7 +1168,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             try
             {
                 mouseDelta = SaveLoadManager.instance.currentSettings.mouseSensitivity * (context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f));
-                Debug.Log(mouseDelta + " | " + mouseDelta.magnitude);
+                //Debug.Log(mouseDelta + " | " + mouseDelta.magnitude);
             }
             catch
             {
