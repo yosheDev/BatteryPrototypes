@@ -1157,9 +1157,24 @@ public class BatteryController : MonoBehaviour, IDamageable
     #region Input Actions
     public void UpdateMouseDelta(InputAction.CallbackContext context)
     {
+        if (GameInstance.instance.isGamePaused)
+        {
+            mouseDelta = Vector2.zero;
+            return;
+        }
+
         if (inputMode == PlayerInputMode.Enabled)
         {
-            mouseDelta = GameInstance.instance.mouseSensitivity * context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
+            try
+            {
+                mouseDelta = SaveLoadManager.instance.currentSettings.mouseSensitivity * (context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f));
+                Debug.Log(mouseDelta + " | " + mouseDelta.magnitude);
+            }
+            catch
+            {
+                Debug.LogError("There is no SaveLoadManager instance. Unable to retrieve mouse sensitivity settings.");
+                mouseDelta = context.ReadValue<Vector2>().magnitude < 50f ? (context.ReadValue<Vector2>()) : FunctionLibraryF.ClampMagnitudeRange(context.ReadValue<Vector2>(), 50f, 0f);
+            }
         }
         else
         {
@@ -1169,6 +1184,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void Scout(InputAction.CallbackContext context)
     {
+        if (GameInstance.instance.isGamePaused)
+        {
+            return;
+        }
+
         if (inputMode == PlayerInputMode.Enabled)
         {
             if (playerInput.currentControlScheme.Equals("Gamepad"))
@@ -1194,6 +1214,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void Weld(InputAction.CallbackContext context)
     {
+        if (GameInstance.instance.isGamePaused)
+        {
+            return;
+        }
+
         if (inputMode == PlayerInputMode.UIOnly)
         {
             if (context.started)
@@ -1248,6 +1273,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void InitiateLaunch(InputAction.CallbackContext context)
     {
+        if (GameInstance.instance.isGamePaused)
+        {
+            return;
+        }
+
         launchInput = (context.ReadValue<float>() == 1 ? true : false);
 
         if (context.canceled && weldState == WeldState.LaunchAim)
@@ -1315,6 +1345,11 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void Interact(InputAction.CallbackContext context)
     {
+        if (GameInstance.instance.isGamePaused)
+        {
+            return;
+        }
+
         if (inputMode == PlayerInputMode.Enabled)
         {
             if (context.started)
@@ -1327,7 +1362,7 @@ public class BatteryController : MonoBehaviour, IDamageable
     
     public void LeftClick(InputAction.CallbackContext context)
     {
-        if (inputMode != PlayerInputMode.Enabled)
+        if (inputMode != PlayerInputMode.Enabled || GameInstance.instance.isGamePaused)
         {
             return;
         }
@@ -1377,7 +1412,7 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void RightClick(InputAction.CallbackContext context)
     {
-        if (inputMode != PlayerInputMode.Enabled)
+        if (inputMode != PlayerInputMode.Enabled || GameInstance.instance.isGamePaused)
         {
             return;
         }
@@ -1714,7 +1749,7 @@ public class BatteryController : MonoBehaviour, IDamageable
 
     public void RestartInput(InputAction.CallbackContext context)
     {
-        if (inputMode != PlayerInputMode.Enabled)
+        if (inputMode != PlayerInputMode.Enabled || GameInstance.instance.isGamePaused)
         {
             return;
         }
@@ -1739,6 +1774,16 @@ public class BatteryController : MonoBehaviour, IDamageable
             rb.linearVelocity = Vector3.zero;
             battery.SetPercent(GameInstance.instance.roomStartBattery);
         } 
+    }
+
+    public void PauseInput(InputAction.CallbackContext context)
+    {
+        if (!context.started)
+        {
+            return;
+        }
+
+        PauseMenu.instance.PauseInput(context);
     }
 
     public void BeginDeath(DamageTypes damageType)

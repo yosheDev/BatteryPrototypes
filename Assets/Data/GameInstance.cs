@@ -4,6 +4,7 @@ public class GameInstance : MonoBehaviour
 {
     public bool initialEditorLoad = true;
     public bool loadingIntoArea = false;
+    public bool isGamePaused = false;
     public enum GameDifficulty
     {
         Easy,
@@ -18,9 +19,6 @@ public class GameInstance : MonoBehaviour
 
     [Header("Game Data")]
     public GameDifficulty difficulty;
-
-    [Header("Settings Data")]
-    public float mouseSensitivity = 1f;
 
     [Header("Player Data")]
     public byte playerLives = 5;

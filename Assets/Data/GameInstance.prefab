@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4174979949325316704}
   - component: {fileID: 7886209720015695894}
   - component: {fileID: 2601093392322165945}
+  - component: {fileID: 4566638104174773389}
   m_Layer: 0
   m_Name: GameInstance
   m_TagString: Untagged
@@ -48,9 +49,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ee5e66ce73eb548b2b377f8a5944fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameInstance
+  initialEditorLoad: 1
+  loadingIntoArea: 0
+  isGamePaused: 0
   difficulty: 0
+  mouseSensitivity: 1
   playerLives: 5
+  maxPlayerLives: 5
   playerAbilityProgression: 0
+  playerInputIgnored: 0
   roomStartBattery: 100
 --- !u!114 &5395748181315296326
 MonoBehaviour:
@@ -273,3 +280,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4566638104174773389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5490753695866811872}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4169f756f9ed053449e91512ebba633d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveLoadManager
+  currentSettings:
+    masterVolume: 1
+    mouseSensitivity: 1
