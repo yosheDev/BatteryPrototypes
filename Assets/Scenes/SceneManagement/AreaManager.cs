@@ -131,6 +131,7 @@ public class AreaManager : MonoBehaviour
                 CheckForMusicChange();
 
                 SetTransitionState(AreaTransitionState.Spawn);
+                StartCoroutine(DelayStart());
                 return;
             }
 
