@@ -2726,6 +2726,7 @@ GameObject:
   - component: {fileID: 7371173790949300151}
   - component: {fileID: 7672027892262536964}
   - component: {fileID: 2213390295015265259}
+  - component: {fileID: 15980532852602325}
   m_Layer: 3
   m_Name: PlayerSprite
   m_TagString: Player
@@ -3369,6 +3370,28 @@ SpringJoint2D:
   m_Distance: 1.9009471
   m_DampingRatio: 0.2
   m_Frequency: 1.8
+--- !u!95 &15980532852602325
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5159612945940311858}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5716817654400341558
 GameObject:
   m_ObjectHideFlags: 0
