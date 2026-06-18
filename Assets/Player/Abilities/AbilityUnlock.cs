@@ -20,6 +20,9 @@ public class AbilityUnlock : MonoBehaviour
 
     [SerializeField] private InputActionReference advanceUIInput;
 
+    [SerializeField] private GameObject riseParticles;
+    [SerializeField] private GameObject hitParticles;
+
     private BatteryController batteryController;
     private AbilityUnlockUI abilityUI;
     void Start()
@@ -49,6 +52,8 @@ public class AbilityUnlock : MonoBehaviour
 
     private IEnumerator Obtain()
     {
+        GameObject riseParticleObj = Instantiate(riseParticles, batteryController.transform, false);
+        riseParticleObj.transform.localPosition = Vector3.zero;
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
         batteryController.GetRigidBody().gravityScale = 0f;
@@ -64,11 +69,15 @@ public class AbilityUnlock : MonoBehaviour
         yield return new WaitWhile(() => obtainRiseSFX.isPlaying);
         #endregion
 
+        riseParticleObj.GetComponent<ParticleSystem>().Stop();
         // Reenable input. Player still has input mode set to dialogue. Need input mode that that.
         batteryController.gameObject.GetComponent<PlayerInput>().ActivateInput();
 
         // Delay between rise and hit
         yield return new WaitForSeconds(.5f);
+
+        GameObject hitParticleObj = Instantiate(hitParticles, batteryController.transform, false);
+        hitParticleObj.transform.localPosition = Vector3.zero;
 
         #region Play Hit SFX
         obtainHitSFX.Play();
@@ -92,6 +101,8 @@ public class AbilityUnlock : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
         yield return new WaitUntil(() => advanceUIInput.action.triggered);
         ContinueGame();
+        Destroy(riseParticleObj);
+        Destroy(hitParticleObj);
     }
 
     private void ContinueGame()
@@ -113,6 +124,6 @@ public class AbilityUnlock : MonoBehaviour
         batteryController.GetRigidBody().gravityScale = 1f;
         batteryController.GetRigidBody().constraints = RigidbodyConstraints2D.None;
 
-        Destroy(this.gameObject);
+        //Destroy(this.gameObject);
     }
 }

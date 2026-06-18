@@ -15440,7 +15440,7 @@ Transform:
   m_GameObject: {fileID: 1741457422}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -201.28, y: -55.1165, z: 0}
+  m_LocalPosition: {x: -201.28, y: -55.15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15467,6 +15467,8 @@ MonoBehaviour:
   afterGetEventNames:
   - Play
   advanceUIInput: {fileID: -3977709267907833626, guid: 511bbb6384ece0a4abe829b208920b85, type: 3}
+  riseParticles: {fileID: 3492745790415113732, guid: 18c9273d4e479c04ba9d3bcccf38c18b, type: 3}
+  hitParticles: {fileID: 3492745790415113732, guid: 809472b3e0461aa40893bbdf0632a4e8, type: 3}
 --- !u!58 &1741457426
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -16868,11 +16870,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -175.7
+      value: -4.8
       objectReference: {fileID: 0}
     - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -54.2
+      value: 1.7
       objectReference: {fileID: 0}
     - target: {fileID: 5297039637636000204, guid: 2b86a7fd6c2642c45938c99bbda08575, type: 3}
       propertyPath: m_LocalPosition.z
