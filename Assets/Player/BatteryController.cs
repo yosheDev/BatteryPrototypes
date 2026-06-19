@@ -49,7 +49,7 @@ public class BatteryController : MonoBehaviour, IDamageable
     [SerializeField] private float rotationTorqueDrag = .2f;    /// Helps damped torque rotation, tweak to prevent oscillation.
     private float angularRotVelocity; // Used for smooth damp.
     [HideInInspector] private bool isGrounded = false;
-
+    [HideInInspector] public bool cursorAimEnd = false;         /// false = negativeMag, true = positiveMag
     public enum PlayerInputMode
     {
         Disabled,   /// No player input goes through this script at all.
@@ -291,7 +291,7 @@ public class BatteryController : MonoBehaviour, IDamageable
         previousRotation = currentRotation;
 
         // Get Aim Target Vector and Quat. Used for rotating player.
-        Vector3 aimDir = (transform.position - cursorObj.transform.position).normalized;
+        Vector3 aimDir = (cursorAimEnd ? -1f : 1f ) * (transform.position - cursorObj.transform.position).normalized;
         Quaternion targetAimQuat = Quaternion.LookRotation(Vector3.forward, aimDir);
         #endregion
 
@@ -819,66 +819,59 @@ public class BatteryController : MonoBehaviour, IDamageable
                         }
                     } 
                 }
+                //Debug.DrawLine(transform.position, transform.position + (Vector3)((intermediateRot * transform.up) * 5f), Color.mediumPurple, 2f);
             }
             else if (weldState == WeldState.Welded)
             {
                 /// Weld aim direction, angles from normal, clamping vectors.
                 #region Weld Vector Data
-                /// Welding aim direction as a Vector and as a Quaternion.
-                Vector3 weldAimDir = (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
+                /// Welding aim direction as a Vector and as a Quaternion. Flip directions if not the leading magnet. 
+                Vector3 weldAimDir = (playerWeldMag != GetLeadingMagnet() ? -1f : 1f) * (playerWeldMag.transform.position - cursorObj.transform.position).normalized;
                 Quaternion weldTargetAimQuat = Quaternion.LookRotation(Vector3.forward, weldAimDir);
 
                 /// The signed angle that the players direction is from the normal of the magnet surface.
                 float angleFromNormal = Vector3.SignedAngle((Vector3)weldAimDir, (Vector3)weldSurfaceNormal, Vector3.forward);
-                
+
                 /// The nearest clamp angle(according to weldAngleClamp) as a vector. Player can not rotate past this.
                 Vector3 clampVector = Quaternion.AngleAxis(weldAngleClamp * -1f * Mathf.Sign(angleFromNormal), Vector3.forward) * (Vector3)weldSurfaceNormal;
-
-                /// Reflect the clampVector if the current welding magnet is NOT the leading magnet.
-                if (playerWeldMag == positiveMag)
-                {
-                    clampVector = Vector3.Reflect(clampVector, (Vector3)weldSurfaceNormal);
-                }
                 #endregion
-
-                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldSurfaceNormal * 2f), Color.red, 7f);
-                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + ((Vector3)weldAimDir * 2f), Color.green, 7f);
-                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (clampVector * 4f), Color.lightBlue, 7f);
 
                 #region Calculate Half Angles
                 float angle1;
                 float angle2;
 
-                if (playerWeldMag == negativeMag)
-                {
-                    angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
-                    angle2 = Vector3.Angle(weldAimDir, clampVector);
-                }
-                else
-                {
-                    angle1 = Vector3.Angle(weldAimDir, -weldSurfaceNormal);
-                    angle2 = Vector3.Angle(weldAimDir, clampVector);
-                }
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (Vector3)(weldSurfaceNormal * 3f), Color.green, .5f);
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (weldAimDir * 3f), Color.red, .5f);
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (Vector3)(clampVector * 3f), Color.green, .5f);
+
+                angle1 = Vector3.Angle(weldAimDir, weldSurfaceNormal);
+                angle2 = Vector3.Angle(weldAimDir, clampVector);
                 #endregion
 
                 #region Weld Rotation
                 // Within appropriate welding angle.
                 if (Mathf.Abs(angle1 + angle2) - weldAngleClamp < .01f)
                 {
-                    intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                    // ReturnHereForUncommenting
+                    //intermediateRot = Quaternion.Slerp(intermediateRot, weldTargetAimQuat, Time.deltaTime * rotationFactor);
+                    intermediateRot = Quaternion.Slerp(intermediateRot, Quaternion.identity, Time.deltaTime * 5f);
                     rb.MoveRotation(intermediateRot);
                 }
                 else // Not within appropriate welding angle.
                 {
+                    // ReturnHereForUncommenting
                     // Rotates to be within range automatically.
                     intermediateRot = Quaternion.Slerp(intermediateRot, Quaternion.LookRotation(Vector3.forward, clampVector), Time.deltaTime * rotationFactor);
-                    rb.MoveRotation(intermediateRot);
+                    //rb.MoveRotation(intermediateRot);
                     softwareCursor.SetLocalPos(-clampVector * 3f);
                 }
+                //Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (Vector3)((weldTargetAimQuat * transform.up) * 5f), Color.purple, 2f);
+                Debug.DrawLine(playerWeldMag.transform.position, playerWeldMag.transform.position + (Vector3)((intermediateRot * transform.up) * 5f), Color.purple, 2f);
                 #endregion
 
-                scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
-                scalePivot.transform.rotation = intermediateRot;
+                // ReturnHereForUncommenting
+                //scalePivot.transform.localScale = new Vector3(FunctionLibraryF.MapRangeClamped(0.4f, 1f, 1f, 1.25f, softwareCursor.GetLaunchAlpha()), Mathf.Lerp(1f, .5f, softwareCursor.GetLaunchAlpha()), 1f);
+                //scalePivot.transform.rotation = intermediateRot;
 
                 #region VFX
                 // Weld Blob VFX
@@ -1545,6 +1538,12 @@ public class BatteryController : MonoBehaviour, IDamageable
             }
         }
     }
+
+    public void ToggleCursorAim(InputAction.CallbackContext context)
+    {
+        cursorAimEnd = !cursorAimEnd;
+        softwareCursor.InvertLocalPos();
+    }
     #endregion
     public void ChangeWeldState(WeldState newState)
     {
@@ -1642,9 +1641,13 @@ public class BatteryController : MonoBehaviour, IDamageable
                 #endregion
 
                 cursorObj.GetComponent<SoftwareCursor>().SetNewPosParent(playerWeldMag.gameObject);
-                Vector2 adjustedWeldAimDir = (playerWeldMag == positiveMag ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
-                float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, -playerWeldMag.transform.up, Vector3.forward);
-                    
+                Vector2 adjustedWeldAimDir = (playerWeldMag != GetLeadingMagnet() ? -1f : 1f) * ((playerWeldMag.transform.position - cursorObj.transform.position).normalized);
+                float angleFromSurfNormal = Vector3.SignedAngle(weldSurfaceNormal, (-playerWeldMag.transform.up), Vector3.forward);
+                if (playerWeldMag == positiveMag)
+                {
+                    //intermediateRot *= Quaternion.AngleAxis(180f, Vector3.forward);
+                }
+
                 rotationFactor = 15f;
                 rb.constraints = RigidbodyConstraints2D.FreezeRotation;
                 UpdateScalePivotTransforms();
@@ -1732,7 +1735,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             //scalePivot.transform.rotation = intermediateRot;
             #endregion
 
-            scalePivot.transform.rotation = (playerWeldMag == negativeMag ? playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f) : playerWeldMag.transform.rotation);
+            scalePivot.transform.rotation = (playerWeldMag == GetLeadingMagnet() ? playerWeldMag.transform.rotation * Quaternion.Euler(0f, 0f, 180f) : playerWeldMag.transform.rotation);
             Physics2D.SyncTransforms();
         }
     }
@@ -1901,6 +1904,11 @@ public class BatteryController : MonoBehaviour, IDamageable
     public void ClearProjectilePool()
     {
         projectilePool.ClearPool();
+    }
+
+    public MagneticSurface GetLeadingMagnet()
+    {
+        return (cursorAimEnd ? positiveMag : negativeMag);
     }
     #endregion
 

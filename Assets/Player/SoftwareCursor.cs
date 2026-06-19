@@ -71,7 +71,7 @@ public class SoftwareCursor : MonoBehaviour
         else
         {
             /// parentRotAngle = (weld was reversing directions, so counteract that) * (reverse based on battery orientation) * (actual value)
-            parentRotAngle = (batteryController.weldState == BatteryController.WeldState.None ? -1f : 1f) * (parentForPos == batteryController.negativeMag.gameObject ? -1f : 1f) * Vector3.SignedAngle((batteryController.GetParentSource().transform.rotation * Vector3.up), (parentLastRot * Vector3.up), Vector3.forward);
+            parentRotAngle = (parentForPos == GetPlayerLeadingMagnet().gameObject ? -1f : 1f) * (batteryController.weldState == BatteryController.WeldState.None ? -1f : -1f) * (parentForPos == batteryController.negativeMag.gameObject ? -1f : 1f) * Vector3.SignedAngle((batteryController.GetParentSource().transform.rotation * Vector3.up), (parentLastRot * Vector3.up), Vector3.forward);
             parentLastRot = batteryController.GetParentSource().transform.rotation;
             //Debug.Log("ParentRotAngle: " + parentRotAngle);
         }
@@ -168,10 +168,12 @@ public class SoftwareCursor : MonoBehaviour
             localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2.5f, 2.5f)));
         }
         localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
+        Debug.DrawLine((Vector2)parentForPos.transform.position + localPos, (Vector2)parentForPos.transform.position + localPos + new Vector2(0f, .2f), Color.yellow, 2f);
 
-        // Get angle between cursorObj dir and surface normal.
-        aimDir = (parentForPos == batteryController.positiveMag.gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
+        // Get angle between cursorObj dir and surface normal. Flip direction if not the leading magnet.
+        aimDir = (parentForPos != GetPlayerLeadingMagnet().gameObject ? -1f : 1f) * ((Vector2)parentForPos.transform.position - ((Vector2)parentForPos.transform.position + localPos)).normalized;
 
+        //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (Vector3)(aimDir * 3f), Color.red, 2f);
         // Reset launch vars.
         launchControlAlpha = 0f;
 
@@ -181,22 +183,23 @@ public class SoftwareCursor : MonoBehaviour
         //Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + ((Vector3)aimDir * 1.5f), Color.blue, .1f);
         //Debug.DrawLine(parentForPos.transform.position - new Vector3(-.2f, 0f, 0f), parentForPos.transform.position - new Vector3(.2f, 0f, 0f), Color.red, .1f);
         //Debug.DrawLine(parentForPos.transform.position - new Vector3(0f, -.2f, 0f), parentForPos.transform.position - new Vector3(0f, .2f, 0f), Color.red, .1f);
-
+        //Debug.Log("Angle From Normal: " + angleFromNormal + " weldAngleClamp: " + batteryController.weldAngleClamp);
         if (((batteryController.weldState == BatteryController.WeldState.Welded && (angleFromNormal > batteryController.weldAngleClamp || angleFromNormal < -batteryController.weldAngleClamp))))
         {
+            Debug.Log("I am here 1 for cursor. Thinks that angleFromNoraml is outside of clamp range.");
             #region Previous Method
             #region Interp To Clamped Range Method
-        //Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
-        ////Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
-        ////Debug.Log("Alpha: " + correctWeldAlpha);
-        //Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
+            //Quaternion curRot = Quaternion.Slerp(weldInitialQuat, targetQuat, correctWeldAlpha);
+            ////Debug.DrawLine(parentForPos.transform.position, parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal) * (parentForPos == batteryController.positiveMag.gameObject ? -4f : 2.5f)), Color.yellowGreen, 2f);
+            ////Debug.Log("Alpha: " + correctWeldAlpha);
+            //Vector2 cursorAimDir = (parentForPos.transform.position - (parentForPos.transform.position + (curRot * (batteryController.weldSurfaceNormal)))).normalized;
 
-        //transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * GetDesiredCursorDistance(-4f, 2.5f));
+            //transform.position = parentForPos.transform.position + (Vector3)(cursorAimDir * GetDesiredCursorDistance(-4f, 2.5f));
 
-        //localPos = transform.position - parentForPos.transform.position;
-        //localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2f, 2f)));
-        //localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
-        #endregion
+            //localPos = transform.position - parentForPos.transform.position;
+            //localPos = ((batteryController.weldState == BatteryController.WeldState.Welded) ? ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), GetDesiredCursorDistance(2.45f, 2.45f)) : Vector2.ClampMagnitude(localPos, GetDesiredCursorDistance(2f, 2f)));
+            //localPos = Quaternion.AngleAxis(parentRotAngle, Vector3.forward) * localPos;
+            #endregion
 
             #region Teleport Within Clamped Range Method
             /// This method is kept commented in case the simple math needs looked at. Interp version is better and is basically just this but with the slerp.
@@ -221,6 +224,7 @@ public class SoftwareCursor : MonoBehaviour
             else
             {
                 localPos = lastFrameLocalPos;
+                Debug.DrawLine((Vector2)parentForPos.transform.position + localPos, (Vector2)parentForPos.transform.position + localPos + new Vector2(0f, .2f), Color.blue, 2f);
             }
         #endregion
         }
@@ -232,7 +236,8 @@ public class SoftwareCursor : MonoBehaviour
             }
             else
             {
-                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos == batteryController.positiveMag.gameObject ? minCursorDistanceFactor + playerSpriteLength + cursorDistanceTweak : minCursorDistanceFactor + cursorDistanceTweak));
+                localPos = ClampMagnitudeRange(localPos, GetDesiredCursorDistance(2.5f, 2.5f), (parentForPos != GetPlayerLeadingMagnet().gameObject ? minCursorDistanceFactor + playerSpriteLength + cursorDistanceTweak : minCursorDistanceFactor + cursorDistanceTweak));
+                Debug.DrawLine((Vector2)parentForPos.transform.position + localPos, (Vector2)parentForPos.transform.position + localPos + new Vector2(0f, .2f), Color.green, 2f);
                 worldPos = (Vector2)parentForPos.transform.position + localPos;
                 transform.position = worldPos;
             }
@@ -247,7 +252,7 @@ public class SoftwareCursor : MonoBehaviour
     {
         if (launchAimControlMethod == LaunchAimControlMethods.FreeRange)
         {
-            if (parentForPos == batteryController.positiveMag.gameObject)
+            if (parentForPos != GetPlayerLeadingMagnet().gameObject)
             {
                 InvertLocalPos();
             }
@@ -285,7 +290,7 @@ public class SoftwareCursor : MonoBehaviour
         // Releasing : Winding Up
         float mult = isReleasing ? FunctionLibraryF.MapRangeClamped(1f, .5f, 2f, 1f, springAlpha) : FunctionLibraryF.MapRangeClamped(.5f, 1f, 1f, .1f, springAlpha);
 
-        return Mathf.Lerp(mult, (parentForPos == batteryController.positiveMag) ? .6f : .5f, sideInputAlpha); /// Positive mag has more because its further out, thus moves slower when at same speed.
+        return Mathf.Lerp(mult, (parentForPos != GetPlayerLeadingMagnet()) ? .6f : .5f, sideInputAlpha); /// Positive mag has more because its further out, thus moves slower when at same speed.
     }
 
     public void InvertLocalPos()
@@ -301,7 +306,7 @@ public class SoftwareCursor : MonoBehaviour
     {
         if (parentForPos != null)
         {
-            return GetCameraZoomCursorDistanceMultiplier() * (parentForPos == batteryController.positiveMag.gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak);
+            return GetCameraZoomCursorDistanceMultiplier() * (parentForPos != GetPlayerLeadingMagnet().gameObject ? posMagValue + playerSpriteLength + cursorDistanceTweak : negMagValue + cursorDistanceTweak);
         }
 
         return GetCameraZoomCursorDistanceMultiplier() * posMagValue;
@@ -369,6 +374,11 @@ public class SoftwareCursor : MonoBehaviour
     public void SetVisibility(bool visible)
     {
         cursorSprite.enabled = visible;
+    }
+
+    private MagneticSurface GetPlayerLeadingMagnet()
+    {
+        return batteryController.cursorAimEnd ? batteryController.positiveMag : batteryController.negativeMag;
     }
     #endregion
 
