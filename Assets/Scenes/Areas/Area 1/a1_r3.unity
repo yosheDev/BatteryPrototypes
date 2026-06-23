@@ -8383,7 +8383,7 @@ GameObject:
   - component: {fileID: 936855999}
   - component: {fileID: 936855998}
   m_Layer: 0
-  m_Name: Audio Source (1)
+  m_Name: AUDIO_RadioStatic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13879,6 +13879,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9628338a664e994dab9a6444e853599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  radioGate: {fileID: 1606054110}
+  sfxRadioStatic: {fileID: 936855998}
 --- !u!4 &1577068745
 Transform:
   m_ObjectHideFlags: 0
@@ -14058,8 +14060,10 @@ GameObject:
   - component: {fileID: 1606054114}
   - component: {fileID: 1606054113}
   - component: {fileID: 1606054112}
+  - component: {fileID: 1606054115}
+  - component: {fileID: 1606054116}
   m_Layer: 0
-  m_Name: Square (46)
+  m_Name: RadioGate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14074,7 +14078,7 @@ Transform:
   m_GameObject: {fileID: 1606054110}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: 0.7071065, w: 0.7071071}
-  m_LocalPosition: {x: -114.55, y: -42.86, z: 0}
+  m_LocalPosition: {x: -114.55, y: -46.3, z: 0}
   m_LocalScale: {x: 5.7610626, y: 0.92655843, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14198,6 +14202,45 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &1606054115
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606054110}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 245b8e8a827e1b5408a5a05cd244e3e9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1606054116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606054110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07f5a6a689cd040458dc9943f92345f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorEvent
+  animator: {fileID: 1606054115}
+  audioSources: []
+  disableAtStart: 0
+  hideSpriteAtStart: 0
+  spriteRenderers: []
 --- !u!1 &1622210532
 GameObject:
   m_ObjectHideFlags: 0

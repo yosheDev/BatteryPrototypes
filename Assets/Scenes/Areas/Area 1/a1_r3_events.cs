@@ -3,6 +3,8 @@ using Magnet;
 
 public class a1_r3_events : MonoBehaviour, IInterfaceEvent
 {
+    [SerializeField] private GameObject radioGate;
+    [SerializeField] private AudioSource sfxRadioStatic;
     public void InterfaceEvent(string eventName)
     {
         switch (eventName)
@@ -19,5 +21,8 @@ public class a1_r3_events : MonoBehaviour, IInterfaceEvent
     {
         DialogueManager.instance.onDialogueEnded -= OnMessagePlayFinished;
         GameInstance.instance.SetPlayerInputMode(BatteryController.PlayerInputMode.Enabled);
+
+        radioGate.GetComponent<AnimatorEvent>().InterfaceEvent("Activate");
+        sfxRadioStatic.Stop();
     }
 }
