@@ -61,9 +61,17 @@ public class ClampRenderersToScreen : MonoBehaviour, IInterfaceEvent
         // Constain this position to specific sides of the screen.
         Vector2 newTrans = (Vector2)transform.position;
 
-        if (mode == ScreenClampMode.Left || mode == ScreenClampMode.Right || mode == ScreenClampMode.All || mode == ScreenClampMode.Horizontal)
+        if (mode == ScreenClampMode.All || mode == ScreenClampMode.Horizontal)
         {
             newTrans.x = Mathf.Clamp(initialPosition.x, screenBoundsX.x + spriteWidth + screenClampPadding.x, screenBoundsX.y - spriteWidth - screenClampPadding.x);
+        }
+        else if (mode == ScreenClampMode.Right)
+        {
+            newTrans.x = Mathf.Clamp(initialPosition.x, initialPosition.x, screenBoundsX.y - spriteWidth - screenClampPadding.x);
+        }
+        else if (mode == ScreenClampMode.Left)
+        {
+            newTrans.x = Mathf.Clamp(initialPosition.x, screenBoundsX.x + spriteWidth + screenClampPadding.x, initialPosition.x);
         }
 
         if (mode == ScreenClampMode.Top || mode == ScreenClampMode.Bottom || mode == ScreenClampMode.All || mode == ScreenClampMode.Vertical)

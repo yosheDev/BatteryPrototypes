@@ -432,6 +432,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 315875362958115388, guid: f085b517953c0254aaa6be8cfd920368, type: 3}
+      propertyPath: distortionLevel
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3315055863917554969, guid: f085b517953c0254aaa6be8cfd920368, type: 3}
       propertyPath: m_Name
       value: RadioMessageBox
@@ -475,6 +479,10 @@ PrefabInstance:
     - target: {fileID: 4163438089947214635, guid: f085b517953c0254aaa6be8cfd920368, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7965591621880514253, guid: f085b517953c0254aaa6be8cfd920368, type: 3}
+      propertyPath: mode
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7965591621880514253, guid: f085b517953c0254aaa6be8cfd920368, type: 3}
       propertyPath: hideAtStart

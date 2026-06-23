@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using static GameInstance;
@@ -60,6 +61,7 @@ public class DialogueManager : MonoBehaviour
         bool dataLoaded = LoadData(csvName);
         if (!dataLoaded)
         {
+            Debug.LogError("No .csv was found titled: " + csvName);
             return;
         }
 
@@ -81,7 +83,7 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
-
+        
         DisplayLine(dialogueIndex);
         onDialogueAdvanced?.Invoke();
     }
@@ -92,11 +94,14 @@ public class DialogueManager : MonoBehaviour
             Debug.LogError("Cannot display dialogue. DisplayLine(displayIndex) is greater than container size.");
             return;
         }
+        Debug.Log("Line: " + lines[displayIndex]);
         dialogueText.SetText(lines[displayIndex]);
     }
 
     private bool LoadData(string csvName)
     {
+        char[] quotesToTrim = new char[] { '"', '“', '”' };
+
         TextAsset csv = Resources.Load<TextAsset>("Dialogue/" + csvName);
 
         if (csv == null)
@@ -114,14 +119,18 @@ public class DialogueManager : MonoBehaviour
         {
             if (string.IsNullOrWhiteSpace(rows[i])) continue;
 
+            string pattern = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
+
             // Split line into columns
-            string[] columns = rows[i].Split(',');
+            //string[] columns = rows[i].Split(',');
+            string[] columns = Regex.Split(rows[i], pattern);
 
             // Assuming CSV structure: Speaker, Line(English), 
             speakers.Add(columns[0]);
-            lines.Add(columns[1]);
-
+            string lineString = columns[1].Trim().Trim(quotesToTrim);
+            lines.Add(lineString);
         }
+        
         return true;
         #endregion
     }
