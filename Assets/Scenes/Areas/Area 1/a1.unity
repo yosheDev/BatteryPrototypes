@@ -195,6 +195,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUDCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 4980221448950170916, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5619844399680663247, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -277,7 +281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8056760087507096649, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8537144761059868427, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
       propertyPath: m_AnchorMax.x
@@ -329,6 +333,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!225 &194574938 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 3391465855307839680, guid: 6b80be54dcbb176498a72524b2b92ad4, type: 3}
+  m_PrefabInstance: {fileID: 194574934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &237103083 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3630706780392114562, guid: 7acb7e56b5c30b94ead4d1aca11e3d94, type: 3}
@@ -1141,6 +1150,10 @@ PrefabInstance:
       propertyPath: dialogueText
       value: 
       objectReference: {fileID: 194574937}
+    - target: {fileID: 7421765311633035218, guid: 8623eb0b6358da64f86e96bd90d59baf, type: 3}
+      propertyPath: dialogueGroup
+      value: 
+      objectReference: {fileID: 194574938}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

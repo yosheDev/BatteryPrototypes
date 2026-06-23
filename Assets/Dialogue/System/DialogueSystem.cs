@@ -7,6 +7,7 @@ using static GameInstance;
 
 public class DialogueManager : MonoBehaviour
 {
+    [SerializeField] private CanvasGroup dialogueGroup;
     [SerializeField] private TextMeshProUGUI dialogueText;
 
     private List<string> speakers = new List<string>();
@@ -48,7 +49,7 @@ public class DialogueManager : MonoBehaviour
     public void EndDialogue()
     {
         inDialogue = false;
-        dialogueText.gameObject.SetActive(false);
+        dialogueGroup.gameObject.SetActive(false);
 
         speakers.Clear();
         lines.Clear();
@@ -66,7 +67,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         inDialogue = true;
-        dialogueText.gameObject.SetActive(true);
+        dialogueGroup.gameObject.SetActive(true);
         onDialogueStarted?.Invoke();
 
         dialogueIndex = 0;
