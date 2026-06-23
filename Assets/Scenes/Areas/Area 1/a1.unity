@@ -658,12 +658,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1520525000}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: titleCardRoomName
+      value: a1_r4
+      objectReference: {fileID: 0}
+    - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: overrideStartLives
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[0].music
@@ -672,14 +676,14 @@ PrefabInstance:
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[1].music
       value: 
-      objectReference: {fileID: 8300000, guid: fdb0978677f0d1f4bb15c5c096083a3d, type: 3}
+      objectReference: {fileID: 8300000, guid: e05ba954f5652c04fa58a76a2b2ff69d, type: 3}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[0].volume
       value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[1].volume
-      value: 0.12
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[0].roomName
@@ -687,7 +691,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[1].roomName
-      value: a1_r6
+      value: a1_r4
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[0].hasTriggered

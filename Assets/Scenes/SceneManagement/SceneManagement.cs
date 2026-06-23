@@ -14,7 +14,10 @@ public enum Areas
     Area0 = 0,
     Area1 = 1,
     Area2,
-    Area3
+    Area3,
+    Area4,
+    Area5,
+    Area6
 }
 public struct Level
 {

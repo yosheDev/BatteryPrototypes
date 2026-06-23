@@ -57,6 +57,8 @@ public class AreaManager : MonoBehaviour
     [Header("Music")]
     [Tooltip("If not null, this music will play upon initial loading of this room.")]
     [SerializeField] private List<RoomMusic> roomMusicList;
+
+    [SerializeField] private string titleCardRoomName;
     #endregion
 
     #region Singleton
@@ -129,6 +131,7 @@ public class AreaManager : MonoBehaviour
                 Debug.LogError("Error: More than one scene was active upon start. Skipping initial loadLevel command of area manager. AreaManager.roomNum is parsed to be " + roomNum + ". Manually setting Confiner2D bounds.");
                 CameraManager.instance.UpdateConfinedBounds();
                 CheckForMusicChange();
+                CheckForTitleCard();
 
                 SetTransitionState(AreaTransitionState.Spawn);
                 StartCoroutine(DelayStart());
@@ -227,6 +230,7 @@ public class AreaManager : MonoBehaviour
         playerController.ClearProjectilePool();
 
         CheckForMusicChange();
+        CheckForTitleCard();
     }
     #endregion
 
@@ -321,6 +325,14 @@ public class AreaManager : MonoBehaviour
                 }
                 break;
             }
+        }
+    }
+
+    public void CheckForTitleCard()
+    {
+        if (SceneManager.GetActiveScene().name == titleCardRoomName)
+        {
+            InGameAreaTitleUI.instance.DisplayAreaTitle(area);
         }
     }
 
