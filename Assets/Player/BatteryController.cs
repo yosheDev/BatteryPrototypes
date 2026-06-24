@@ -1117,11 +1117,34 @@ public class BatteryController : MonoBehaviour, IDamageable
             }
             #endregion
         }
-        else
+        else if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None) && inputMode == PlayerInputMode.UIOnly)
         {
-            // Manually Update Transforms to face software cursor.
-            //transform.rotation = Quaternion.Slerp(transform.rotation, targetAimQuat, Time.deltaTime * rotationFactor);
-            //intermediateRot = transform.rotation;
+            //Debug.Log("Torque Rotation Method");
+            // Side Torque for stabilization
+            float currentAngle = rb.rotation;
+            float angleDifference = Mathf.DeltaAngle(currentAngle, Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg);
+            float torque = angleDifference;
+            rb.AddTorque(torque * Time.fixedDeltaTime);
+
+            // Drag
+            //rb.angularVelocity = Mathf.Lerp(rb.angularVelocity, Mathf.Min(0f, rb.angularVelocity / 2f), Time.fixedDeltaTime * 2f);
+
+
+            // Correct Torque for aiming to software cursor
+            Vector3 dirA = transform.rotation * Vector3.up;
+            Vector3 dirB = targetAimQuat * Vector3.up;
+            float signedAngle = Vector3.SignedAngle(dirA, dirB, Vector3.forward);
+            float torqueAmount = (Mathf.Abs(signedAngle) <= 90f ? signedAngle : 90f * Mathf.Sign(signedAngle)) * rotationTorqueFactor;
+            rb.AddTorque(torqueAmount, ForceMode2D.Force);
+
+            // Damping
+            rb.AddTorque(-rb.angularVelocity * rotationTorqueDrag, ForceMode2D.Force);
+
+            // Continue updating intermediateRot so other move modes can transition well.
+            intermediateRot = transform.rotation;
+
+            // Set min allowed distance of software cursor back to default.
+            softwareCursor.SetCursorMinDistance(-1f);
         }
 
         #region Scouting
@@ -1372,11 +1395,14 @@ public class BatteryController : MonoBehaviour, IDamageable
             return;
         }
 
-        isShootDisabled = true;
+        if (abilityProgression >= 3)
+        {
+            isShootDisabled = true;
 
-        #region Burst Shot
-        StartCoroutine(BurstShot());
-        #endregion
+            #region Burst Shot
+            StartCoroutine(BurstShot());
+            #endregion
+        }
     }
 
     private IEnumerator BurstShot()
