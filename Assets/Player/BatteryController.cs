@@ -1117,7 +1117,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             }
             #endregion
         }
-        else if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None) && inputMode == PlayerInputMode.UIOnly)
+        else if (AreaManager.instance.IsTransitionState(AreaManager.AreaTransitionState.None) && (inputMode == PlayerInputMode.UIOnly || inputMode == PlayerInputMode.Scene))
         {
             //Debug.Log("Torque Rotation Method");
             // Side Torque for stabilization
@@ -1835,7 +1835,9 @@ public class BatteryController : MonoBehaviour, IDamageable
         // TO DO: Ensure reset room state when respawning in the same room.
         // TO DO: Reset battery percentage to be what is was upon entering the room.
         // TO DO: Checkpoint logic
-        switch(GameInstance.instance.difficulty)
+        Debug.Log("Player died/death in " + SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()));
+
+        switch (GameInstance.instance.difficulty)
         {
             case GameInstance.GameDifficulty.Easy:
                 if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r11")// respawn tutorial scene
@@ -1860,6 +1862,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             case GameInstance.GameDifficulty.Normal:
                 if (GameInstance.instance.playerLives <= 0)
                 {
+                    Debug.Log("Should respawn");
                     AreaManager.instance.Respawn();
                 }
                 else
