@@ -1930,6 +1930,11 @@ public class BatteryController : MonoBehaviour, IDamageable
     {
         projectilePool.ClearPool();
     }
+
+    public byte GetAbilityProgression()
+    {
+        return abilityProgression;
+    }
     #endregion
 
     #region Getters / Setters

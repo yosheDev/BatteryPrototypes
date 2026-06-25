@@ -96,7 +96,7 @@ public class AbilityUnlock : MonoBehaviour
 
         // Display UI
         abilityUI = GameObject.FindAnyObjectByType<AbilityUnlockUI>();
-        abilityUI.DisplayAbilityUnlock(0, 1f, 1f);
+        abilityUI.DisplayAbilityUnlock(batteryController.GetAbilityProgression(), 1f, 1f);
         UISFX.Play();
         yield return new WaitForSeconds(1.5f);
         yield return new WaitUntil(() => advanceUIInput.action.triggered);
