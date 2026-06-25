@@ -366,7 +366,6 @@ public class AreaManager : MonoBehaviour
         if (SceneManagement.DoesSceneExist(checkpointLevel))
         {
             loadRooms = new Level[] { checkpointLevel };
-
             roomNum = checkpointLevel.room;
         }
         else

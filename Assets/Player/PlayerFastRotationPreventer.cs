@@ -281,7 +281,7 @@ public class PlayerFastRotationPreventer : MonoBehaviour
                 }
 
                 // Additionally, stop execution if any player magnet is closer to a mag surface than to a neutral surface.
-                if (playerMagNearestMagnet != null)
+                if (playerMagNearestMagnet != null && nearestMagSurface.surfaceCol != null)
                 {
                     if (Vector2.Distance(playerMagNearestMagnet.transform.position, nearestMagSurface.surfaceCol.ClosestPoint(playerMagNearestMagnet.transform.position)) < distanceToNearestNeutral)
                     {
