@@ -1842,6 +1842,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 {
                     if (GameInstance.instance.playerLives <= 0)
                     {
+                        Debug.Log("Should respawn");
                         AreaManager.instance.Respawn();
                     }
                     else
@@ -1851,6 +1852,7 @@ public class BatteryController : MonoBehaviour, IDamageable
                 }
                 else
                 {
+                    Debug.Log("Not respawning for some fuckass reason.");
                     Restart();
                 }  
                 break;

@@ -367,6 +367,7 @@ public class AreaManager : MonoBehaviour
         {
             loadRooms = new Level[] { checkpointLevel };
             roomNum = checkpointLevel.room;
+            Debug.Log("Should respawn at " + checkpointLevel.room);
         }
         else
         {
