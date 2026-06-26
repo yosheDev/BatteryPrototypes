@@ -1201,7 +1201,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: This is dialogue, yo. Science is rad.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8d72972bbbc03454d89f4a8e2cb3aa88, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6964e42bab400964b9355a72bb17cca8, type: 2}
   m_sharedMaterial: {fileID: 5840196483694606173, guid: 8d72972bbbc03454d89f4a8e2cb3aa88, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1284,8 +1284,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EasyTextEffects::EasyTextEffects.TextEffect
   text: {fileID: 5543109555144464690}
-  usePreset: 0
-  preset: {fileID: 0}
+  usePreset: 1
+  preset: {fileID: 11400000, guid: d37cc4cf17e755146b33877fc606c0bb, type: 2}
   tagEffects: []
   globalEffects: []
   updatesPerSecond: 30

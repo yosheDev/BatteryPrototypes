@@ -13978,54 +13978,6 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
---- !u!1 &1886563954
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1886563956}
-  - component: {fileID: 1886563955}
-  m_Layer: 0
-  m_Name: CamBoundsManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1886563955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886563954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eff7500ce3384ae4abe142db9f3b6a1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::a1_r7_CamBoundsUpdater
-  hatchRoomBounds: {fileID: 0}
-  bottomBounds:
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!4 &1886563956
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886563954}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.86002, y: 3.94381, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1898499975
 GameObject:
   m_ObjectHideFlags: 0
@@ -18715,7 +18667,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 824042598}
   - {fileID: 1253538717}
-  - {fileID: 1886563956}
   - {fileID: 1802902204}
   - {fileID: 3977103819261406333}
   - {fileID: 1826935615}
