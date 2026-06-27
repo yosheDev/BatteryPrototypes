@@ -1199,9 +1199,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: This is dialogue, yo. Science is rad.
+  m_text: <link=DialogueHorizontal+DialogueVertical>This is dialogue, yo. Science
+    is rad. </link>
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6964e42bab400964b9355a72bb17cca8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8d72972bbbc03454d89f4a8e2cb3aa88, type: 2}
   m_sharedMaterial: {fileID: 5840196483694606173, guid: 8d72972bbbc03454d89f4a8e2cb3aa88, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

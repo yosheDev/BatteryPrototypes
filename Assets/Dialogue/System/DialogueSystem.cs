@@ -10,6 +10,9 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private CanvasGroup dialogueGroup;
     [SerializeField] private TextMeshProUGUI dialogueText;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource dialogueAdvanceSFX;
+
     private List<string> speakers = new List<string>();
     private List<string> lines = new List<string>();
 
@@ -77,7 +80,7 @@ public class DialogueManager : MonoBehaviour
     public void AdvanceDialogue()
     {
         dialogueIndex++;
-
+        dialogueAdvanceSFX.Play();
         // Is dialogue over?
         if (dialogueIndex >= lines.Count)
         {
@@ -96,7 +99,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         Debug.Log("Line: " + lines[displayIndex]);
-        dialogueText.SetText(lines[displayIndex]);
+        dialogueText.SetText("<link=DialogueHorizontal+DialogueVertical>" + lines[displayIndex] + "</link>");
     }
 
     private bool LoadData(string csvName)
