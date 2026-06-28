@@ -1842,6 +1842,7 @@ public class BatteryController : MonoBehaviour, IDamageable
             case GameInstance.GameDifficulty.Easy:
                 if (SceneManagement.GetSceneFormattedName(AreaManager.instance.GetCurrentRoom()) == "a1_r11")// respawn tutorial scene
                 {
+                    Debug.Log(GameInstance.instance.playerLives);
                     if (GameInstance.instance.playerLives <= 0)
                     {
                         Debug.Log("Should respawn");
@@ -1854,7 +1855,6 @@ public class BatteryController : MonoBehaviour, IDamageable
                 }
                 else
                 {
-                    Debug.Log("Not respawning for some fuckass reason.");
                     Restart();
                 }  
                 break;
