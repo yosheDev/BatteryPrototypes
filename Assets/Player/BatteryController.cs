@@ -1889,15 +1889,23 @@ public class BatteryController : MonoBehaviour, IDamageable
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
-    {
+    {   
         if (collision.gameObject.layer == LayerMask.NameToLayer("MagnetSurface"))
         {
-            playerAudio.sfxSurfaceMagnet.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
+            playerAudio.sfxSurfaceMagnet.volume = FunctionLibraryF.MapRangeClamped(.75f, 10f, 0f, 3f, velocity);
             playerAudio.sfxSurfaceMagnet.Play();
         }
         else
         {
-            playerAudio.sfxSurfaceGeneric.volume = FunctionLibraryF.MapRangeClamped(0f, 10f, 0f, 3f, velocity);
+            if (velocity <= 1.5f)
+            {
+                playerAudio.sfxSurfaceGeneric.volume = FunctionLibraryF.MapRangeClamped(0f, 1.5f, 0.75f, .15f, velocity);
+            }
+            else
+            {
+                playerAudio.sfxSurfaceGeneric.volume = FunctionLibraryF.MapRangeClamped(1.5f, 10f, .15f, 2f, velocity);
+            }
+                
             playerAudio.sfxSurfaceGeneric.Play();
         } 
     }
