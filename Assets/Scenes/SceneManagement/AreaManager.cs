@@ -58,7 +58,7 @@ public class AreaManager : MonoBehaviour
     [Tooltip("If not null, this music will play upon initial loading of this room.")]
     [SerializeField] private List<RoomMusic> roomMusicList;
 
-    [SerializeField] private string titleCardRoomName;
+    [SerializeField] private List<string> titleCardRoomNames;
     #endregion
 
     #region Singleton
@@ -330,10 +330,20 @@ public class AreaManager : MonoBehaviour
 
     public void CheckForTitleCard()
     {
-        if (SceneManager.GetActiveScene().name == titleCardRoomName)
+        if (area == Areas.Area1 && roomNum == 11)
         {
-            InGameAreaTitleUI.instance.DisplayAreaTitle(area);
+            // The scripted death means custom logic will display the title card instead.
+            return;
         }
+
+        foreach (string name in titleCardRoomNames)
+        {
+            if (SceneManager.GetActiveScene().name == name)
+            {
+                InGameAreaTitleUI.instance.DisplayAreaTitle(area, roomNum);
+            }
+        }
+        
     }
 
     #region Checkpoint

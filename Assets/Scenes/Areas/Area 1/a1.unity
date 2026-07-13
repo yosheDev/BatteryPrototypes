@@ -686,6 +686,18 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: titleCardRoomNames.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: 'titleCardRoomNames.Array.data[0]'
+      value: a1_r4
+      objectReference: {fileID: 0}
+    - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
+      propertyPath: 'titleCardRoomNames.Array.data[1]'
+      value: a1_r18
+      objectReference: {fileID: 0}
+    - target: {fileID: -5291999943119668468, guid: 825c8a5fab05f2a4e9007f45d0dbd6aa, type: 3}
       propertyPath: roomMusicList.Array.data[0].music
       value: 
       objectReference: {fileID: 8300000, guid: 0790e3d28a2ade041b56bd2e9c374706, type: 3}

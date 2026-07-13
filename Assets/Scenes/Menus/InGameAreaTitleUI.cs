@@ -27,7 +27,7 @@ public class InGameAreaTitleUI : MonoBehaviour
     }
     #endregion
 
-    public void DisplayAreaTitle(Areas area)
+    public void DisplayAreaTitle(Areas area, int roomNum)
     {
         chapterText.text = "Chapter ";
         chapterText.text += (int)area;
@@ -38,7 +38,26 @@ public class InGameAreaTitleUI : MonoBehaviour
                 areaText.text = "Testing Grounds";
                 break;
             case Areas.Area1:
-                areaText.text = "The Nest";
+                switch(roomNum)
+                {
+                    case 4:
+                        chapterText.text = "Chapter 1";
+                        areaText.text = "The Nest";
+                        break;
+                    case 11:
+                        chapterText.text = "Chapter 1-2";
+                        areaText.text = "The Climb";
+                        break;
+                    case 18:
+                        chapterText.text = "Chapter 1-3";
+                        areaText.text = "The Upper Nest";
+                        break;
+                    default:
+                        chapterText.text = "Chapter 1";
+                        areaText.text = "The Nest";
+                        break;
+                }
+                
                 break;
             case Areas.Area2:
                 areaText.text = "Facility";

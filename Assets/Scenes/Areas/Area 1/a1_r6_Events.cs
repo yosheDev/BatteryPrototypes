@@ -1,7 +1,8 @@
-using UnityEngine;
+using Magnet;
 using System.Collections;
 using System.Collections.Generic;
-using Magnet;
+using Unity.ProjectAuditor.Editor;
+using UnityEngine;
 public class a1_r6_Events : MonoBehaviour
 {
     public List<GameObject> bombingRemoveObjs = new List<GameObject>();
@@ -24,6 +25,8 @@ public class a1_r6_Events : MonoBehaviour
             {
                 vent.GetComponent<IInterfaceEvent>().InterfaceEvent("Open");
             }
+
+            InGameAreaTitleUI.instance.DisplayAreaTitle(Areas.Area1, 11);
 
         }
         else
