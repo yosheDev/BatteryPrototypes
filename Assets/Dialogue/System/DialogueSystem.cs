@@ -63,6 +63,7 @@ public class DialogueManager : MonoBehaviour
     public void BeginDialogue(string csvName)
     {
         bool dataLoaded = LoadData(csvName);
+ 
         if (!dataLoaded)
         {
             Debug.LogError("No .csv was found titled: " + csvName);
@@ -74,6 +75,7 @@ public class DialogueManager : MonoBehaviour
         onDialogueStarted?.Invoke();
 
         dialogueIndex = 0;
+        Debug.Log("Before Display Line");
         DisplayLine(dialogueIndex);
     }
 
@@ -98,7 +100,6 @@ public class DialogueManager : MonoBehaviour
             Debug.LogError("Cannot display dialogue. DisplayLine(displayIndex) is greater than container size.");
             return;
         }
-        Debug.Log("Line: " + lines[displayIndex]);
         dialogueText.SetText("<link=DialogueHorizontal+DialogueVertical>" + lines[displayIndex] + "</link>");
     }
 
