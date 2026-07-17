@@ -52,6 +52,10 @@ public class InGameAreaTitleUI : MonoBehaviour
                         chapterText.text = "Chapter 1-3";
                         areaText.text = "The Upper Nest";
                         break;
+                    case 26:
+                        chapterText.text = "Chapter 1-4";
+                        areaText.text = "The Plunge";
+                        break;
                     default:
                         chapterText.text = "Chapter 1";
                         areaText.text = "The Nest";
