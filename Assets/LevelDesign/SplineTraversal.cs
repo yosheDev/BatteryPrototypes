@@ -18,12 +18,14 @@ public class SplineTraversal : MonoBehaviour, IInterfaceEvent
     [SerializeField, Tooltip("Duration of travel. Only used when Move Method = Time.")] private float duration;
     [SerializeField, Tooltip("Interpolation curve of travel.")] private AnimationCurve curve;
     [SerializeField] private float endDelay = 2f;
+    [SerializeField] private bool stopAtEnd = false;
     [SerializeField] private bool playOnAwake = true;
     [SerializeField, Range(0f, 1f), Tooltip("Normalized distance [0;1] offset along the spline at which the GameObject should be placed when the animation begins.")]
     private float startOffset;
     [SerializeField] private bool startBackwards = false;
     [SerializeField] private bool enableRotation = false;
-    
+    [SerializeField] private float globalSpeedMult = 1f;
+
     // Constant data
     private Spline pathSpline;
     
@@ -74,7 +76,7 @@ public class SplineTraversal : MonoBehaviour, IInterfaceEvent
             switch (moveMethod)
             {
                 case Method.Speed:
-                    currentAlpha += dt * (speed * (currentDirection ? 1f : -1f));
+                    currentAlpha += dt * ((speed * globalSpeedMult) * (currentDirection ? 1f : -1f));
                     break;
                 case Method.Time:
                     currentAlpha += (dt * FunctionLibraryF.MapRangeClamped(0f, pathSpline.GetLength(), 0f, 1f, (pathSpline.GetLength() / duration)) * (currentDirection ? 1f : -1f));
@@ -137,6 +139,7 @@ public class SplineTraversal : MonoBehaviour, IInterfaceEvent
 
     private void EndReached()
     {
+        if (stopAtEnd) { return; }
         if (pathSpline.Closed)
         {
             if (currentAlpha >= 1f)

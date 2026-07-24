@@ -63,7 +63,14 @@ public class a1_RisingWaterSequence : MonoBehaviour, IInterfaceEvent
         }
         else
         {
-            desiredSpeed = waterMaxSpeed * 2f;
+            if (surfaceDistanceFromPlayer >= 20f)
+            {
+                desiredSpeed = waterMaxSpeed * 2.5f;
+            }
+            else
+            {
+                desiredSpeed = waterMaxSpeed * 1.5f;
+            }
         }
 
         float newSpeed;

@@ -25,6 +25,8 @@ public class MagneticFieldVisibility : MonoBehaviour
     [SerializeField] private bool doOcclusionCheck = true;
     //========================================================
     #endregion
+
+    [SerializeField] private GameObject parentOverrideObj;
     
     private void OnDestroy()
     {
@@ -45,6 +47,11 @@ public class MagneticFieldVisibility : MonoBehaviour
         else
         {
             Debug.LogError("surfaceCol is null on " + this.gameObject + ". surfaceCol is needed for setting variables in the mag field shader.");
+        }
+
+        if (parentOverrideObj != null)
+        {
+            transform.SetParent(parentOverrideObj.transform, true);
         }
     }
 

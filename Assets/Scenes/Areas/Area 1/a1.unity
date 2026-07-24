@@ -806,6 +806,10 @@ PrefabInstance:
       propertyPath: MinDistance
       value: 18.322784
       objectReference: {fileID: 0}
+    - target: {fileID: 5395748181315296326, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
+      propertyPath: targetFPS
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 5490753695866811872, guid: be2c7f958784c2a47b3925ec3e2cfeb9, type: 3}
       propertyPath: m_Name
       value: GameInstance
