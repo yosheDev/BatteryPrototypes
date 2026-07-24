@@ -12,13 +12,14 @@ public class MainMenu : MonoBehaviour
     {
         newGame = true;
         SceneManager.sceneLoaded += UnloadMainMenu;
-        SceneManager.LoadScene("AreaSelection"); 
+        SceneManager.LoadScene("AreaSelection", LoadSceneMode.Additive); 
     }
 
     private void UnloadMainMenu(Scene scene, LoadSceneMode mode)
     {
+        SceneManager.SetActiveScene(scene);
         SceneManager.sceneLoaded -= UnloadMainMenu;
-        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+        SceneManager.UnloadSceneAsync("MainMenu");
     }
 
     public void LoadGame()

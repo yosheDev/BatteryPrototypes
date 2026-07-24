@@ -5,6 +5,7 @@ public class RigidbodyBob : MonoBehaviour
     [Header("Bobbing Settings")]
     public float bobSpeed = 4f;
     public float bobStrength = 2f;
+    public bool updateBobOriginOnUpdate = false;
 
     [Header("Rotational Bobbing")]
     public float rotSpeed = 4f;
@@ -24,6 +25,12 @@ public class RigidbodyBob : MonoBehaviour
 
     void FixedUpdate()
     {
+        // This is very useful for bobbing platforms on dynamic water.
+        if (updateBobOriginOnUpdate)
+        {
+            originalY = transform.position.y;
+        }
+
         float targetY = originalY + (Mathf.Sin(Time.time * bobSpeed) * bobStrength);
         float rotOffset = Mathf.Sin(Time.time * rotSpeed) * rotAmount;
 

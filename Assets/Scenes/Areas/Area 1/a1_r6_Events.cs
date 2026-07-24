@@ -1,7 +1,5 @@
 using Magnet;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.ProjectAuditor.Editor;
 using UnityEngine;
 public class a1_r6_Events : MonoBehaviour
 {

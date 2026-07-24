@@ -13,7 +13,11 @@ public class ChargeParticleManager : MonoBehaviour
     [Tooltip("Locations list is populated with the locations of these dummy actors.")]
     public List<GameObject> particleLocationDummies = new List<GameObject>();
     [SerializeField][HideInInspector] private List<Vector3> particleLocations = new List<Vector3>();
+    #if UNITY_EDITOR
     [ReadOnly] public int locationsCount;
+    #else
+    public int locationsCount;
+    #endif
 
     // Charge Particle Settings
     [Header("Particle Global Settings")]
@@ -46,6 +50,7 @@ public class ChargeParticleManager : MonoBehaviour
         _particleSystem.Emit(emitParams, count);
     }
 
+    #if UNITY_EDITOR
     #region Editor Button List Management
     public void PopulatePositionsList()
     {
@@ -89,7 +94,7 @@ public class ChargeParticleManager : MonoBehaviour
         locationsCount = particleLocations.Count;
     }
     #endregion
-
+    
     #region Inspector Buttons
     [CustomEditor(typeof(ChargeParticleManager))]
     class ChargeParticleManagerGUI : Editor
@@ -145,4 +150,5 @@ public class ChargeParticleManager : MonoBehaviour
         }
     }
     #endregion
+    #endif
 }

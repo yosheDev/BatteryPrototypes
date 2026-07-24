@@ -171,6 +171,16 @@ public class SplineTraversal : MonoBehaviour, IInterfaceEvent
         yield break;
     }
 
+    public void SetSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+    }
+
+    public float GetSpeed()
+    {
+        return speed;
+    }
+
     public void InterfaceEvent(string eventName)
     {
         switch(eventName)

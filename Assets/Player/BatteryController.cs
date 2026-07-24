@@ -1,16 +1,10 @@
 using FunctionLibrary;
 using Magnet;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor.EditorTools;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.UI.Image;
 
 public class BatteryController : MonoBehaviour, IDamageable
 {
@@ -1945,6 +1939,11 @@ public class BatteryController : MonoBehaviour, IDamageable
     public byte GetAbilityProgression()
     {
         return abilityProgression;
+    }
+
+    public bool IsGrounded()
+    {
+        return isGrounded;
     }
     #endregion
 

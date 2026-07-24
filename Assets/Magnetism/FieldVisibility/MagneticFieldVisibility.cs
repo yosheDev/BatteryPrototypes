@@ -1,11 +1,7 @@
 using FunctionLibrary;
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class MagneticFieldVisibility : MonoBehaviour
@@ -206,6 +202,7 @@ public class MagneticFieldVisibility : MonoBehaviour
     }
     #endregion
 
+    #if UNITY_EDITOR
     #region Inspector Buttons
     [CustomEditor(typeof(MagneticFieldVisibility))]
     class MagneticFieldVisibilityGUI : Editor
@@ -223,4 +220,5 @@ public class MagneticFieldVisibility : MonoBehaviour
         }
     }
     #endregion
+    #endif
 }

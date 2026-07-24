@@ -2,8 +2,6 @@ namespace PixeLadder.EasyTransition
 {
     using System.Collections;
     using System.Linq;
-    using Unity.VectorGraphics;
-    using UnityEditor.SearchService;
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;

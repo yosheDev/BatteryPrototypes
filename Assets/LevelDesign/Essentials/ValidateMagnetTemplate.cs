@@ -22,6 +22,7 @@ public class ValidateMagnetTemplate : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
 #region Inspector Buttons
 [CustomEditor(typeof(ValidateMagnetTemplate))]
 class EnsureNormalizedScaleGUI : Editor
@@ -39,3 +40,4 @@ class EnsureNormalizedScaleGUI : Editor
     }
 }
 #endregion
+#endif
