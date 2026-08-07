@@ -1,0 +1,767 @@
+fileFormatVersion: 2
+guid: 0b2d47fa00004614b8ef558e0d543dcf
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2807207991795259538
+    second: Nest Asset Sheet WIP_0
+  - first:
+      213: -7515527736538344796
+    second: Nest Asset Sheet WIP_1
+  - first:
+      213: -2592352212380755594
+    second: Nest Asset Sheet WIP_2
+  - first:
+      213: 8089312167882467828
+    second: Nest Asset Sheet WIP_3
+  - first:
+      213: 7870741463486817388
+    second: Nest Asset Sheet WIP_4
+  - first:
+      213: 6700277498241011722
+    second: Nest Asset Sheet WIP_5
+  - first:
+      213: 8298177772391594505
+    second: Nest Asset Sheet WIP_6
+  - first:
+      213: -701163268731823966
+    second: Nest Asset Sheet WIP_7
+  - first:
+      213: 5621405338570839974
+    second: Nest Asset Sheet WIP_8
+  - first:
+      213: 4168592794972808358
+    second: Nest Asset Sheet WIP_9
+  - first:
+      213: -8855815907239713871
+    second: Nest Asset Sheet WIP_10
+  - first:
+      213: -8170018326581270911
+    second: Nest Asset Sheet WIP_11
+  - first:
+      213: 4634234004370767388
+    second: Nest Asset Sheet WIP_12
+  - first:
+      213: -8322099912932151460
+    second: Nest Asset Sheet WIP_13
+  - first:
+      213: 5490178971792945769
+    second: Nest Asset Sheet WIP_14
+  - first:
+      213: 5843118628184551922
+    second: Nest Asset Sheet WIP_15
+  - first:
+      213: -3214934844477091413
+    second: Nest Asset Sheet WIP_16
+  - first:
+      213: 7573388313072615259
+    second: Nest Asset Sheet WIP_17
+  - first:
+      213: 7336365404962496138
+    second: Nest Asset Sheet WIP_18
+  - first:
+      213: -6644407705509122148
+    second: Nest Asset Sheet WIP_19
+  - first:
+      213: -1496974641862214050
+    second: Nest Asset Sheet WIP_20
+  - first:
+      213: -8037392048122155560
+    second: Nest Asset Sheet WIP_21
+  - first:
+      213: 2844092881821389229
+    second: Nest Asset Sheet WIP_22
+  - first:
+      213: 3125922527883734512
+    second: Nest Asset Sheet WIP_23
+  - first:
+      213: 6120181132006976496
+    second: Nest Asset Sheet WIP_24
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_0
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 1301
+        width: 739
+        height: 620
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e67e766643bca09d0800000000000000
+      internalID: -2807207991795259538
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_1
+      rect:
+        serializedVersion: 2
+        x: 853
+        y: 942
+        width: 263
+        height: 499
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a25904b75b73b790800000000000000
+      internalID: -7515527736538344796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_2
+      rect:
+        serializedVersion: 2
+        x: 981
+        y: 1395
+        width: 315
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 679d850d56d160cd0800000000000000
+      internalID: -2592352212380755594
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_3
+      rect:
+        serializedVersion: 2
+        x: 1809
+        y: 379
+        width: 1063
+        height: 1541
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f921e3ce82034070800000000000000
+      internalID: 8089312167882467828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_4
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 1218
+        width: 97
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c64e11af8ad7a3d60800000000000000
+      internalID: 7870741463486817388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_5
+      rect:
+        serializedVersion: 2
+        x: 493
+        y: 947
+        width: 322
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a00d23392ea2cfc50800000000000000
+      internalID: 6700277498241011722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_6
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 1238
+        width: 135
+        height: 136
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90a7176e7bc092370800000000000000
+      internalID: 8298177772391594505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_7
+      rect:
+        serializedVersion: 2
+        x: 1389
+        y: 724
+        width: 284
+        height: 591
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a810b5d8b7f446f0800000000000000
+      internalID: -701163268731823966
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_8
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1195
+        width: 34
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a7dff73f5e330e40800000000000000
+      internalID: 5621405338570839974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_9
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 1081
+        width: 128
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a46b959f01d9d930800000000000000
+      internalID: 4168592794972808358
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_10
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 1155
+        width: 29
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b329bc3a52d91580800000000000000
+      internalID: -8855815907239713871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_11
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 984
+        width: 253
+        height: 165
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18621bb5e934e9e80800000000000000
+      internalID: -8170018326581270911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_12
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 974
+        width: 61
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1e3e84164b105040800000000000000
+      internalID: 4634234004370767388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_13
+      rect:
+        serializedVersion: 2
+        x: 1139
+        y: 907
+        width: 92
+        height: 153
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5fae58b836f18c80800000000000000
+      internalID: -8322099912932151460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_14
+      rect:
+        serializedVersion: 2
+        x: 1278
+        y: 1006
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 962b907cfa8013c40800000000000000
+      internalID: 5490178971792945769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_15
+      rect:
+        serializedVersion: 2
+        x: 1285
+        y: 1008
+        width: 74
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f178652f6de61150800000000000000
+      internalID: 5843118628184551922
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_16
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 941
+        width: 38
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba1daeadac14263d0800000000000000
+      internalID: -3214934844477091413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_17
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 910
+        width: 46
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5fb9c29b841a1960800000000000000
+      internalID: 7573388313072615259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_18
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 666
+        width: 286
+        height: 268
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8e1141577100d560800000000000000
+      internalID: 7336365404962496138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_19
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 573
+        width: 485
+        height: 343
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9fa24a35625ac3a0800000000000000
+      internalID: -6644407705509122148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_20
+      rect:
+        serializedVersion: 2
+        x: 1113
+        y: 468
+        width: 244
+        height: 396
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5ef80a9e7da93be0800000000000000
+      internalID: -1496974641862214050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_21
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 320
+        width: 322
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dd21232482757090800000000000000
+      internalID: -8037392048122155560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_22
+      rect:
+        serializedVersion: 2
+        x: 563
+        y: 484
+        width: 271
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da15e29486f387720800000000000000
+      internalID: 2844092881821389229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_23
+      rect:
+        serializedVersion: 2
+        x: 848
+        y: 505
+        width: 64
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fda6ed2af1816b20800000000000000
+      internalID: 3125922527883734512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Nest Asset Sheet WIP_24
+      rect:
+        serializedVersion: 2
+        x: 537
+        y: 405
+        width: 317
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fbe25e30504fe450800000000000000
+      internalID: 6120181132006976496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Nest Asset Sheet WIP_0: -2807207991795259538
+      Nest Asset Sheet WIP_1: -7515527736538344796
+      Nest Asset Sheet WIP_10: -8855815907239713871
+      Nest Asset Sheet WIP_11: -8170018326581270911
+      Nest Asset Sheet WIP_12: 4634234004370767388
+      Nest Asset Sheet WIP_13: -8322099912932151460
+      Nest Asset Sheet WIP_14: 5490178971792945769
+      Nest Asset Sheet WIP_15: 5843118628184551922
+      Nest Asset Sheet WIP_16: -3214934844477091413
+      Nest Asset Sheet WIP_17: 7573388313072615259
+      Nest Asset Sheet WIP_18: 7336365404962496138
+      Nest Asset Sheet WIP_19: -6644407705509122148
+      Nest Asset Sheet WIP_2: -2592352212380755594
+      Nest Asset Sheet WIP_20: -1496974641862214050
+      Nest Asset Sheet WIP_21: -8037392048122155560
+      Nest Asset Sheet WIP_22: 2844092881821389229
+      Nest Asset Sheet WIP_23: 3125922527883734512
+      Nest Asset Sheet WIP_24: 6120181132006976496
+      Nest Asset Sheet WIP_3: 8089312167882467828
+      Nest Asset Sheet WIP_4: 7870741463486817388
+      Nest Asset Sheet WIP_5: 6700277498241011722
+      Nest Asset Sheet WIP_6: 8298177772391594505
+      Nest Asset Sheet WIP_7: -701163268731823966
+      Nest Asset Sheet WIP_8: 5621405338570839974
+      Nest Asset Sheet WIP_9: 4168592794972808358
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
